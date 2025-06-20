@@ -21,6 +21,17 @@ def load_metadata():
     return metadata
 
 
+def resample_time_data(df_to_resample):
+    df_to_resample.reference_timestamp = pd.to_datetime(df_to_resample.reference_timestamp, format='%d.%m.%Y %H:%M')
+    df_to_resample = df_to_resample.set_index(pd.DatetimeIndex(df_to_resample.reference_timestamp), drop=True).drop(
+        columns='reference_timestamp'
+    )
+    df_to_resample = df_to_resample.loc[(df_to_resample.index.max() - pd.tseries.offsets.Day(7)) :]
+    time_key = pd.Grouper(freq='6H')
+    df_to_resample = df_to_resample.groupby(['station_abbr', time_key]).sum().reset_index(level=['station_abbr'])
+    return df_to_resample
+
+
 def load_rainfall(stations, metadata, from_local=False):
     rainfall = pd.DataFrame(index=pd.to_datetime([]))
     for station in stations:
@@ -33,33 +44,13 @@ def load_rainfall(stations, metadata, from_local=False):
                 sep=';',
                 parse_dates=['reference_timestamp'],
             )
-        df.reference_timestamp = pd.to_datetime(df.reference_timestamp, format='%d.%m.%Y %H:%M')
-        df = df.set_index(pd.DatetimeIndex(df.reference_timestamp), drop=True).drop(columns='reference_timestamp')
-        df = df.loc[(df.index.max() - pd.tseries.offsets.Day(7)) :]
-        time_key = pd.Grouper(freq='6H')
-        df = df.groupby(['station_abbr', time_key]).sum().reset_index(level=['station_abbr'])
-        # df = df.resample('6H').sum()
+        df = resample_time_data(df)
         rainfall = pd.concat([rainfall, df])
     rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150z0': 'Rainfall'})
-    rainfall = rainfall.replace(rainfall.Station.unique(), meta['precipitation'].loc[meta['precipitation'].station_abbr.str.lower().isin(stations), 'station_name'])
-    return rainfall
-
-
-def load_precipitation_into_dataframe(from_local, stations):
-    if from_local:
-        rainfall = pd.read_csv(
-            f'{stations[0]}.csv',
-            encoding='ISO-8859-1',
-            sep=';',
-            parse_dates=['reference_timestamp'],
-        )
-    else:
-        rainfall = pd.read_csv(
-            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{stations[0]}/ogd-smn-precip_{stations[0]}_t_recent.csv',
-            encoding='ISO-8859-1',
-            sep=';',
-            parse_dates=['reference_timestamp'],
-        )
+    rainfall = rainfall.replace(
+        rainfall.Station.unique(),
+        metadata.loc[metadata.station_abbr.str.lower().isin(stations), 'station_name'],
+    )
     return rainfall
 
 
