@@ -2,17 +2,11 @@
 name = "meteoswiss-ogd"
 version = "0.1.0"
 description = "Add your description here"
-requires-python = ">=3.9"
+requires-python = ">=3.13"
 dependencies = [
-    "geopandas>=1.0.1",
-    "matplotlib>=3.9.4",
-    "numpy>=2.0.2",
     "pandas[parquet]>=2.2.3",
-    "pykrige>=1.7.2",
-    "pystac-client>=0.8.3",
-    "scipy>=1.13.1",
-    "setuptools>=80.3.1",
-    "streamlit>=1.45.1",
+    "setuptools>=80.9.0",
+    "streamlit>=1.46.0",
 ]
 
 [tool.ruff]
@@ -49,8 +43,7 @@ exclude = [
 line-length = 120
 indent-width = 4
 
-# Assume Python 3.9
-target-version = "py39"
+target-version = "py313"
 
 
 [tool.ruff.lint]
