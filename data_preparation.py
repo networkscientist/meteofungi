@@ -4,6 +4,7 @@ import pandas as pd
 # --- Load data ---
 stations_rainfall = ['cou', 'bey', 'abe', 'gad', 'neb']
 
+
 def download_rainfall_locally(stations):
     for station in stations:
         urllib.request.urlretrieve(
@@ -21,14 +22,8 @@ def load_metadata():
 
 
 def load_rainfall(stations, metadata, from_local=False):
-    rainfall = load_precipitation_into_dataframe(from_local, stations)
-    rainfall.index = pd.DatetimeIndex(pd.to_datetime(rainfall.reference_timestamp, format='%d.%m.%Y %H:%M'))
-    rainfall = (
-        rainfall.sort_index()
-        .loc[(rainfall.index.max() - pd.tseries.offsets.Day(7)) :]
-        .rename(columns={'rre150z0': stations[0]})
-    )
-    for station in stations[1:]:
+    rainfall = pd.DataFrame(index=pd.to_datetime([]))
+    for station in stations:
         if from_local:
             df = pd.read_csv(f'{station}.csv', encoding='ISO-8859-1', sep=';', parse_dates=['reference_timestamp'])
         else:
@@ -39,31 +34,14 @@ def load_rainfall(stations, metadata, from_local=False):
                 parse_dates=['reference_timestamp'],
             )
         df.reference_timestamp = pd.to_datetime(df.reference_timestamp, format='%d.%m.%Y %H:%M')
-        df.index = pd.DatetimeIndex(df.reference_timestamp)
-        df = df.sort_index().loc[(df.index.max() - pd.tseries.offsets.Day(7)) :]
-        rainfall = rainfall.join(df.rre150z0.rename(station))
-    rainfall = rainfall.drop(columns=['station_abbr', 'reference_timestamp'])
-    rainfall = rainfall.rename(
-        columns={
-            key: value
-            for key, value in zip(
-                rainfall.columns,
-                metadata.loc[
-                    metadata.station_abbr.str.lower().isin(rainfall.columns),
-                    'station_name',
-                ],
-            )
-        }
-    )
-    rainfall = rainfall.rename(
-        columns={
-            key: value
-            for key, value in zip(
-                rainfall.columns,
-                metadata.loc[metadata.station_abbr.str.lower().isin(rainfall.columns), 'station_name'],
-            )
-        }
-    )
+        df = df.set_index(pd.DatetimeIndex(df.reference_timestamp), drop=True).drop(columns='reference_timestamp')
+        df = df.loc[(df.index.max() - pd.tseries.offsets.Day(7)) :]
+        time_key = pd.Grouper(freq='6H')
+        df = df.groupby(['station_abbr', time_key]).sum().reset_index(level=['station_abbr'])
+        # df = df.resample('6H').sum()
+        rainfall = pd.concat([rainfall, df])
+    rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150z0': 'Rainfall'})
+    rainfall = rainfall.replace(rainfall.Station.unique(), meta['precipitation'].loc[meta['precipitation'].station_abbr.str.lower().isin(stations), 'station_name'])
     return rainfall
 
 
@@ -86,5 +64,6 @@ def load_precipitation_into_dataframe(from_local, stations):
 
 
 meta = load_metadata()
-rainfall = load_rainfall(stations_rainfall, meta['precipitation']).resample('6H').sum()
+rainfall = load_rainfall(stations_rainfall, meta['precipitation'], from_local=True)
 rainfall.to_parquet('rainfall.parquet')
+pd.read_parquet('rainfall.parquet')
