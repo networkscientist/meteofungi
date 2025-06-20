@@ -3,8 +3,6 @@ import pandas as pd
 
 # --- Load data ---
 st.set_page_config(layout='wide')
-stations_jura = ['Aarberg', 'Bellelay', 'Couvet', 'Gadmen', 'Nesselboden']
-
 
 @st.cache_data
 def load_rainfall():
