@@ -12,5 +12,5 @@ def load_rainfall():
 
 rainfall = load_rainfall()
 st.title('MeteoFungi')
-st.area_chart(data=rainfall, x=None, y=stations_jura, x_label='Time', y_label='Rainfall (mm)')
+st.area_chart(data=rainfall, x=None, y="Rainfall", color="Station", x_label='Time', y_label='Rainfall (mm)')
 st.info('Source: MeteoSwiss')
