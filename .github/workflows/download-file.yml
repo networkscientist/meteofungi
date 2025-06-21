@@ -1,9 +1,8 @@
 name: Download File
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 */1 * * *"
+    - cron: "23 */1 * * *"
 
 jobs:
   build:
