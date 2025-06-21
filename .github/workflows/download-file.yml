@@ -7,6 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
     steps:
     - uses: actions/checkout@v4
 
@@ -14,12 +19,6 @@ jobs:
       run: |
         curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/cou/ogd-smn-precip_cou_t_recent.csv --output ./cou.csv
       working-directory: ${{ github.workspace }}
-
-    - name: Commit and Push Changes
-      run: |
-        git config --global user.name "${{ github.actor }}"
-        git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
-        git add cou.csv
-        git commit -m 'Update downloaded file'
-        git push
+      
+      # Commit all changed files back to the repository
+    - uses: stefanzweifel/git-auto-commit-action@v6
