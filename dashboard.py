@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from data_preparation import load_rainfall, stations_rainfall, load_metadata
 
 # --- Load data ---
 st.set_page_config(layout='wide')
