@@ -54,6 +54,8 @@ def load_rainfall(stations, metadata, from_local=False):
     return rainfall
 
 
-# meta = load_metadata()
-# rainfall = load_rainfall(stations_rainfall, meta['precipitation'], from_local=True)
-# rainfall.to_parquet('rainfall.parquet')
+if __name__ == '__main__':
+    meta = load_metadata()
+    rainfall = load_rainfall(stations_rainfall, meta['precipitation'])
+    rainfall.to_parquet('rainfall.parquet')
+    

@@ -1,0 +1,48 @@
+name: Data Preparation with Python
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 */1 * * *"
+
+jobs:
+  python-setup:
+    runs-on: ubuntu-latest
+
+    permissions:
+# Give the default GITHUB_TOKEN write permission to commit and push the
+# added or changed files to the repository.
+      contents: write
+
+    steps:
+    - name: "Checkout"
+      uses: actions/checkout@v4
+
+    - name: "Install uv"
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: "Set up Python"
+      uses: actions/setup-python@v5
+      with:
+        python-version-file: "pyproject.toml"
+
+    - name: "Install Project"
+      uses: uv sync --locked --all-extras --dev
+
+    - name: "Data Preparation with Python"
+      run: python data_preparation.py
+
+    - name: Download File
+      run: |
+        curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/cou/ogd-smn-precip_cou_t_recent.csv --output ./cou.csv &
+        curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/bey/ogd-smn-precip_bey_t_recent.csv --output ./bey.csv &
+        curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/abe/ogd-smn-precip_abe_t_recent.csv --output ./abe.csv &
+        curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/gad/ogd-smn-precip_gad_t_recent.csv --output ./gad.csv &
+        curl https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/neb/ogd-smn-precip_neb_t_recent.csv --output ./neb.csv
+      working-directory: ${{ github.workspace }}
+  
+  # Commit all changed files back to the repository
+    - uses: stefanzweifel/git-auto-commit-action@v6
