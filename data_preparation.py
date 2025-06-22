@@ -2,7 +2,7 @@ import urllib.request
 import pandas as pd
 
 # --- Load data ---
-stations_rainfall = ['cou', 'bey', 'abe', 'gad', 'neb']
+stations_rainfall = ['bey', 'mgl', 'sai']
 
 
 def download_rainfall_locally(stations):
