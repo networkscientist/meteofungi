@@ -33,7 +33,7 @@ jobs:
       run: uv sync --locked --all-extras --dev
 
     - name: "Data Preparation with Python"
-      run: python data_preparation.py
+      run: uv run data_preparation.py
 #
 #    - name: Download File
 #      run: |
