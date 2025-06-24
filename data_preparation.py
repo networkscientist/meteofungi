@@ -2,7 +2,13 @@ import urllib.request
 import pandas as pd
 
 # --- Load data ---
-stations_rainfall = ['bey', 'mgl', 'sai']
+stations = {
+    'bey': 'rainfall',
+    'mgl': 'rainfall',
+    'sai': 'rainfall',
+    'coy': 'weather',
+    'cha': 'weather'
+}
 
 
 def download_rainfall_locally(stations):
@@ -32,21 +38,29 @@ def resample_time_data(df_to_resample):
     return df_to_resample
 
 
-def load_rainfall(stations, metadata, from_local=False):
+def generate_download_url(station, station_type):
+    if station_type == 'rainfall':
+        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+    if station_type == 'weather':
+        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
+
+
+def load_weather(stations, metadata, from_local=False):
     rainfall = pd.DataFrame(index=pd.to_datetime([]))
-    for station in stations:
+    for station, station_type in stations.items():
         if from_local:
             df = pd.read_csv(f'{station}.csv', encoding='ISO-8859-1', sep=';', parse_dates=['reference_timestamp'])
         else:
             df = pd.read_csv(
-                f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_t_recent.csv',
+                generate_download_url(station, station_type),
                 encoding='ISO-8859-1',
                 sep=';',
                 parse_dates=['reference_timestamp'],
             )
         df = resample_time_data(df)
         rainfall = pd.concat([rainfall, df])
-    rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150z0': 'Rainfall'})
+    rainfall = rainfall.loc[:,['station_abbr', 'rre150h0']]
+    rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150h0': 'Rainfall'})
     rainfall = rainfall.replace(
         rainfall.Station.unique(),
         metadata.loc[metadata.station_abbr.str.lower().isin(stations), 'station_name'],
@@ -54,8 +68,15 @@ def load_rainfall(stations, metadata, from_local=False):
     return rainfall
 
 
+def create_metrics(df):
+    metrics = df.loc[(df.index >= pd.Timestamp.now() - pd.Timedelta(days=3))].groupby('Station').sum()
+    return metrics
+
+
 if __name__ == '__main__':
     meta = load_metadata()
-    rainfall = load_rainfall(stations_rainfall, meta['precipitation'])
+    rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
+    metrics = create_metrics(rainfall)
+    # weather = load_weather(stations, pd.concat(meta['weather'])
     rainfall.to_parquet('rainfall.parquet')
-    
+    metrics.to_parquet('metrics.parquet')
