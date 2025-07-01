@@ -3,7 +3,7 @@ name: Data Preparation with Python
 on:
   workflow_dispatch:
   schedule:
-    - cron: "43 6 * * *"
+    - cron: "43 * * * *"
 
 jobs:
   python-setup:
