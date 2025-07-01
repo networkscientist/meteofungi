@@ -28,11 +28,11 @@ st.subheader('3-Day Rainfall Sum (mm)')
 a, b, c, d, e = st.columns(5)
 for col, station in zip([a, b, c, d, e], rainfall.Station.unique()):
     val = round(metrics[metrics.index == station].values.tolist()[0][0], 2)
-    if val < 5:
+    if val < 1:
         emo = '☀️'
-    elif (val >= 5) & (val < 10):
+    elif (val >= 1) & (val < 20):
         emo = '🌦️'
-    elif val >= 10:
+    elif (val >= 20) & (val < 50):
         emo = '🌧️'
     else:
         emo = '🌊'
