@@ -121,8 +121,8 @@ if __name__ == '__main__':
     if pl:
         rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']])).collect()
         metrics = create_metrics(rainfall.lazy())
-        rainfall.write_parquet('rainfall.parquet')
-        metrics.sink_parquet('metrics.parquet')
+        rainfall.rename({'station_abbr': 'Station', 'reference_timestamp':'Time', 'rre150h0':'Rainfall'}).write_parquet('rainfall.parquet')
+        metrics.rename({'rre150h0':'Rainfall','station_abbr':'Station'}).sink_parquet('metrics.parquet')
     else:
         rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
         metrics = create_metrics(rainfall)
