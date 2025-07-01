@@ -5,6 +5,7 @@ description = "Add your description here"
 requires-python = ">=3.13"
 dependencies = [
     "pandas[parquet]>=2.2.3",
+    "polars>=1.31.0",
     "setuptools>=80.9.0",
     "streamlit>=1.46.0",
 ]

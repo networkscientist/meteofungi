@@ -1,14 +1,16 @@
 import urllib.request
 import pandas as pd
 
+try:
+    import polars as pl
+except ImportError:
+    pl = None
+from datetime import datetime, timedelta
+from cProfile import Profile
+from pstats import SortKey, Stats
+
 # --- Load data ---
-stations = {
-    'bey': 'rainfall',
-    'mgl': 'rainfall',
-    'sai': 'rainfall',
-    'coy': 'weather',
-    'cha': 'weather'
-}
+stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
 
 
 def download_rainfall_locally(stations):
@@ -40,43 +42,96 @@ def resample_time_data(df_to_resample):
 
 def generate_download_url(station, station_type):
     if station_type == 'rainfall':
-        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        return (
+            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        )
     if station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
 
 
 def load_weather(stations, metadata, from_local=False):
-    rainfall = pd.DataFrame(index=pd.to_datetime([]))
-    for station, station_type in stations.items():
-        if from_local:
-            df = pd.read_csv(f'{station}.csv', encoding='ISO-8859-1', sep=';', parse_dates=['reference_timestamp'])
-        else:
-            df = pd.read_csv(
-                generate_download_url(station, station_type),
-                encoding='ISO-8859-1',
-                sep=';',
-                parse_dates=['reference_timestamp'],
-            )
-        df = resample_time_data(df)
-        rainfall = pd.concat([rainfall, df])
-    rainfall = rainfall.loc[:,['station_abbr', 'rre150h0']]
-    rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150h0': 'Rainfall'})
-    rainfall = rainfall.replace(
-        rainfall.Station.unique(),
-        metadata.loc[metadata.station_abbr.str.lower().isin(stations), 'station_name'],
-    )
-    return rainfall
+    if pl:
+        rainfall = pl.scan_csv(
+            [
+                generate_download_url(station, station_type)
+                for station, station_type in stations.items()
+                if station_type == 'rainfall'
+            ],
+            separator=';',
+            try_parse_dates=True,
+        )
+        weather = pl.scan_csv(
+            [
+                generate_download_url(station, station_type)
+                for station, station_type in stations.items()
+                if station_type == 'weather'
+            ],
+            separator=';',
+            try_parse_dates=True,
+        )
+        return (
+            pl.concat([rainfall, weather], how='diagonal')
+            .sort('reference_timestamp')
+            .group_by_dynamic('reference_timestamp', every='6h', group_by='station_abbr')
+            .sum()
+        )
+    else:
+        rainfall = pd.DataFrame(index=pd.to_datetime([]))
+        for station, station_type in stations.items():
+            if from_local:
+                df = pd.read_csv(f'{station}.csv', encoding='ISO-8859-1', sep=';', parse_dates=['reference_timestamp'])
+            else:
+                df = pd.read_csv(
+                    generate_download_url(station, station_type),
+                    encoding='ISO-8859-1',
+                    sep=';',
+                    parse_dates=['reference_timestamp'],
+                )
+            df = resample_time_data(df)
+            rainfall = pd.concat([rainfall, df])
+        rainfall = rainfall.loc[:, ['station_abbr', 'rre150h0']]
+        rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150h0': 'Rainfall'})
+        rainfall = rainfall.replace(
+            rainfall.Station.unique(),
+            metadata.loc[metadata.station_abbr.str.lower().isin(stations), 'station_name'],
+        )
+        return rainfall
 
 
 def create_metrics(df):
-    metrics = df.loc[(df.index >= pd.Timestamp.now() - pd.Timedelta(days=3))].groupby('Station').sum()
-    return metrics
+    if pl:
+        time_periods = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+
+        # 2) Filter & groupby‐sum:
+        return pl.concat(
+            [
+                df.filter(pl.col('reference_timestamp') >= datetime_period)
+                .drop('reference_timestamp')
+                .group_by('station_abbr')
+                .sum()
+                .with_columns(pl.lit(period).alias('aggr_period_days'))
+                for period, datetime_period in time_periods.items()
+            ]
+        )
+    else:
+        metrics = df.loc[(df.index >= pd.Timestamp.now() - pd.Timedelta(days=3))].groupby('Station').sum()
+        return metrics
 
 
 if __name__ == '__main__':
     meta = load_metadata()
-    rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
-    metrics = create_metrics(rainfall)
+    if pl:
+        with Profile() as profile:
+            rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']])).collect()
+            metrics = create_metrics(rainfall.lazy())
+            rainfall.write_parquet('rainfall.parquet')
+            metrics.sink_parquet('metrics.parquet')
+            (Stats(profile).strip_dirs().sort_stats(SortKey.CALLS).print_stats())
+    else:
+        with Profile() as profile:
+            rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
+            metrics = create_metrics(rainfall)
+            rainfall.to_parquet('rainfall.parquet')
+            metrics.to_parquet('metrics.parquet')
+            (Stats(profile).strip_dirs().sort_stats(SortKey.CALLS).print_stats())
     # weather = load_weather(stations, pd.concat(meta['weather'])
-    rainfall.to_parquet('rainfall.parquet')
-    metrics.to_parquet('metrics.parquet')
