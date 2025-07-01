@@ -6,8 +6,6 @@ try:
 except ImportError:
     pl = None
 from datetime import datetime, timedelta
-from cProfile import Profile
-from pstats import SortKey, Stats
 
 # --- Load data ---
 stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
@@ -121,17 +119,13 @@ def create_metrics(df):
 if __name__ == '__main__':
     meta = load_metadata()
     if pl:
-        with Profile() as profile:
-            rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']])).collect()
-            metrics = create_metrics(rainfall.lazy())
-            rainfall.write_parquet('rainfall.parquet')
-            metrics.sink_parquet('metrics.parquet')
-            (Stats(profile).strip_dirs().sort_stats(SortKey.CALLS).print_stats())
+        rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']])).collect()
+        metrics = create_metrics(rainfall.lazy())
+        rainfall.write_parquet('rainfall.parquet')
+        metrics.sink_parquet('metrics.parquet')
     else:
-        with Profile() as profile:
-            rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
-            metrics = create_metrics(rainfall)
-            rainfall.to_parquet('rainfall.parquet')
-            metrics.to_parquet('metrics.parquet')
-            (Stats(profile).strip_dirs().sort_stats(SortKey.CALLS).print_stats())
+        rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
+        metrics = create_metrics(rainfall)
+        rainfall.to_parquet('rainfall.parquet')
+        metrics.to_parquet('metrics.parquet')
     # weather = load_weather(stations, pd.concat(meta['weather'])
