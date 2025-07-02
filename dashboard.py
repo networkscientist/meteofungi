@@ -55,14 +55,13 @@ for col, station in zip(
         .item(),
         2,
     )
-    if val < 5:
+    if val < 1:
         emo = '☀️'
-    elif (val >= 5) & (val < 10):
+    elif (val >= 1) & (val < 20):
         emo = '🌦️'
-    elif val >= 10:
+    elif (val >= 20) & (val < 50):
         emo = '🌧️'
     else:
         emo = '🌊'
     col.metric(label=station, value=str(val) + emo)
-
 st.info('Source: MeteoSwiss')
