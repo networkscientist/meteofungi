@@ -2,13 +2,7 @@ import urllib.request
 import pandas as pd
 
 # --- Load data ---
-stations = {
-    'bey': 'rainfall',
-    'mgl': 'rainfall',
-    'sai': 'rainfall',
-    'coy': 'weather',
-    'cha': 'weather'
-}
+stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
 
 
 def download_rainfall_locally(stations):
@@ -40,7 +34,9 @@ def resample_time_data(df_to_resample):
 
 def generate_download_url(station, station_type):
     if station_type == 'rainfall':
-        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        return (
+            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        )
     if station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
 
@@ -59,7 +55,7 @@ def load_weather(stations, metadata, from_local=False):
             )
         df = resample_time_data(df)
         rainfall = pd.concat([rainfall, df])
-    rainfall = rainfall.loc[:,['station_abbr', 'rre150h0']]
+    rainfall = rainfall.loc[:, ['station_abbr', 'rre150h0']]
     rainfall = rainfall.rename(columns={'station_abbr': 'Station', 'rre150h0': 'Rainfall'})
     rainfall = rainfall.replace(
         rainfall.Station.unique(),
@@ -77,6 +73,5 @@ if __name__ == '__main__':
     meta = load_metadata()
     rainfall = load_weather(stations, pd.concat([meta['precipitation'], meta['weather']]))
     metrics = create_metrics(rainfall)
-    # weather = load_weather(stations, pd.concat(meta['weather'])
     rainfall.to_parquet('rainfall.parquet')
     metrics.to_parquet('metrics.parquet')
