@@ -15,10 +15,6 @@ def load_metrics():
     return pd.read_parquet('metrics.parquet')
 
 
-# def load_rainfall_from_local(stations_rainfall, metadata):
-#     return load_rainfall(stations_rainfall, metadata['precipitation'], from_local=True)
-
-# meta = load_metadata()
 rainfall = load_rainfall()
 metrics = load_metrics()
 st.title('MeteoFungi')
