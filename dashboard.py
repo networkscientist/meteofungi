@@ -49,7 +49,7 @@ for col, station in zip(
     station_name_list,
 ):
     val = round(
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 7))
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
         .select(pl.col('Rainfall'))
         .collect()
         .item(),
@@ -64,4 +64,5 @@ for col, station in zip(
     else:
         emo = '🌊'
     col.metric(label=station, value=str(val) + emo)
+
 st.info('Source: MeteoSwiss')
