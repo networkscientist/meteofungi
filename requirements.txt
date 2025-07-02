@@ -51,6 +51,8 @@ pandas==2.2.3
     #   streamlit
 pillow==11.2.1
     # via streamlit
+polars==1.31.0
+    # via meteoswiss-ogd
 protobuf==6.31.1
     # via streamlit
 pyarrow==20.0.0
