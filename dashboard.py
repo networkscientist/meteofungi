@@ -63,10 +63,10 @@ for col, station in zip(
     station_name_list,
 ):
     val = (
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
+              (metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
         .select(pl.col('Rainfall'))
-        .collect()
-        .item()
+        .collect())
+        .item() if (len(metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3)).select(pl.col('Rainfall')).collect()) > 0) else 0
         / 3
     )
 
