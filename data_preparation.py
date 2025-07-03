@@ -2,11 +2,15 @@ import polars as pl
 from datetime import datetime, timedelta
 
 # --- Load data ---
-stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
+# stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
 
+WEATHER_SCHEMA = {'station_abbr': pl.String, 'reference_timestamp': pl.Datetime, 'tre200h0': pl.Float32, 'tre200hn': pl.Float32, 'tre200hx': pl.Float32, 'tre005h0': pl.Float32, 'tre005hn': pl.Float32, 'ure200h0': pl.Float32, 'pva200h0': pl.Float32, 'tde200h0': pl.Float32, 'prestah0': pl.Float32, 'pp0qffh0': pl.Float32, 'pp0qnhh0': pl.Float32, 'ppz700h0': pl.Float32, 'ppz850h0': pl.Float32, 'fkl010h1': pl.Float32, 'dkl010h0': pl.Int16, 'fkl010h0': pl.Float32, 'fu3010h0': pl.Float32, 'fu3010h1': pl.Float32, 'fkl010h3': pl.Float32, 'fu3010h3': pl.Float32, 'wcc006h0': pl.Int16, 'fve010h0': pl.Float32, 'rre150h0': pl.Float32, 'htoauths': pl.Int16, 'gre000h0': pl.Int16, 'oli000h0': pl.Int16, 'olo000h0': pl.Int16, 'osr000h0': pl.Int16, 'ods000h0': pl.Int16, 'sre000h0': pl.Int16, 'erefaoh0': pl.Float32}
 
-def load_metadata():
+def load_metadata_stations():
     return pl.scan_parquet('meta_stations.parquet')
+
+def load_metadata_params():
+    return pl.scan_parquet('meta_parameters.parquet')
 
 
 def generate_download_url(station, station_type):
@@ -26,7 +30,8 @@ def load_weather(stations, metadata):
             if station_type == 'rainfall'
         ],
         separator=';',
-        try_parse_dates=True,
+        # try_parse_dates=True,
+        schema=WEATHER_SCHEMA
     )
     rainfall_now = pl.scan_csv(
         [
@@ -35,8 +40,8 @@ def load_weather(stations, metadata):
             if station_type == 'rainfall'
         ],
         separator=';',
-        try_parse_dates=True,
-        schema=rainfall_recent.schema,
+        # try_parse_dates=True,
+        schema=WEATHER_SCHEMA,
     )
     weather_recent = pl.scan_csv(
         [
@@ -45,7 +50,8 @@ def load_weather(stations, metadata):
             if station_type == 'weather'
         ],
         separator=';',
-        try_parse_dates=True,
+        # try_parse_dates=True,
+        schema = WEATHER_SCHEMA
     )
     weather_now = pl.scan_csv(
         [
@@ -54,8 +60,8 @@ def load_weather(stations, metadata):
             if station_type == 'weather'
         ],
         separator=';',
-        try_parse_dates=True,
-        schema=weather_recent.schema,
+        # try_parse_dates=True,
+        schema=WEATHER_SCHEMA,
     )
     rainfall = pl.concat(
         [
@@ -97,8 +103,26 @@ def create_metrics(df):
 
 
 if __name__ == '__main__':
-    meta = load_metadata()
-    rainfall = load_weather(stations, meta)
+    meta_stations = load_metadata_stations()
+    meta_parameters = load_metadata_params()
+    # data_type_map = {'Float': 'pl.Float32', 'Integer': 'pl.Int16', 'String': 'pl.String'}
+    # meta_parameters = meta_parameters.with_columns(
+    #     datatypes=pl.Series(
+    #         [data_type_map[dt] for dt in meta_parameters.select('parameter_datatype').to_series()]
+    #     )
+    # )
+    # meta_parameters = meta_parameters.with_columns(
+    #     datatypes_obj=pl.Series(
+    #         [eval(dt) for dt in meta_parameters.select('datatypes').to_series()]
+    #     )
+    # )
+    # dtps = [({'station_abbr':pl.String, 'reference_timestamp':pl.String}|{col:tp for col, tp in zip(meta_parameters.select('parameter_shortname').to_series(), meta_parameters.select('datatypes_obj').to_series())})[tp] for tp in pl.read_csv('https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/cou/ogd-smn-precip_cou_h_recent.csv', separator=';', encoding='ISO-8859-1').columns]
+    # cols = pl.read_csv('https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/cou/ogd-smn-precip_cou_h_recent.csv', separator=';', encoding='ISO-8859-1').columns
+    # sc = pl.Schema({col: tp for col, tp in zip(cols, dtps)})
+
+
+    stations = {station_abbr.lower():'weather' for station_abbr in meta_stations.filter(pl.col('station_type_de') == 'Automatische Wetterstationen').select('station_abbr').collect().to_series().to_list()} | {station_abbr.lower():'rainfall' for station_abbr in meta_stations.filter(pl.col('station_type_de') == 'Automatische Niederschlagsstationen').select('station_abbr').collect().to_series().to_list()}
+    rainfall = load_weather(stations, meta_stations)
     rainfall.sink_parquet('rainfall.parquet')
     metrics = create_metrics(rainfall)
     metrics.sink_parquet('metrics.parquet')
