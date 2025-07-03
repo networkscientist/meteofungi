@@ -10,14 +10,14 @@ st.set_page_config(layout='wide')
 @st.cache_data
 def load_rainfall():
     return pl.scan_parquet('rainfall.parquet').rename(
-        {'reference_timestamp': 'Time', 'rre150h0': 'Rainfall', 'station_name': 'Station'}
+        {'reference_timestamp': 'Time', 'rre150h0': 'Rainfall', 'erefaoh0': 'Verdunstung', 'station_name': 'Station'}
     )
 
 
 @st.cache_data
 def load_metrics():
     return pl.scan_parquet('metrics.parquet').rename(
-        {'rre150h0': 'Rainfall', 'station_name': 'Station', 'aggr_period_days': 'Time Period'}
+        {'rre150h0': 'Rainfall', 'erefaoh0':'Verdunstung', 'station_name': 'Station', 'aggr_period_days': 'Time Period'}
     )
 
 
@@ -73,6 +73,30 @@ for col, station in zip(
     delta = val - (
         metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
         .select(pl.col('Rainfall'))
+        .collect()
+        .item()
+        / 14
+    )
+    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
+
+st.subheader('3-Day Average (mm/d)')
+
+a, b, c, d, e = st.columns(5)
+for col, station in zip(
+    [a, b, c, d, e],
+    station_name_list,
+):
+    val = (
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
+        .select(pl.col('Verdunstung'))
+        .collect()
+        .item()
+        / 3
+    )
+
+    delta = val - (
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
+        .select(pl.col('Verdunstung'))
         .collect()
         .item()
         / 14
