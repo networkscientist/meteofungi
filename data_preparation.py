@@ -59,17 +59,13 @@ def load_weather(stations, metadata):
     )
     rainfall = pl.concat(
         [
-            rainfall_recent.filter(
-                pl.col('reference_timestamp') < rainfall_now.select('reference_timestamp').min().collect().item()
-            ),
+            rainfall_recent,
             rainfall_now,
         ]
     )
     weather = pl.concat(
         [
-            weather_recent.filter(
-                pl.col('reference_timestamp') < weather_now.select('reference_timestamp').min().collect().item()
-            ),
+            weather_recent,
             weather_now,
         ],
     )
