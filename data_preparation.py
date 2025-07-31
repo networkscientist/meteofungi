@@ -85,7 +85,7 @@ def create_metrics(df):
             df.filter(pl.col('reference_timestamp') >= datetime_period)
             .drop('reference_timestamp')
             .group_by(['station_abbr', 'station_name'])
-            .sum()
+            .agg(pl.col('rre150h0').mean())
             .with_columns(pl.lit(period).alias('aggr_period_days'))
             for period, datetime_period in time_periods.items()
         ]
