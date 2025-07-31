@@ -63,11 +63,20 @@ for col, station in zip(
     station_name_list,
 ):
     val = (
-              (metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
-        .select(pl.col('Rainfall'))
-        .collect())
-        .item() if (len(metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3)).select(pl.col('Rainfall')).collect()) > 0) else 0
-        / 3
+        (
+            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
+            .select(pl.col('Rainfall'))
+            .collect()
+        ).item()
+        if (
+            len(
+                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
+                .select(pl.col('Rainfall'))
+                .collect()
+            )
+            > 0
+        )
+        else 0
     )
 
     delta = val - (
@@ -75,10 +84,82 @@ for col, station in zip(
         .select(pl.col('Rainfall'))
         .collect()
         .item()
-        / 14
     )
     col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
 
 with st.expander('Further Information'):
     st.text('Delta values indicate difference between 3-day average and 14-day average.')
+    st.info('Data Sources: MeteoSwiss')
+
+st.subheader('7-Day Average (mm/d)')
+
+a, b, c, d, e = st.columns(5)
+for col, station in zip(
+    [a, b, c, d, e],
+    station_name_list,
+):
+    val = (
+        (
+            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 7))
+            .select(pl.col('Rainfall'))
+            .collect()
+        ).item()
+        if (
+            len(
+                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 7))
+                .select(pl.col('Rainfall'))
+                .collect()
+            )
+            > 0
+        )
+        else 0
+    )
+
+    delta = val - (
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
+        .select(pl.col('Rainfall'))
+        .collect()
+        .item()
+    )
+    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
+
+with st.expander('Further Information'):
+    st.text('Delta values indicate difference between 7-day average and 14-day average.')
+    st.info('Data Sources: MeteoSwiss')
+
+st.subheader('14-Day Average (mm/d)')
+
+a, b, c, d, e = st.columns(5)
+for col, station in zip(
+    [a, b, c, d, e],
+    station_name_list,
+):
+    val = (
+        (
+            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
+            .select(pl.col('Rainfall'))
+            .collect()
+        ).item()
+        if (
+            len(
+                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
+                .select(pl.col('Rainfall'))
+                .collect()
+            )
+            > 0
+        )
+        else 0
+    )
+
+    delta = val - (
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 30))
+        .select(pl.col('Rainfall'))
+        .collect()
+        .item()
+    )
+    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
+
+
+with st.expander('Further Information'):
+    st.text('Delta values indicate difference between 14-day average and 30-day average.')
     st.info('Data Sources: MeteoSwiss')

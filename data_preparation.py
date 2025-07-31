@@ -59,17 +59,13 @@ def load_weather(stations, metadata):
     )
     rainfall = pl.concat(
         [
-            rainfall_recent.filter(
-                pl.col('reference_timestamp') < rainfall_now.select('reference_timestamp').min().collect().item()
-            ),
+            rainfall_recent,
             rainfall_now,
         ]
     )
     weather = pl.concat(
         [
-            weather_recent.filter(
-                pl.col('reference_timestamp') < weather_now.select('reference_timestamp').min().collect().item()
-            ),
+            weather_recent,
             weather_now,
         ],
     )
@@ -89,7 +85,7 @@ def create_metrics(df):
             df.filter(pl.col('reference_timestamp') >= datetime_period)
             .drop('reference_timestamp')
             .group_by(['station_abbr', 'station_name'])
-            .sum()
+            .agg(pl.col('rre150h0').mean())
             .with_columns(pl.lit(period).alias('aggr_period_days'))
             for period, datetime_period in time_periods.items()
         ]
