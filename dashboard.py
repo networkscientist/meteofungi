@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import polars as pl
 
 # --- Load data ---
-st.set_page_config(layout='wide')
+st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 
 @st.cache_data
