@@ -76,15 +76,15 @@ def load_weather(stations, metadata):
     )
     return (
         pl.concat([rainfall, weather], how='diagonal')
-        .sort('reference_timestamp')
+        # .sort('reference_timestamp')
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
-        .sum()
+        .agg(pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'))
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
-        .sort('reference_timestamp')
+        # .sort('reference_timestamp')
     )
 
 
 if __name__ == '__main__':
     meta = load_metadata()
-    rainfall = load_weather(stations, meta)
-    rainfall.sink_parquet('rainfall.parquet')
+    weather_data = load_weather(stations, meta)
+    weather_data.sink_parquet('weather_data.parquet')

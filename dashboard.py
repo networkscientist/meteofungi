@@ -3,33 +3,32 @@ from datetime import datetime, timedelta
 
 import polars as pl
 
+from ux_metrics import get_rainfall_emoji, create_metrics_expander_info
+
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
+TIME_PERIODS = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+METRICS_LIST = ['rre150h0', 'tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
+PARAMETER_AGGREGATION_TYPES = {
+    'sum': ['rre150h0'],
+    'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
+}
 
 @st.cache_data
-def load_rainfall():
-    return pl.scan_parquet('rainfall.parquet').rename(
-        {
-            'reference_timestamp': 'Time',
-            'rre150h0': 'Rainfall',
-            'station_name': 'Station',
-        }
-    )
-
-
-time_periods = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+def load_weather_data():
+    return pl.scan_parquet('weather_data.parquet')
 
 
 @st.cache_data
 def create_metrics(_df, time_periods):
     return pl.concat(
         [
-            _df.filter(pl.col('Time') >= datetime_period)
-            .drop('Time')
-            .group_by(['station_abbr', 'Station'])
-            .agg(pl.sum('Rainfall'))
-            .with_columns(pl.lit(period).alias('Time Period'))
+            _df.filter(pl.col('reference_timestamp') >= datetime_period)
+            .drop('reference_timestamp')
+            .group_by(['station_abbr', 'station_name'])
+            .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
+            .with_columns(pl.lit(period).alias('time_period'))
             for period, datetime_period in time_periods.items()
         ]
     )
@@ -37,74 +36,111 @@ def create_metrics(_df, time_periods):
 
 @st.cache_data
 def load_meta_stations():
-    return pl.scan_parquet('meta_stations.parquet').rename({'station_abbr': 'Station'})
+    return pl.scan_parquet('meta_stations.parquet')
 
 
-def get_rainfall_emoji(val):
-    if val < 1:
-        return '☀️'  # No rain
-    elif 1 <= val < 10:
-        return '🌦️'  # Light rain
-    elif 10 <= val < 20:
-        return '🌧️'  # Moderate rain
-    elif 20 <= val < 50:
-        return '🌊'  # Heavy rain
-    else:
-        return '🌧️🌊'  # Very heavy rain
+@st.cache_data
+def load_meta_params():
+    return pl.scan_parquet('ogd-smn_meta_parameters.parquet')
 
 
-meta = load_meta_stations()
-rainfall = load_rainfall()
+meta_stations = load_meta_stations()
+meta_params = load_meta_params()
+METRICS_NAMES_DICT = {
+    metric: meta_params.filter(pl.col('parameter_shortname') == metric)
+    .select(pl.col('parameter_description_en').str.to_titlecase().str.extract(r'([\w\s()]+)', 1))
+    .collect()
+    .item()
+    for metric in METRICS_LIST
+}
+METRICS_CATEGORY_DICT = {
+    metric: meta_params.filter(pl.col('parameter_shortname') == metric)
+    .select(pl.col('parameter_group_en').str.to_titlecase())
+    .collect()
+    .item()
+    for metric in METRICS_LIST
+}
+WEATHER_COLUMN_NAMES_DICT = dict({'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT)
+df_weather = load_weather_data()
+metrics = create_metrics(df_weather, TIME_PERIODS)
 
-metrics = create_metrics(rainfall, time_periods)
 st.title('MeteoFungi')
 st.area_chart(
     data=(
-        rainfall.sort('Time')
-        .filter(pl.col('Time') >= (datetime.now() - timedelta(days=7)))
-        .group_by_dynamic('Time', every='6h', group_by='Station')
-        .agg(pl.col(['Rainfall']).sum())
-        .sort('Time')
+        df_weather.sort('reference_timestamp')
+        .filter(pl.col('reference_timestamp') >= (datetime.now() - timedelta(days=7)))
+        .group_by_dynamic('reference_timestamp', every='6h', group_by='station_name')
+        .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
+        # .sort('reference_timestamp')
+        .rename(WEATHER_COLUMN_NAMES_DICT)
     ),
     x='Time',
-    y='Rainfall',
+    y='Precipitation',
     color='Station',
     x_label='Time',
     y_label='Rainfall (mm)',
 )
 
-station_name_list = metrics.unique(subset=['Station']).sort('Station').select('Station').collect().to_series().to_list()
+station_name_list = (
+    metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
+)
 
 
-def create_metric_section():
-    st.subheader('3-Day Rainfall Average (mm/d)')
-    a, b, c, d, e = st.columns(5)
-    for col, station in zip(
-        [a, b, c, d, e],
-        station_name_list,
+def create_metric_section(station_name, metrics_list):
+    st.subheader(station_name)
+
+    cols_metric = st.columns(len(metrics_list))
+    for col, metric in zip(
+        cols_metric,
+        metrics_list,
     ):
-        val = (
-            filter_metrics_time_period(station, number_days=3).item()
-            if (len(filter_metrics_time_period(station, number_days=3)) > 0)
+        val = calculate_metric_value(metric, station_name, number_days=3)
+        delta = calculate_metric_delta(metric, station_name, val, number_days=7)
+        if val:
+            col.metric(
+            label=WEATHER_COLUMN_NAMES_DICT[metric],
+            value=(str(round(val, 1)) + ' ' + meta_params.filter(pl.col('parameter_shortname')==metric).select('parameter_unit').collect().item() + ' ' + (get_rainfall_emoji(val) if metric == 'rre150h0' else '')),
+            delta=str(round(delta, 1))
+            )
+
+
+def calculate_metric_delta(metric, station_name, value, number_days):
+    if value:
+        if metric in PARAMETER_AGGREGATION_TYPES['sum']:
+            return (value - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()) / number_days
+        elif metric in PARAMETER_AGGREGATION_TYPES['mean']:
+            return (value - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item())
+
+
+def calculate_metric_value(metric, station_name, number_days):
+    if metric in PARAMETER_AGGREGATION_TYPES['sum']:
+        return (
+            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+            if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric)) > 0)
             else 0
-        ) / 3
-        delta = (val - filter_metrics_time_period(station, number_days=7).item()) / 7
-        col.metric(
-            label=station,
-            value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)),
-            delta=round(delta, 1),
+        ) / number_days
+    elif metric in PARAMETER_AGGREGATION_TYPES['mean']:
+        return (
+            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+            if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric)) > 0)
+            else 0
         )
-    with st.expander('Further Information'):
-        st.text('Delta values indicate difference between 3-day average and 14-day average.')
-        st.info('Data Sources: MeteoSwiss')
 
 
-def filter_metrics_time_period(station, number_days):
+def filter_metrics_time_period(station_name, number_days, metric_short_code):
     return (
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == number_days))
-        .select(pl.col('Rainfall'))
+        metrics.filter((pl.col('station_name') == station_name) & (pl.col('time_period') == number_days))
+        .select(pl.col(metric_short_code))
         .collect()
     )
 
-
-create_metric_section()
+with st.sidebar:
+    st.title('Stations')
+    stations_options_selected = st.multiselect(
+        "Choose Stations:",
+        station_name_list,
+        default=station_name_list[0],
+    )
+for station in stations_options_selected:
+    create_metric_section(station, METRICS_LIST)
+create_metrics_expander_info()
