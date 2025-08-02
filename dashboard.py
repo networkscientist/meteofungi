@@ -64,6 +64,7 @@ st.area_chart(
         .filter(pl.col('Time') >= (datetime.now() - timedelta(days=7)))
         .group_by_dynamic('Time', every='6h', group_by='Station')
         .agg(pl.col(['Rainfall']).sum())
+        .sort('Time')
     ),
     x='Time',
     y='Rainfall',
@@ -72,18 +73,11 @@ st.area_chart(
     y_label='Rainfall (mm)',
 )
 
-station_name_list = (
-    metrics.unique(subset=['Station'])
-    .sort('Station')
-    .select('Station')
-    .collect()
-    .to_series()
-    .to_list()
-)
+station_name_list = metrics.unique(subset=['Station']).sort('Station').select('Station').collect().to_series().to_list()
 
 
 def create_metric_section():
-    st.subheader('3-Day Rainfall Sum (mm)')
+    st.subheader('3-Day Rainfall Average (mm/d)')
     a, b, c, d, e = st.columns(5)
     for col, station in zip(
         [a, b, c, d, e],
@@ -93,8 +87,8 @@ def create_metric_section():
             filter_metrics_time_period(station, number_days=3).item()
             if (len(filter_metrics_time_period(station, number_days=3)) > 0)
             else 0
-        )
-        delta = val - filter_metrics_time_period(station, number_days=7).item()
+        ) / 3
+        delta = (val - filter_metrics_time_period(station, number_days=7).item()) / 7
         col.metric(
             label=station,
             value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)),
