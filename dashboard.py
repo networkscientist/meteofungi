@@ -10,14 +10,28 @@ st.set_page_config(layout='wide')
 @st.cache_data
 def load_rainfall():
     return pl.scan_parquet('rainfall.parquet').rename(
-        {'reference_timestamp': 'Time', 'rre150h0': 'Rainfall', 'station_name': 'Station'}
+        {
+            'reference_timestamp': 'Time',
+            'rre150h0': 'Rainfall',
+            'station_name': 'Station',
+        }
     )
 
 
+time_periods = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+
+
 @st.cache_data
-def load_metrics():
-    return pl.scan_parquet('metrics.parquet').rename(
-        {'rre150h0': 'Rainfall', 'station_name': 'Station', 'aggr_period_days': 'Time Period'}
+def create_metrics(_df, time_periods):
+    return pl.concat(
+        [
+            _df.filter(pl.col('Time') >= datetime_period)
+            .drop('Time')
+            .group_by(['station_abbr', 'Station'])
+            .agg(pl.sum('Rainfall'))
+            .with_columns(pl.lit(period).alias('Time Period'))
+            for period, datetime_period in time_periods.items()
+        ]
     )
 
 
@@ -42,10 +56,15 @@ def get_rainfall_emoji(val):
 meta = load_meta_stations()
 rainfall = load_rainfall()
 
-metrics = load_metrics()
+metrics = create_metrics(rainfall, time_periods)
 st.title('MeteoFungi')
 st.area_chart(
-    data=rainfall.filter(pl.col('Time') >= (datetime.now() - timedelta(days=7))),
+    data=(
+        rainfall.sort('Time')
+        .filter(pl.col('Time') >= (datetime.now() - timedelta(days=7)))
+        .group_by_dynamic('Time', every='6h', group_by='Station')
+        .agg(pl.col(['Rainfall']).sum())
+    ),
     x='Time',
     y='Rainfall',
     color='Station',
@@ -53,113 +72,45 @@ st.area_chart(
     y_label='Rainfall (mm)',
 )
 
-station_name_list = metrics.unique(subset=['Station']).sort('Station').select('Station').collect().to_series().to_list()
+station_name_list = (
+    metrics.unique(subset=['Station'])
+    .sort('Station')
+    .select('Station')
+    .collect()
+    .to_series()
+    .to_list()
+)
 
-st.subheader('3-Day Average (mm/d)')
 
-a, b, c, d, e = st.columns(5)
-for col, station in zip(
-    [a, b, c, d, e],
-    station_name_list,
-):
-    val = (
-        (
-            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
-            .select(pl.col('Rainfall'))
-            .collect()
-        ).item()
-        if (
-            len(
-                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 3))
-                .select(pl.col('Rainfall'))
-                .collect()
-            )
-            > 0
+def create_metric_section():
+    st.subheader('3-Day Rainfall Sum (mm)')
+    a, b, c, d, e = st.columns(5)
+    for col, station in zip(
+        [a, b, c, d, e],
+        station_name_list,
+    ):
+        val = (
+            filter_metrics_time_period(station, number_days=3).item()
+            if (len(filter_metrics_time_period(station, number_days=3)) > 0)
+            else 0
         )
-        else 0
-    )
+        delta = val - filter_metrics_time_period(station, number_days=7).item()
+        col.metric(
+            label=station,
+            value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)),
+            delta=round(delta, 1),
+        )
+    with st.expander('Further Information'):
+        st.text('Delta values indicate difference between 3-day average and 14-day average.')
+        st.info('Data Sources: MeteoSwiss')
 
-    delta = val - (
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
+
+def filter_metrics_time_period(station, number_days):
+    return (
+        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == number_days))
         .select(pl.col('Rainfall'))
         .collect()
-        .item()
-    )
-    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
-
-with st.expander('Further Information'):
-    st.text('Delta values indicate difference between 3-day average and 14-day average.')
-    st.info('Data Sources: MeteoSwiss')
-
-st.subheader('7-Day Average (mm/d)')
-
-a, b, c, d, e = st.columns(5)
-for col, station in zip(
-    [a, b, c, d, e],
-    station_name_list,
-):
-    val = (
-        (
-            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 7))
-            .select(pl.col('Rainfall'))
-            .collect()
-        ).item()
-        if (
-            len(
-                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 7))
-                .select(pl.col('Rainfall'))
-                .collect()
-            )
-            > 0
-        )
-        else 0
     )
 
-    delta = val - (
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
-        .select(pl.col('Rainfall'))
-        .collect()
-        .item()
-    )
-    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
 
-with st.expander('Further Information'):
-    st.text('Delta values indicate difference between 7-day average and 14-day average.')
-    st.info('Data Sources: MeteoSwiss')
-
-st.subheader('14-Day Average (mm/d)')
-
-a, b, c, d, e = st.columns(5)
-for col, station in zip(
-    [a, b, c, d, e],
-    station_name_list,
-):
-    val = (
-        (
-            metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
-            .select(pl.col('Rainfall'))
-            .collect()
-        ).item()
-        if (
-            len(
-                metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 14))
-                .select(pl.col('Rainfall'))
-                .collect()
-            )
-            > 0
-        )
-        else 0
-    )
-
-    delta = val - (
-        metrics.filter((pl.col('Station') == station) & (pl.col('Time Period') == 30))
-        .select(pl.col('Rainfall'))
-        .collect()
-        .item()
-    )
-    col.metric(label=station, value=(str(round(val, 1)) + ' ' + get_rainfall_emoji(val)), delta=round(delta, 1))
-
-
-with st.expander('Further Information'):
-    st.text('Delta values indicate difference between 14-day average and 30-day average.')
-    st.info('Data Sources: MeteoSwiss')
+create_metric_section()
