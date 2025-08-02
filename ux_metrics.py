@@ -1,3 +1,6 @@
+import streamlit as st
+
+
 def get_rainfall_emoji(val):
     if val < 1:
         return '☀️'  # No rain
@@ -9,3 +12,9 @@ def get_rainfall_emoji(val):
         return '🌊'  # Heavy rain
     else:
         return '🌧️🌊'  # Very heavy rain
+
+
+def create_metrics_expander_info():
+    with st.expander('Further Information'):
+        st.text('Delta values indicate difference between 3-day average and 14-day average.')
+        st.info('Data Sources: MeteoSwiss')
