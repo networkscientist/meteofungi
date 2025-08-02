@@ -16,7 +16,9 @@ def load_metadata():
 
 def generate_download_url(station, station_type):
     if station_type == 'rainfall':
-        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        return (
+            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
+        )
     elif station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
 
@@ -78,6 +80,7 @@ def load_weather(stations, metadata):
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .sum()
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
+        .sort('reference_timestamp')
     )
 
 
