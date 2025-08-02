@@ -1,8 +1,13 @@
 import polars as pl
-from datetime import datetime, timedelta
 
 # --- Load data ---
-stations = {'bey': 'rainfall', 'mgl': 'rainfall', 'sai': 'rainfall', 'coy': 'weather', 'cha': 'weather'}
+stations = {
+    'bey': 'rainfall',
+    'mgl': 'rainfall',
+    'sai': 'rainfall',
+    'coy': 'weather',
+    'cha': 'weather',
+}
 
 
 def load_metadata():
@@ -11,9 +16,7 @@ def load_metadata():
 
 def generate_download_url(station, station_type):
     if station_type == 'rainfall':
-        return (
-            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
-        )
+        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_recent.csv'
     elif station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
 
@@ -72,23 +75,9 @@ def load_weather(stations, metadata):
     return (
         pl.concat([rainfall, weather], how='diagonal')
         .sort('reference_timestamp')
-        .group_by_dynamic('reference_timestamp', every='6h', group_by='station_abbr')
+        .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .sum()
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
-    )
-
-
-def create_metrics(df):
-    time_periods = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
-    return pl.concat(
-        [
-            df.filter(pl.col('reference_timestamp') >= datetime_period)
-            .drop('reference_timestamp')
-            .group_by(['station_abbr', 'station_name'])
-            .agg(pl.col('rre150h0').mean())
-            .with_columns(pl.lit(period).alias('aggr_period_days'))
-            for period, datetime_period in time_periods.items()
-        ]
     )
 
 
@@ -96,5 +85,3 @@ if __name__ == '__main__':
     meta = load_metadata()
     rainfall = load_weather(stations, meta)
     rainfall.sink_parquet('rainfall.parquet')
-    metrics = create_metrics(rainfall)
-    metrics.sink_parquet('metrics.parquet')
