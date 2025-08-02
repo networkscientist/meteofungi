@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 
 import polars as pl
 
+from ux_metrics import get_rainfall_emoji
+
 # --- Load data ---
 st.set_page_config(layout='wide')
 
@@ -38,19 +40,6 @@ def create_metrics(_df, time_periods):
 @st.cache_data
 def load_meta_stations():
     return pl.scan_parquet('meta_stations.parquet').rename({'station_abbr': 'Station'})
-
-
-def get_rainfall_emoji(val):
-    if val < 1:
-        return '☀️'  # No rain
-    elif 1 <= val < 10:
-        return '🌦️'  # Light rain
-    elif 10 <= val < 20:
-        return '🌧️'  # Moderate rain
-    elif 20 <= val < 50:
-        return '🌊'  # Heavy rain
-    else:
-        return '🌧️🌊'  # Very heavy rain
 
 
 meta = load_meta_stations()
