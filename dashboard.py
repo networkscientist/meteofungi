@@ -10,10 +10,8 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 TIME_PERIODS = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
 METRICS_LIST = ['rre150h0', 'tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
-PARAMETER_AGGREGATION_TYPES = {
-    'sum': ['rre150h0'],
-    'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
-}
+PARAMETER_AGGREGATION_TYPES = {'sum': ['rre150h0'], 'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']}
+
 
 @st.cache_data
 def load_weather_data():
@@ -63,15 +61,30 @@ METRICS_CATEGORY_DICT = {
 WEATHER_COLUMN_NAMES_DICT = dict({'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT)
 df_weather = load_weather_data()
 metrics = create_metrics(df_weather, TIME_PERIODS)
+station_name_list = (
+    metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
+)
 
 st.title('MeteoFungi')
+
+with st.sidebar:
+    st.title('Stations')
+    stations_options_selected = st.multiselect(
+        'Stations:', station_name_list, default=station_name_list[0], max_selections=5, placeholder='Choose Station(s)'
+    )
+
+
 st.area_chart(
     data=(
         df_weather.sort('reference_timestamp')
-        .filter(pl.col('reference_timestamp') >= (datetime.now() - timedelta(days=7)))
+        .filter(
+            (pl.col('reference_timestamp') >= (datetime.now() - timedelta(days=7)))
+            & (pl.col('station_name').is_in(stations_options_selected))
+        )
         .group_by_dynamic('reference_timestamp', every='6h', group_by='station_name')
         .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
         # .sort('reference_timestamp')
+        .with_columns(pl.selectors.numeric().round(1))
         .rename(WEATHER_COLUMN_NAMES_DICT)
     ),
     x='Time',
@@ -79,10 +92,6 @@ st.area_chart(
     color='Station',
     x_label='Time',
     y_label='Rainfall (mm)',
-)
-
-station_name_list = (
-    metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
 )
 
 
@@ -98,18 +107,33 @@ def create_metric_section(station_name, metrics_list):
         delta = calculate_metric_delta(metric, station_name, val, number_days=7)
         if val:
             col.metric(
-            label=WEATHER_COLUMN_NAMES_DICT[metric],
-            value=(str(round(val, 1)) + ' ' + meta_params.filter(pl.col('parameter_shortname')==metric).select('parameter_unit').collect().item() + ' ' + (get_rainfall_emoji(val) if metric == 'rre150h0' else '')),
-            delta=str(round(delta, 1))
+                label=WEATHER_COLUMN_NAMES_DICT[metric],
+                value=(
+                    str(round(val, 1))
+                    + ' '
+                    + meta_params.filter(pl.col('parameter_shortname') == metric)
+                    .select('parameter_unit')
+                    .collect()
+                    .item()
+                    + ' '
+                    + (get_rainfall_emoji(val) if metric == 'rre150h0' else '')
+                ),
+                delta=str(round(delta, 1)),
             )
 
 
 def calculate_metric_delta(metric, station_name, value, number_days):
     if value:
         if metric in PARAMETER_AGGREGATION_TYPES['sum']:
-            return (value - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()) / number_days
+            return (
+                value
+                - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+            ) / number_days
         elif metric in PARAMETER_AGGREGATION_TYPES['mean']:
-            return (value - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item())
+            return (
+                value
+                - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+            )
 
 
 def calculate_metric_value(metric, station_name, number_days):
@@ -134,13 +158,7 @@ def filter_metrics_time_period(station_name, number_days, metric_short_code):
         .collect()
     )
 
-with st.sidebar:
-    st.title('Stations')
-    stations_options_selected = st.multiselect(
-        "Choose Stations:",
-        station_name_list,
-        default=station_name_list[0],
-    )
+
 for station in stations_options_selected:
     create_metric_section(station, METRICS_LIST)
 create_metrics_expander_info()
