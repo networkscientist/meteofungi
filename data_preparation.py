@@ -1,17 +1,27 @@
 import polars as pl
 
-# --- Load data ---
-stations = {
-    'bey': 'rainfall',
-    'mgl': 'rainfall',
-    'sai': 'rainfall',
-    'coy': 'weather',
-    'cha': 'weather',
+
+DTYPE_DICT = {
+    'Integer': pl.Int32,
+    'Float': pl.Float32,
 }
 
 
-def load_metadata():
+def load_meta_stations():
     return pl.scan_parquet('meta_stations.parquet')
+
+
+def load_meta_params():
+    return pl.scan_parquet('meta_params.parquet')
+
+
+schema_dict = {
+    colname: DTYPE_DICT[dtp]
+    for colname, dtp in zip(
+        load_meta_params().select('parameter_shortname').collect().to_series(),
+        load_meta_params().select('parameter_datatype').collect().to_series(),
+    )
+}
 
 
 def generate_download_url(station, station_type):
@@ -23,44 +33,61 @@ def generate_download_url(station, station_type):
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_recent.csv'
 
 
-def load_weather(stations, metadata):
+def load_weather(metadata):
+    stations = (
+        metadata.select('station_abbr', 'station_type_en')
+        .with_columns(pl.col('station_abbr'), pl.col('station_type_en'))
+        .unique('station_abbr')
+        .sort('station_abbr')
+        .collect()
+    )
     rainfall_recent = pl.scan_csv(
         [
-            generate_download_url(station, station_type)
-            for station, station_type in stations.items()
-            if station_type == 'rainfall'
+            generate_download_url(station, 'rainfall')
+            for station in stations.filter(pl.col('station_type_en') == 'Automatic precipitation stations')
+            .select('station_abbr')
+            .to_series()
+            .str.to_lowercase()
         ],
         separator=';',
         try_parse_dates=True,
+        schema_overrides=schema_dict,
     )
     rainfall_now = pl.scan_csv(
         [
-            generate_download_url(station, station_type).replace('_recent', '_now')
-            for station, station_type in stations.items()
-            if station_type == 'rainfall'
+            generate_download_url(station, 'rainfall').replace('_recent', '_now')
+            for station in stations.filter(pl.col('station_type_en') == 'Automatic precipitation stations')
+            .select('station_abbr')
+            .to_series()
+            .str.to_lowercase()
         ],
         separator=';',
         try_parse_dates=True,
-        schema=rainfall_recent.schema,
+        schema_overrides=schema_dict,
     )
     weather_recent = pl.scan_csv(
         [
-            generate_download_url(station, station_type)
-            for station, station_type in stations.items()
-            if station_type == 'weather'
+            generate_download_url(station, 'weather')
+            for station in stations.filter(pl.col('station_type_en') == 'Automatic weather stations')
+            .select('station_abbr')
+            .to_series()
+            .str.to_lowercase()
         ],
         separator=';',
         try_parse_dates=True,
+        schema_overrides=schema_dict,
     )
     weather_now = pl.scan_csv(
         [
-            generate_download_url(station, station_type).replace('_recent', '_now')
-            for station, station_type in stations.items()
-            if station_type == 'weather'
+            generate_download_url(station, 'weather').replace('_recent', '_now')
+            for station in stations.filter(pl.col('station_type_en') == 'Automatic weather stations')
+            .select('station_abbr')
+            .to_series()
+            .str.to_lowercase()
         ],
         separator=';',
         try_parse_dates=True,
-        schema=weather_recent.schema,
+        schema_overrides=schema_dict,
     )
     rainfall = pl.concat(
         [
@@ -76,7 +103,7 @@ def load_weather(stations, metadata):
     )
     return (
         pl.concat([rainfall, weather], how='diagonal')
-        # .sort('reference_timestamp')
+        .sort('reference_timestamp')
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .agg(pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'))
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
@@ -85,6 +112,6 @@ def load_weather(stations, metadata):
 
 
 if __name__ == '__main__':
-    meta = load_metadata()
-    weather_data = load_weather(stations, meta)
+    meta = load_meta_stations()
+    weather_data = load_weather(meta)
     weather_data.sink_parquet('weather_data.parquet')
