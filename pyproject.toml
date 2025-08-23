@@ -1,12 +1,12 @@
 [project]
-name = "meteoswiss-ogd"
+name = "MeteoFungi"
 version = "0.1.0"
-description = "Add your description here"
+description = "Predict Mushroom Appearance from Meteo Data"
 requires-python = ">=3.13"
 dependencies = [
-    "polars>=1.31.0",
+    "polars>=1.32.3",
     "setuptools>=80.9.0",
-    "streamlit>=1.46.0",
+    "streamlit>=1.48.1",
 ]
 
 [tool.ruff]
@@ -89,3 +89,11 @@ docstring-code-format = false
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
+
+[dependency-groups]
+data-exploration = [
+    "geopandas>=1.1.1",
+    "marimo>=0.15.0",
+    "matplotlib>=3.10.5",
+    "plotly>=6.3.0",
+]
