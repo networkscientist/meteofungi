@@ -39,7 +39,7 @@ def load_meta_stations():
 
 @st.cache_data
 def load_meta_params():
-    return pl.scan_parquet('ogd-smn_meta_parameters.parquet')
+    return pl.scan_parquet('meta_parameters.parquet').unique()
 
 
 meta_stations = load_meta_stations()
