@@ -1,0 +1,40 @@
+= MeteoFungi
+:toc: auto
+:icons: font
+
+[NOTE]
+Contributors Welcome!
+See section _Contributing_ for more info...
+
+With _MeteoFungi_, You can keep track of the perfect conditions for mushroom hunting.
+We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
+
+== Motivation
+
+While hunting mushrooms happens in nature, a lot of the planning can be carried out beforehand.
+Where are possible areas to find boletes?
+Should You leave the house right now or are you already too late?
+And will Your current small basket be large enough or is it time to invest in something bigger?
+Meteorological data, time series of past findings as well as other datasets can give us valuable insights.
+
+== Concept
+
+=== Spatial
+
+Currently, the _MeteoFungi_ project is focussed on Switzerland, as MeteoSwiss has started to provide access to their data as OGD.
+
+=== Dashboard
+
+Metrics and time series visulizations are currently hosted as a Streamlit dashboard, so please check it out at https://meteofungi.streamlit.app[https://meteofungi.streamlit.app]
+
+== Contributing
+
+_MeteoFungi_ is right at the beginning of the development process: I've got some ideas and inspirations as well as motivation to write Python code; but so far, _MeteoFungi_ cannot realistically increase Your chances of success when hunting mushrooms.
+However, that is about to change: If you want to contribute to the project, feel free to fork it, improve it and create a Pull Request.
+Alternatively, create an Issue. _MeteoFungi_ is mainly written in Python at the moment.
+Should you fancy coding in Rust, be my guest.
+
+Furthermore, my aim is to create a model that learns from past mushroom sightings, local soil and meteo conditions, etc., and which then helps predict when a user has the chance to find edible mushrooms of their choosing.
+If you feel well versed in creating such a model, now's your time.
+
+
