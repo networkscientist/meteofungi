@@ -52,7 +52,7 @@ def load_meta_stations():
             ]
         )
     )
-    stations.write_parquet('meta_stations.parquet')
+    stations.write_parquet(Path('data/meta_stations.parquet'))
     return stations.lazy()
 
 
@@ -83,7 +83,7 @@ def load_meta_params():
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ]
     ).drop([cs.ends_with('_fr'), cs.ends_with('_it')])
-    params.write_parquet('meta_parameters.parquet')
+    params.write_parquet(Path('meta_parameters.parquet'))
     return params.lazy()
 
 
@@ -186,4 +186,4 @@ def load_weather(metadata):
 if __name__ == '__main__':
     meta = load_meta_stations()
     weather_data = load_weather(meta)
-    weather_data.sink_parquet('weather_data.parquet')
+    weather_data.sink_parquet(Path('data/weather_data.parquet'))

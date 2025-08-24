@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
+from pathlib import Path
 
 import polars as pl
 
@@ -15,7 +16,7 @@ PARAMETER_AGGREGATION_TYPES = {'sum': ['rre150h0'], 'mean': ['tre200h0', 'ure200
 
 @st.cache_data
 def load_weather_data():
-    return pl.scan_parquet('weather_data.parquet')
+    return pl.scan_parquet(Path('data/weather_data.parquet'))
 
 
 @st.cache_data
@@ -34,12 +35,12 @@ def create_metrics(_df, time_periods):
 
 @st.cache_data
 def load_meta_stations():
-    return pl.scan_parquet('meta_stations.parquet')
+    return pl.scan_parquet(Path('data/meta_stations.parquet'))
 
 
 @st.cache_data
 def load_meta_params():
-    return pl.scan_parquet('meta_parameters.parquet').unique()
+    return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
 
 
 meta_stations = load_meta_stations()
