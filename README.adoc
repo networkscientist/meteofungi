@@ -2,9 +2,18 @@
 :toc: auto
 :icons: font
 
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 [NOTE]
-Contributors Welcome!
+=== Contributors Welcome!
 See section _Contributing_ for more info...
+===
 
 With _MeteoFungi_, You can keep track of the perfect conditions for mushroom hunting.
 We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
