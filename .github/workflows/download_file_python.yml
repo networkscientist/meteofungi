@@ -30,7 +30,7 @@ jobs:
         python-version-file: "pyproject.toml"
 
     - name: "Install Project"
-      run: uv sync --locked --all-extras --dev
+      run: uv sync
 
     - name: "Data Preparation with Python"
       run: uv run data_preparation.py
