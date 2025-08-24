@@ -83,7 +83,7 @@ def load_meta_params():
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ]
     ).drop([cs.ends_with('_fr'), cs.ends_with('_it')])
-    params.write_parquet(Path('meta_parameters.parquet'))
+    params.write_parquet(Path('data/meta_parameters.parquet'))
     return params.lazy()
 
 
