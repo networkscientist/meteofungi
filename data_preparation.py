@@ -186,4 +186,4 @@ def load_weather(metadata):
 if __name__ == '__main__':
     meta = load_meta_stations()
     weather_data = load_weather(meta)
-    weather_data.sink_parquet(Path('data/weather_data.parquet'))
+    weather_data.sink_parquet(Path('data/weather_data.parquet'), compression='brotli', compression_level=11)
