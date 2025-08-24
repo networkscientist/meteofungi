@@ -200,4 +200,4 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-weather_data.parquet
+*.parquet
