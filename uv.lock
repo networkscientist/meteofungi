@@ -542,7 +542,7 @@ wheels = [
 ]
 
 [[package]]
-name = "meteoswiss-ogd"
+name = "meteofungi"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
