@@ -91,9 +91,7 @@ def load_meta_params() -> pl.LazyFrame:
 def generate_download_url(station: str, station_type: str, timeframe: str) -> str:
     assert timeframe in ['recent', 'now'], "timeframe needs to be 'recent' or 'now'"
     if station_type == 'rainfall':
-        return (
-            f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_{timeframe}.csv'
-        )
+        return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_{timeframe}.csv'
     elif station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_{timeframe}.csv'
     else:
@@ -102,51 +100,24 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
 
 def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.LazyFrame:
     stations: pl.DataFrame = (
-        metadata.select('station_abbr', 'station_type_en')
-        .unique('station_abbr')
-        .sort('station_abbr')
-        .collect()
+        metadata.select('station_abbr', 'station_type_en').unique('station_abbr').sort('station_abbr').collect()
     )
     kwargs_lazyframe = {'separator': ';', 'try_parse_dates': True, 'schema_overrides': schema_dict_lazyframe}
-    rainfall_recent: pl.LazyFrame = pl.scan_csv(
-        [
-            generate_download_url(station, 'rainfall', timeframe='recent')
-            for station in stations.filter(pl.col('station_type_en') == 'Automatic precipitation stations')
-            .select('station_abbr')
-            .to_series()
-            .str.to_lowercase()
-        ],
-        **kwargs_lazyframe,
+    station_series_precipitation: pl.Series = filter_stations_to_series(
+        stations, station_type='Automatic precipitation stations'
     )
-    rainfall_now: pl.LazyFrame = pl.scan_csv(
-        [
-            generate_download_url(station, 'rainfall', timeframe='now')
-            for station in stations.filter(pl.col('station_type_en') == 'Automatic precipitation stations')
-            .select('station_abbr')
-            .to_series()
-            .str.to_lowercase()
-        ],
-        **kwargs_lazyframe,
+    station_series_weather: pl.Series = filter_stations_to_series(stations, station_type='Automatic weather stations')
+    rainfall_recent: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        station_series_precipitation, 'rainfall', 'recent', kwargs_lazyframe
     )
-    weather_recent: pl.LazyFrame = pl.scan_csv(
-        [
-            generate_download_url(station, 'weather', timeframe='recent')
-            for station in stations.filter(pl.col('station_type_en') == 'Automatic weather stations')
-            .select('station_abbr')
-            .to_series()
-            .str.to_lowercase()
-        ],
-        **kwargs_lazyframe,
+    rainfall_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        station_series_precipitation, 'rainfall', 'now', kwargs_lazyframe
     )
-    weather_now: pl.LazyFrame = pl.scan_csv(
-        [
-            generate_download_url(station, 'weather', timeframe='now')
-            for station in stations.filter(pl.col('station_type_en') == 'Automatic weather stations')
-            .select('station_abbr')
-            .to_series()
-            .str.to_lowercase()
-        ],
-        **kwargs_lazyframe,
+    weather_recent: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        station_series_weather, 'weather', 'recent', kwargs_lazyframe
+    )
+    weather_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        station_series_weather, 'weather', 'now', kwargs_lazyframe
     )
     rainfall: pl.LazyFrame = pl.concat(
         [
@@ -166,7 +137,21 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .agg(pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'))
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
-        # .sort('reference_timestamp')
+    )
+
+
+def create_rainfall_weather_lazyframes(
+    station_series: pl.Series, station_type: str, timeframe: str, kwargs_lazyframe
+) -> pl.LazyFrame:
+    return pl.scan_csv(
+        [generate_download_url(station, station_type, timeframe) for station in station_series],
+        **kwargs_lazyframe,
+    )
+
+
+def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.Series:
+    return (
+        stations.filter(pl.col('station_type_en') == station_type).select('station_abbr').to_series().str.to_lowercase()
     )
 
 
