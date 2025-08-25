@@ -75,6 +75,13 @@ METRICS_CATEGORY_DICT: dict[str, str] = {
 WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
     {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
 )
+WEATHER_SHORT_LABEL_DICT = {
+    'rre150h0': 'Precipitation',
+    'tre200h0': 'Air Temperture',
+    'ure200h0': 'Rel. Humidity',
+    'fu3010h0': 'Wind Speed',
+    'tde200h0': 'Dew Point'
+}
 df_weather: pl.LazyFrame = load_weather_data()
 metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
 station_name_list: list[str] = (
@@ -122,7 +129,7 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
         delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
         if val is not None:
             col.metric(
-                label=WEATHER_COLUMN_NAMES_DICT[metric_name],
+                label=WEATHER_SHORT_LABEL_DICT[metric_name],
                 value=(
                     str(round(val, 1))
                     + ' '
@@ -134,11 +141,13 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
                     + (get_rainfall_emoji(val) if metric_name == 'rre150h0' else '')
                 ),
                 delta=str(round(delta, 1)),
+                help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
             )
         else:
             col.metric(
-                label=WEATHER_COLUMN_NAMES_DICT[metric_name],
+                label=WEATHER_SHORT_LABEL_DICT[metric_name],
                 value='-',
+                help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
             )
 
 
