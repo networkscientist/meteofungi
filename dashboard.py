@@ -135,12 +135,17 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
                 ),
                 delta=str(round(delta, 1)),
             )
+        else:
+            col.metric(
+                label=WEATHER_COLUMN_NAMES_DICT[metric_name],
+                value='-',
+            )
 
 
 def calculate_metric_delta(
     metric_name: str, station_name: str, value: int | float | None, number_days: int
 ) -> int | float | None:
-    if value:
+    if value is not None:
         if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
             return (
                 value
