@@ -6,7 +6,7 @@ from itertools import chain
 import polars as pl
 import re
 
-import plotly.express as px
+# import plotly.express as px
 from ux_metrics import get_metric_emoji, create_metrics_expander_info
 
 
@@ -115,30 +115,30 @@ def main():
         x_label='Time',
         y_label='Rainfall (mm)',
     )
-    on = st.toggle('Hide Map')
-    if not on:
-        fig = px.scatter_map(
-            meta_stations.with_columns(
-                pl.col('station_type_en').alias('Station Type'),
-                pl.col('station_abbr').alias('Short Code'),
-                Altitude=pl.col('station_height_masl').cast(pl.Int16).cast(pl.String).add(' m.a.s.l'),
-            ).collect(),
-            lat='station_coordinates_wgs84_lat',
-            lon='station_coordinates_wgs84_lon',
-            color='Station Type',
-            hover_name='station_name',
-            hover_data={
-                'Station Type': False,
-                'station_coordinates_wgs84_lat': False,
-                'station_coordinates_wgs84_lon': False,
-                'Short Code': True,
-                'Altitude': True,
-            },
-            color_continuous_scale=px.colors.cyclical.IceFire,
-            size_max=15,
-            zoom=6,
-        )
-        st.plotly_chart(fig, use_container_width=True)
+    # on = st.toggle('Hide Map')
+    # if not on:
+    #     fig = px.scatter_map(
+    #         meta_stations.with_columns(
+    #             pl.col('station_type_en').alias('Station Type'),
+    #             pl.col('station_abbr').alias('Short Code'),
+    #             Altitude=pl.col('station_height_masl').cast(pl.Int16).cast(pl.String).add(' m.a.s.l'),
+    #         ).collect(),
+    #         lat='station_coordinates_wgs84_lat',
+    #         lon='station_coordinates_wgs84_lon',
+    #         color='Station Type',
+    #         hover_name='station_name',
+    #         hover_data={
+    #             'Station Type': False,
+    #             'station_coordinates_wgs84_lat': False,
+    #             'station_coordinates_wgs84_lon': False,
+    #             'Short Code': True,
+    #             'Altitude': True,
+    #         },
+    #         color_continuous_scale=px.colors.cyclical.IceFire,
+    #         size_max=15,
+    #         zoom=6,
+    #     )
+    #     st.plotly_chart(fig, use_container_width=True)
 
     def create_metric_section(station_name: str, metrics_list: list[str]):
         st.subheader(station_name)
