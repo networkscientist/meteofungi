@@ -86,7 +86,7 @@ st.title('MeteoFungi')
 with st.sidebar:
     st.title('Stations')
     stations_options_selected = st.multiselect(
-        'Stations:', station_name_list, default=station_name_list[0], max_selections=5, placeholder='Choose Station(s)'
+        'Stations:', station_name_list, default='Airolo', max_selections=5, placeholder='Choose Station(s)'
     )
 
 
