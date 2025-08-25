@@ -102,7 +102,6 @@ def generate_download_url(station: str, station_type: str) -> str:
 def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.LazyFrame:
     stations: pl.DataFrame = (
         metadata.select('station_abbr', 'station_type_en')
-        .with_columns(pl.col('station_abbr'), pl.col('station_type_en'))
         .unique('station_abbr')
         .sort('station_abbr')
         .collect()
