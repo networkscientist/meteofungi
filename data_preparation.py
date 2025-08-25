@@ -172,8 +172,8 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
 
 if __name__ == '__main__':
     weather_schema_dict = {
-        colname: DTYPE_DICT[dtp]
-        for colname, dtp in zip(
+        colname: DTYPE_DICT[datatype]
+        for colname, datatype in zip(
             load_meta_params().select('parameter_shortname').collect().to_series(),
             load_meta_params().select('parameter_datatype').collect().to_series(),
         )
