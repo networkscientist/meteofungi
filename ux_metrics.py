@@ -14,7 +14,7 @@ def get_rainfall_emoji(val):
         return '🌧️🌊'  # Very heavy rain
 
 
-def create_metrics_expander_info():
+def create_metrics_expander_info(num_days_value, num_days_delta):
     with st.expander('Further Information'):
-        st.text('Delta values indicate difference between 3-day average and 14-day average.')
+        st.text(f'Delta values indicate difference between {num_days_value}-day average and {num_days_delta}-day average.')
         st.info('Data Sources: MeteoSwiss')
