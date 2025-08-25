@@ -107,7 +107,8 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
         .sort('station_abbr')
         .collect()
     )
-    rainfall_recent = pl.scan_csv(
+    kwargs_lazyframe = {'separator': ';', 'try_parse_dates': True, 'schema_overrides': schema_dict_lazyframe}
+    rainfall_recent: pl.LazyFrame = pl.scan_csv(
         [
             generate_download_url(station, 'rainfall')
             for station in stations.filter(pl.col('station_type_en') == 'Automatic precipitation stations')
@@ -115,9 +116,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
             .to_series()
             .str.to_lowercase()
         ],
-        separator=';',
-        try_parse_dates=True,
-        schema_overrides=schema_dict,
+        **kwargs_lazyframe,
     )
     rainfall_now: pl.LazyFrame = pl.scan_csv(
         [
@@ -127,9 +126,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
             .to_series()
             .str.to_lowercase()
         ],
-        separator=';',
-        try_parse_dates=True,
-        schema_overrides=schema_dict,
+        **kwargs_lazyframe,
     )
     weather_recent: pl.LazyFrame = pl.scan_csv(
         [
@@ -139,9 +136,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
             .to_series()
             .str.to_lowercase()
         ],
-        separator=';',
-        try_parse_dates=True,
-        schema_overrides=schema_dict,
+        **kwargs_lazyframe,
     )
     weather_now: pl.LazyFrame = pl.scan_csv(
         [
@@ -151,9 +146,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
             .to_series()
             .str.to_lowercase()
         ],
-        separator=';',
-        try_parse_dates=True,
-        schema_overrides=schema_dict,
+        **kwargs_lazyframe,
     )
     rainfall: pl.LazyFrame = pl.concat(
         [
@@ -178,6 +171,13 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
 
 
 if __name__ == '__main__':
-    meta = load_meta_stations()
-    weather_data = load_weather(meta)
+    weather_schema_dict = {
+        colname: DTYPE_DICT[dtp]
+        for colname, dtp in zip(
+            load_meta_params().select('parameter_shortname').collect().to_series(),
+            load_meta_params().select('parameter_datatype').collect().to_series(),
+        )
+    }
+    meta_stations: pl.LazyFrame = load_meta_stations()
+    weather_data: pl.LazyFrame = load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
     weather_data.sink_parquet(Path('data/weather_data.parquet'), compression='brotli', compression_level=11)
