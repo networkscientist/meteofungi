@@ -8,6 +8,7 @@ import re
 
 from ux_metrics import get_metric_emoji, create_metrics_expander_info
 
+
 def main():
     # --- Load data ---
     st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -21,11 +22,9 @@ def main():
     }
     METRICS_LIST: list[str] = list(chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values()))
 
-
     @st.cache_data
     def load_weather_data() -> pl.LazyFrame:
         return pl.scan_parquet(Path('data/weather_data.parquet'))
-
 
     @st.cache_data
     def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
@@ -40,16 +39,13 @@ def main():
             ]
         )
 
-
     @st.cache_data
     def load_meta_stations() -> pl.LazyFrame:
         return pl.scan_parquet(Path('data/meta_stations.parquet'))
 
-
     @st.cache_data
     def load_meta_params() -> pl.LazyFrame:
         return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
-
 
     @st.cache_data
     def load_meta_datainventory() -> pl.LazyFrame:
@@ -77,15 +73,20 @@ def main():
     )
     WEATHER_SHORT_LABEL_DICT = {
         'rre150h0': 'Precipitation',
-        'tre200h0': 'Air Temperture',
+        'tre200h0': 'Air Temperature',
         'ure200h0': 'Rel. Humidity',
         'fu3010h0': 'Wind Speed',
-        'tde200h0': 'Dew Point'
+        'tde200h0': 'Dew Point',
     }
     df_weather: pl.LazyFrame = load_weather_data()
     metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
     station_name_list: list[str] = (
-        metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
+        metrics.unique(subset=['station_name'])
+        .sort('station_name')
+        .select('station_name')
+        .collect()
+        .to_series()
+        .to_list()
     )
 
     st.title('MeteoFungi')
@@ -95,7 +96,6 @@ def main():
         stations_options_selected = st.multiselect(
             'Stations:', station_name_list, default='Airolo', max_selections=5, placeholder='Choose Station(s)'
         )
-
 
     st.area_chart(
         data=(
@@ -126,32 +126,21 @@ def main():
             metrics_list,
         ):
             val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=NUM_DAYS_VAL)
-            delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
+            delta: int | float | None = calculate_metric_delta(
+                metric_name, station_name, val, number_days=NUM_DAYS_DELTA
+            )
             metric_label = WEATHER_SHORT_LABEL_DICT[metric_name]
-            metric_tooltip = f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}'
-            metric_kwargs = {
-                "border": True,
-                "help": metric_tooltip,
-                "height": "stretch"
-            }
+            metric_tooltip = f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").collect().item()}'
+            metric_kwargs = {'border': True, 'help': metric_tooltip, 'height': 'stretch'}
             if val is not None:
                 col.metric(
                     label=metric_label,
-                    value=(
-                        str(round(val, 1))
-                        + ' '
-                        + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
-                    ),
+                    value=(str(round(val, 1)) + ' ' + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')),
                     delta=str(round(delta, 1)),
                     **metric_kwargs
                 )
             else:
-                col.metric(
-                    label=metric_label,
-                    value='-',
-                    **metric_kwargs
-                )
-
+                col.metric(label=metric_label, value='-', **metric_kwargs)
 
     def calculate_metric_delta(
         metric_name: str, station_name: str, value: int | float | None, number_days: int
@@ -176,7 +165,6 @@ def main():
         else:
             return None
 
-
     def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
         if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
             return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days) / number_days
@@ -185,14 +173,15 @@ def main():
         else:
             return None
 
-
     def calculate_metric_value_if_greater_zero(metric_name: str, station_name: str, number_days: int) -> int:
         return (
             filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
-            if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name)) > 0)
+            if (
+                len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
+                > 0
+            )
             else 0
         )
-
 
     def filter_metrics_time_period(station_name: str, number_days: int, metric_short_code: str) -> pl.DataFrame:
         return (
@@ -201,7 +190,15 @@ def main():
             .collect()
         )
 
-
     for station in stations_options_selected:
         create_metric_section(station, METRICS_LIST)
     create_metrics_expander_info(num_days_value=NUM_DAYS_VAL, num_days_delta=NUM_DAYS_DELTA)
+
+
+if __name__ == '__main__':
+    # pr = cProfile.Profile()
+    # pr.enable()
+    main()
+    # pr.disable()
+    # stats = Stats(pr)
+    # stats.sort_stats('tottime').print_stats(10)
