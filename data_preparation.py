@@ -9,8 +9,6 @@ METEO_CSV_ENCODING: str = 'ISO-8859-1'
 
 
 def load_meta_stations() -> pl.LazyFrame:
-    # if Path('meta_stations.parquet').exists():
-    #     return pl.scan_parquet('meta_stations.parquet')
     cols_to_keep: list[str] = [
         'station_' + x
         for x in 'abbr name canton type_de type_en dataowner data_since height_masl height_barometer_masl coordinates_lv95_east coordinates_lv95_north coordinates_wgs84_lat coordinates_wgs84_lon'.split()
