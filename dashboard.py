@@ -127,24 +127,29 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
     ):
         val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=NUM_DAYS_VAL)
         delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
+        metric_label = WEATHER_SHORT_LABEL_DICT[metric_name]
+        metric_tooltip = f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}'
+        metric_kwargs = {
+            "border": True,
+            "help": metric_tooltip,
+            "height": "stretch"
+        }
         if val is not None:
             col.metric(
-                label=WEATHER_SHORT_LABEL_DICT[metric_name],
+                label=metric_label,
                 value=(
                     str(round(val, 1))
                     + ' '
                     + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
                 ),
                 delta=str(round(delta, 1)),
-                border=True,
-                help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
+                **metric_kwargs
             )
         else:
             col.metric(
-                label=WEATHER_SHORT_LABEL_DICT[metric_name],
+                label=metric_label,
                 value='-',
-                border=True,
-                help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
+                **metric_kwargs
             )
 
 
