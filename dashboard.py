@@ -24,10 +24,10 @@ def load_weather_data() -> pl.LazyFrame:
 
 
 @st.cache_data
-def create_metrics(weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
+def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
     return pl.concat(
         [
-            weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
+            _weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
             .drop('reference_timestamp')
             .group_by(['station_abbr', 'station_name'])
             .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
