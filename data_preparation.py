@@ -87,6 +87,30 @@ def load_meta_params() -> pl.LazyFrame:
     return params.lazy()
 
 
+def load_meta_datainventory() -> pl.LazyFrame:
+    schem = {
+        'station_abbr': pl.String,
+        'parameter_shortname': pl.String,
+        'meas_cat_nr': pl.Int8,
+        'data_since': pl.Datetime,
+        'data_till': pl.Datetime,
+        'owner': pl.String,
+    }
+    datainventory: pl.DataFrame = pl.concat(
+        [
+            pl.read_csv(
+                f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn{ogd_smn_prefix}/ogd-smn{meta_suffix}_meta_datainventory.csv',
+                encoding=METEO_CSV_ENCODING,
+                separator=';',
+                schema=schem,
+            )
+            for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
+        ]
+    ).drop('meas_cat_nr')
+    datainventory.write_parquet(Path('data/meta_datainventory.parquet'))
+    return datainventory.lazy()
+
+
 def generate_download_url(station: str, station_type: str, timeframe: str) -> str:
     assert timeframe in ['recent', 'now'], "timeframe needs to be 'recent' or 'now'"
     if station_type == 'rainfall':
@@ -165,5 +189,6 @@ if __name__ == '__main__':
     }
 
     meta_stations: pl.LazyFrame = load_meta_stations()
+    meta_datainventory = load_meta_datainventory()
     weather_data: pl.LazyFrame = load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
     weather_data.sink_parquet(Path('data/weather_data.parquet'), compression='brotli', compression_level=11)
