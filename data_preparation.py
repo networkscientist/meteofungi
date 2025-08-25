@@ -1,5 +1,6 @@
 import polars.selectors as cs
 import polars as pl
+from datetime import datetime, timedelta
 
 from pathlib import Path
 
@@ -132,6 +133,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
     return (
         pl.concat([rainfall, weather], how='diagonal')
         .sort('reference_timestamp')
+        .filter(pl.col('reference_timestamp')>=pl.lit(datetime.now() - timedelta(days=31)))
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .agg(pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'))
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
