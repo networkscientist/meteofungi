@@ -11,16 +11,19 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 TIME_PERIODS = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
 METRICS_LIST = ['rre150h0', 'tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
-PARAMETER_AGGREGATION_TYPES = {'sum': ['rre150h0'], 'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']}
+PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
+    'sum': ['rre150h0'],
+    'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'],
+}
 
 
 @st.cache_data
-def load_weather_data():
+def load_weather_data() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/weather_data.parquet'))
 
 
 @st.cache_data
-def create_metrics(_df, time_periods):
+def create_metrics(_df: pl.LazyFrame, time_periods) -> pl.LazyFrame:
     return pl.concat(
         [
             _df.filter(pl.col('reference_timestamp') >= datetime_period)
@@ -34,35 +37,37 @@ def create_metrics(_df, time_periods):
 
 
 @st.cache_data
-def load_meta_stations():
+def load_meta_stations() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_stations.parquet'))
 
 
 @st.cache_data
-def load_meta_params():
+def load_meta_params() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
 
 
-meta_stations = load_meta_stations()
-meta_params = load_meta_params()
-METRICS_NAMES_DICT = {
-    metric: meta_params.filter(pl.col('parameter_shortname') == metric)
+meta_stations: pl.LazyFrame = load_meta_stations()
+meta_parameters: pl.LazyFrame = load_meta_params()
+METRICS_NAMES_DICT: dict[str, str] = {
+    metric: meta_parameters.filter(pl.col('parameter_shortname') == metric)
     .select(pl.col('parameter_description_en').str.to_titlecase().str.extract(r'([\w\s()]+)', 1))
     .collect()
     .item()
     for metric in METRICS_LIST
 }
-METRICS_CATEGORY_DICT = {
-    metric: meta_params.filter(pl.col('parameter_shortname') == metric)
+METRICS_CATEGORY_DICT: dict[str, str] = {
+    metric: meta_parameters.filter(pl.col('parameter_shortname') == metric)
     .select(pl.col('parameter_group_en').str.to_titlecase())
     .collect()
     .item()
     for metric in METRICS_LIST
 }
-WEATHER_COLUMN_NAMES_DICT = dict({'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT)
-df_weather = load_weather_data()
-metrics = create_metrics(df_weather, TIME_PERIODS)
-station_name_list = (
+WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
+    {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
+)
+df_weather: pl.LazyFrame = load_weather_data()
+metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
+station_name_list: list[str] = (
     metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
 )
 
@@ -96,63 +101,81 @@ st.area_chart(
 )
 
 
-def create_metric_section(station_name, metrics_list):
+def create_metric_section(station_name: str, metrics_list: list[str]):
     st.subheader(station_name)
 
     cols_metric = st.columns(len(metrics_list))
-    for col, metric in zip(
+    for col, metric_name in zip(
         cols_metric,
         metrics_list,
     ):
-        val = calculate_metric_value(metric, station_name, number_days=3)
-        delta = calculate_metric_delta(metric, station_name, val, number_days=7)
+        val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=3)
+        delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=7)
         if val:
             col.metric(
-                label=WEATHER_COLUMN_NAMES_DICT[metric],
+                label=WEATHER_COLUMN_NAMES_DICT[metric_name],
                 value=(
                     str(round(val, 1))
                     + ' '
-                    + meta_params.filter(pl.col('parameter_shortname') == metric)
+                    + meta_parameters.filter(pl.col('parameter_shortname') == metric_name)
                     .select('parameter_unit')
                     .collect()
                     .item()
                     + ' '
-                    + (get_rainfall_emoji(val) if metric == 'rre150h0' else '')
+                    + (get_rainfall_emoji(val) if metric_name == 'rre150h0' else '')
                 ),
                 delta=str(round(delta, 1)),
             )
 
 
-def calculate_metric_delta(metric, station_name, value, number_days):
+def calculate_metric_delta(
+    metric_name: str, station_name: str, value: int | float | None, number_days: int
+) -> int | float | None:
     if value:
-        if metric in PARAMETER_AGGREGATION_TYPES['sum']:
+        if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
             return (
                 value
-                - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+                - filter_metrics_time_period(
+                    station_name, number_days=number_days, metric_short_code=metric_name
+                ).item()
             ) / number_days
-        elif metric in PARAMETER_AGGREGATION_TYPES['mean']:
+        elif metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
             return (
                 value
-                - filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
+                - filter_metrics_time_period(
+                    station_name, number_days=number_days, metric_short_code=metric_name
+                ).item()
             )
+        else:
+            return None
+    else:
+        return None
 
 
-def calculate_metric_value(metric, station_name, number_days):
-    if metric in PARAMETER_AGGREGATION_TYPES['sum']:
+def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
+    if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
         return (
-            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
-            if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric)) > 0)
+            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
+            if (
+                len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
+                > 0
+            )
             else 0
         ) / number_days
-    elif metric in PARAMETER_AGGREGATION_TYPES['mean']:
+    elif metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
         return (
-            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric).item()
-            if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric)) > 0)
+            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
+            if (
+                len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
+                > 0
+            )
             else 0
         )
+    else:
+        return None
 
 
-def filter_metrics_time_period(station_name, number_days, metric_short_code):
+def filter_metrics_time_period(station_name: str, number_days: int, metric_short_code: str) -> pl.DataFrame:
     return (
         metrics.filter((pl.col('station_name') == station_name) & (pl.col('time_period') == number_days))
         .select(pl.col(metric_short_code))
