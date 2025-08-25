@@ -5,7 +5,7 @@ from itertools import chain
 
 import polars as pl
 
-from ux_metrics import get_rainfall_emoji, create_metrics_expander_info
+from ux_metrics import get_metric_emoji, create_metrics_expander_info
 
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
@@ -133,12 +133,7 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
                 value=(
                     str(round(val, 1))
                     + ' '
-                    + meta_parameters.filter(pl.col('parameter_shortname') == metric_name)
-                    .select('parameter_unit')
-                    .collect()
-                    .item()
-                    + ' '
-                    + (get_rainfall_emoji(val) if metric_name == 'rre150h0' else '')
+                    + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
                 ),
                 delta=str(round(delta, 1)),
                 border=True,
