@@ -49,8 +49,15 @@ def load_meta_params() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
 
 
+@st.cache_data
+def load_meta_datainventory() -> pl.LazyFrame:
+    return pl.scan_parquet(Path('data/meta_datainventory.parquet'))
+
+
 meta_stations: pl.LazyFrame = load_meta_stations()
 meta_parameters: pl.LazyFrame = load_meta_params()
+meta_datainventory: pl.LazyFrame = load_meta_datainventory()
+
 METRICS_NAMES_DICT: dict[str, str] = {
     metric: meta_parameters.filter(pl.col('parameter_shortname') == metric)
     .select(pl.col('parameter_description_en').str.to_titlecase().str.extract(r'([\w\s()]+)', 1))
