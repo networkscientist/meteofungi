@@ -141,12 +141,14 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
                     + (get_rainfall_emoji(val) if metric_name == 'rre150h0' else '')
                 ),
                 delta=str(round(delta, 1)),
+                border=True,
                 help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
             )
         else:
             col.metric(
                 label=WEATHER_SHORT_LABEL_DICT[metric_name],
                 value='-',
+                border=True,
                 help=f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col('parameter_shortname') == metric_name).select('parameter_unit').collect().item()}',
             )
 
