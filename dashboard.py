@@ -24,10 +24,10 @@ def load_weather_data() -> pl.LazyFrame:
 
 
 @st.cache_data
-def create_metrics(_df: pl.LazyFrame, time_periods) -> pl.LazyFrame:
+def create_metrics(weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
     return pl.concat(
         [
-            _df.filter(pl.col('reference_timestamp') >= datetime_period)
+            weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
             .drop('reference_timestamp')
             .group_by(['station_abbr', 'station_name'])
             .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
@@ -90,7 +90,6 @@ st.area_chart(
         )
         .group_by_dynamic('reference_timestamp', every='6h', group_by='station_name')
         .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
-        # .sort('reference_timestamp')
         .with_columns(pl.selectors.numeric().round(1))
         .rename(WEATHER_COLUMN_NAMES_DICT)
     ),
