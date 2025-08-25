@@ -546,6 +546,7 @@ name = "meteofungi"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "plotly" },
     { name = "polars" },
     { name = "setuptools" },
     { name = "streamlit" },
@@ -564,6 +565,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "plotly", specifier = ">=6.3.0" },
     { name = "polars", specifier = ">=1.32.3" },
     { name = "setuptools", specifier = ">=80.9.0" },
     { name = "streamlit", specifier = ">=1.48.1" },
