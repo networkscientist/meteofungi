@@ -31,9 +31,17 @@ Meteorological data, time series of past findings as well as other datasets can 
 
 === Spatial
 
-Currently, the _MeteoFungi_ project is focussed on Switzerland, as MeteoSwiss has started to provide access to their data as OGD.
+Currently, the _MeteoFungi_ project is focussed on Switzerland, as https://www.meteoswiss.admin.ch[MeteoSwiss] has started to provide access to their data as https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[OGD].
 
-=== Dashboard
+=== Technical
+
+A main aim is to have sound results calculated efficiently.
+Therefore, Python _Polars_ is used for calculations, wherever possible.
+Its _LazyFrames_ optimize the workflow.
+Data quality is validated through _Pandera_.
+Compressed _Parquet_-Files save storage space and up-/download bandwith.
+
+=== Visualization
 
 Metrics and time series visulizations are currently hosted as a Streamlit dashboard, so please check it out at https://meteofungi.streamlit.app[https://meteofungi.streamlit.app]
 
