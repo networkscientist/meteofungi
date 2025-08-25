@@ -154,25 +154,19 @@ def calculate_metric_delta(
 
 def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
     if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-        return (
-            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
-            if (
-                len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
-                > 0
-            )
-            else 0
-        ) / number_days
+        return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days) / number_days
     elif metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-        return (
-            filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
-            if (
-                len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
-                > 0
-            )
-            else 0
-        )
+        return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days)
     else:
         return None
+
+
+def calculate_metric_value_if_greater_zero(metric_name: str, station_name: str, number_days: int) -> int:
+    return (
+        filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
+        if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name)) > 0)
+        else 0
+    )
 
 
 def filter_metrics_time_period(station_name: str, number_days: int, metric_short_code: str) -> pl.DataFrame:
