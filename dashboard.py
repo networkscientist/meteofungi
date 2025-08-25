@@ -9,8 +9,8 @@ from ux_metrics import get_rainfall_emoji, create_metrics_expander_info
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-TIME_PERIODS = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
-METRICS_LIST = ['rre150h0', 'tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
+TIME_PERIODS: dict[int, datetime] = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+METRICS_LIST: list[str] = ['rre150h0', 'tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0']
 PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
     'sum': ['rre150h0'],
     'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'],
