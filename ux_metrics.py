@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def get_rainfall_emoji(val):
+def get_metric_emoji(val):
     if val < 1:
         return '☀️'  # No rain
     elif 1 <= val < 10:
