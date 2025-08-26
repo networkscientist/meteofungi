@@ -21,9 +21,11 @@ PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
 }
 METRICS_LIST: list[str] = list(chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values()))
 
+
 @st.cache_data
 def load_weather_data() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/weather_data.parquet'))
+
 
 @st.cache_data
 def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
@@ -38,17 +40,21 @@ def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime
         ]
     )
 
+
 @st.cache_data
 def load_meta_stations() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_stations.parquet'))
+
 
 @st.cache_data
 def load_meta_params() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
 
+
 @st.cache_data
 def load_meta_datainventory() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_datainventory.parquet'))
+
 
 meta_stations: pl.LazyFrame = load_meta_stations()
 meta_parameters: pl.LazyFrame = load_meta_params()
@@ -79,12 +85,7 @@ WEATHER_SHORT_LABEL_DICT = {
 df_weather: pl.LazyFrame = load_weather_data()
 metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
 station_name_list: list[str] = (
-    metrics.unique(subset=['station_name'])
-    .sort('station_name')
-    .select('station_name')
-    .collect()
-    .to_series()
-    .to_list()
+    metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
 )
 
 st.title('MeteoFungi')
@@ -138,6 +139,7 @@ if not on:
     )
     st.plotly_chart(fig, use_container_width=True)
 
+
 def create_metric_section(station_name: str, metrics_list: list[str]):
     st.subheader(station_name)
 
@@ -147,9 +149,7 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
         metrics_list,
     ):
         val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=NUM_DAYS_VAL)
-        delta: int | float | None = calculate_metric_delta(
-            metric_name, station_name, val, number_days=NUM_DAYS_DELTA
-        )
+        delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
         metric_label = WEATHER_SHORT_LABEL_DICT[metric_name]
         metric_tooltip = f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").collect().item()}'
         metric_kwargs = {'border': True, 'help': metric_tooltip, 'height': 'stretch'}
@@ -162,6 +162,7 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
             )
         else:
             col.metric(label=metric_label, value='-', **metric_kwargs)
+
 
 def calculate_metric_delta(
     metric_name: str, station_name: str, value: int | float | None, number_days: int
@@ -186,6 +187,7 @@ def calculate_metric_delta(
     else:
         return None
 
+
 def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
     if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
         return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days) / number_days
@@ -194,15 +196,14 @@ def calculate_metric_value(metric_name: str, station_name: str, number_days: int
     else:
         return None
 
+
 def calculate_metric_value_if_greater_zero(metric_name: str, station_name: str, number_days: int) -> int:
     return (
         filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
-        if (
-            len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name))
-            > 0
-        )
+        if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name)) > 0)
         else 0
     )
+
 
 def filter_metrics_time_period(station_name: str, number_days: int, metric_short_code: str) -> pl.DataFrame:
     return (
@@ -210,6 +211,7 @@ def filter_metrics_time_period(station_name: str, number_days: int, metric_short
         .select(pl.col(metric_short_code))
         .collect()
     )
+
 
 for station in stations_options_selected:
     create_metric_section(station, METRICS_LIST)
