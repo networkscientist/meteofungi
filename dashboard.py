@@ -136,6 +136,8 @@ if not on:
         color_continuous_scale=px.colors.cyclical.IceFire,
         size_max=15,
         zoom=6,
+        map_style='light',
+        title='Station Locations',
     )
     st.plotly_chart(fig, use_container_width=True)
 
