@@ -106,4 +106,7 @@ data-exploration = [
 ]
 dev = [
     "mypy>=1.17.1",
+    "pre-commit>=4.3.0",
+    "ruff>=0.12.10",
+    "uv>=0.8.13",
 ]
