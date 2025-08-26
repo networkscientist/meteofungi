@@ -142,10 +142,11 @@ st.area_chart(
     x_label='Time',
     y_label='Rainfall (mm)',
 )
+station_frame_for_map = create_station_frame_for_map(meta_stations)
 on = st.toggle('Hide Map')
 if not on:
     fig = px.scatter_map(
-        create_station_frame_for_map(meta_stations),
+        station_frame_for_map,
         lat='station_coordinates_wgs84_lat',
         lon='station_coordinates_wgs84_lon',
         color='Station Type',
