@@ -56,22 +56,49 @@ def load_meta_datainventory() -> pl.LazyFrame:
     return pl.scan_parquet(Path('data/meta_datainventory.parquet'))
 
 
+@st.cache_data
+def create_station_name_list(_frame_with_stations: pl.LazyFrame) -> list[str]:
+    return (
+        _frame_with_stations.unique(subset=['station_name'])
+        .sort('station_name')
+        .select('station_name')
+        .collect()
+        .to_series()
+        .to_list()
+    )
+
+
+@st.cache_data
+def create_station_frame_for_map(_frame_with_stations: pl.LazyFrame) -> pl.DataFrame:
+    return (
+        _frame_with_stations.with_columns(
+            pl.col('station_type_en').alias('Station Type'),
+            pl.col('station_abbr').alias('Short Code'),
+            Altitude=pl.col('station_height_masl').cast(pl.Int16).cast(pl.String).add(' m.a.s.l'),
+        )
+        .select(
+            pl.col(
+                [
+                    'Short Code',
+                    'Station Type',
+                    'station_name',
+                    'station_coordinates_wgs84_lat',
+                    'station_coordinates_wgs84_lon',
+                    'Altitude',
+                ]
+            )
+        )
+        .collect()
+    )
+
+
 meta_stations: pl.LazyFrame = load_meta_stations()
 meta_parameters: pl.LazyFrame = load_meta_params()
-# meta_datainventory: pl.LazyFrame = load_meta_datainventory()
 
 regexp = re.compile(r'([\w\s()]+)')
 rows = meta_parameters.collect().to_dicts()
 meta_map = {r['parameter_shortname']: re.search(regexp, r['parameter_description_en']).group() for r in rows}
 METRICS_NAMES_DICT = {m: meta_map.get(m, '') for m in METRICS_LIST}
-
-# METRICS_CATEGORY_DICT: dict[str, str] = {
-#     metric: meta_parameters.filter(pl.col('parameter_shortname') == metric)
-#     .select(pl.col('parameter_group_en').str.to_titlecase())
-#     .collect()
-#     .item()
-#     for metric in METRICS_LIST
-# }
 WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
     {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
 )
@@ -84,18 +111,19 @@ WEATHER_SHORT_LABEL_DICT = {
 }
 df_weather: pl.LazyFrame = load_weather_data()
 metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
-station_name_list: list[str] = (
-    metrics.unique(subset=['station_name']).sort('station_name').select('station_name').collect().to_series().to_list()
-)
+station_name_list: list[str] = create_station_name_list(metrics)
 
 st.title('MeteoFungi')
 
 with st.sidebar:
     st.title('Stations')
     stations_options_selected = st.multiselect(
-        'Stations:', station_name_list, default='Airolo', max_selections=5, placeholder='Choose Station(s)'
+        label='Stations:',
+        options=station_name_list,
+        default='Airolo',
+        max_selections=5,
+        placeholder='Choose Station(s)',
     )
-
 st.area_chart(
     data=(
         df_weather.sort('reference_timestamp')
@@ -117,11 +145,7 @@ st.area_chart(
 on = st.toggle('Hide Map')
 if not on:
     fig = px.scatter_map(
-        meta_stations.with_columns(
-            pl.col('station_type_en').alias('Station Type'),
-            pl.col('station_abbr').alias('Short Code'),
-            Altitude=pl.col('station_height_masl').cast(pl.Int16).cast(pl.String).add(' m.a.s.l'),
-        ).collect(),
+        create_station_frame_for_map(meta_stations),
         lat='station_coordinates_wgs84_lat',
         lon='station_coordinates_wgs84_lon',
         color='Station Type',
