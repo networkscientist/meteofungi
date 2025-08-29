@@ -1,0 +1,23 @@
+= Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on https://keepachangelog.com/en/1.0.0/[keep a changelog], and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
+
+== [MAJOR.MINOR.PATCH] - YYYY-MM-DD
+
+=== Changed
+
+* Summarize Change and link to PR
+
+=== Fixed
+
+* Summarize Change and link to PR
+
+=== Added
+
+* Summarize Change and link to PR
+
+== Credits
+
+Adapted from https://github.com/Textualize/rich/blob/ea9d4db5d84b4e834979304e3053bf757daae322/CHANGELOG.md[Rich]
