@@ -38,6 +38,28 @@ dev = [
     "uv>=0.8.13",
 ]
 
+[dependency-groups]
+data-exploration = [
+    "geopandas>=1.1.1",
+    "marimo>=0.15.0",
+    "matplotlib>=3.10.5",
+    "plotly>=6.3.0",
+]
+dev = [
+    "mypy>=1.17.1",
+    "pandas-stubs>=2.3.2.250827",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-emoji>=0.2.0",
+    "pytest-md>=0.2.0",
+    "ruff>=0.12.10",
+    "types-markdown>=3.8.0.20250809",
+    "types-python-dateutil>=2.9.0.20250822",
+    "types-toml>=0.10.8.20240310",
+    "uv>=0.8.13",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
