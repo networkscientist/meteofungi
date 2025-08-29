@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from pathlib import Path
 
+DATA_PATH = Path(__file__).resolve().parents[3].joinpath('data')
 DTYPE_DICT = {'Integer': pl.Int16, 'Float': pl.Float32, 'String': pl.String}
 
 METEO_CSV_ENCODING: str = 'ISO-8859-1'
@@ -52,7 +53,7 @@ def load_meta_stations() -> pl.LazyFrame:
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ]
     )
-    stations.write_parquet(Path('data/meta_stations.parquet'))
+    stations.write_parquet(Path(DATA_PATH, 'meta_stations.parquet'))
     return stations.lazy()
 
 
@@ -83,7 +84,7 @@ def load_meta_params() -> pl.LazyFrame:
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ]
     ).drop([cs.ends_with('_fr'), cs.ends_with('_it')])
-    params.write_parquet(Path('data/meta_parameters.parquet'))
+    params.write_parquet(Path(DATA_PATH, 'meta_parameters.parquet'))
     return params.lazy()
 
 
@@ -107,7 +108,7 @@ def load_meta_datainventory() -> pl.LazyFrame:
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ]
     ).drop('meas_cat_nr')
-    datainventory.write_parquet(Path('data/meta_datainventory.parquet'))
+    datainventory.write_parquet(Path(DATA_PATH, 'meta_datainventory.parquet'))
     return datainventory.lazy()
 
 
@@ -191,4 +192,4 @@ if __name__ == '__main__':
     meta_stations: pl.LazyFrame = load_meta_stations()
     meta_datainventory = load_meta_datainventory()
     weather_data: pl.LazyFrame = load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
-    weather_data.sink_parquet(Path('data/weather_data.parquet'), compression='brotli', compression_level=11)
+    weather_data.sink_parquet(Path(DATA_PATH, 'weather_data.parquet'), compression='brotli', compression_level=11)

@@ -7,8 +7,9 @@ import polars as pl
 import re
 
 import plotly.express as px
-from ux_metrics import get_metric_emoji, create_metrics_expander_info
+from meteofungi.dashboard.ux_metrics import get_metric_emoji, create_metrics_expander_info
 
+DATA_PATH = Path(__file__).resolve().parents[3].joinpath('data')
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
@@ -24,7 +25,7 @@ METRICS_LIST: list[str] = list(chain.from_iterable(PARAMETER_AGGREGATION_TYPES.v
 
 @st.cache_data
 def load_weather_data() -> pl.LazyFrame:
-    return pl.scan_parquet(Path('data/weather_data.parquet'))
+    return pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet'))
 
 
 @st.cache_data
@@ -43,17 +44,17 @@ def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime
 
 @st.cache_data
 def load_meta_stations() -> pl.LazyFrame:
-    return pl.scan_parquet(Path('data/meta_stations.parquet'))
+    return pl.scan_parquet(Path(DATA_PATH, 'meta_stations.parquet'))
 
 
 @st.cache_data
 def load_meta_params() -> pl.LazyFrame:
-    return pl.scan_parquet(Path('data/meta_parameters.parquet')).unique()
+    return pl.scan_parquet(Path(DATA_PATH, 'meta_parameters.parquet')).unique()
 
 
 @st.cache_data
 def load_meta_datainventory() -> pl.LazyFrame:
-    return pl.scan_parquet(Path('data/meta_datainventory.parquet'))
+    return pl.scan_parquet(Path(DATA_PATH, 'meta_datainventory.parquet'))
 
 
 @st.cache_data
