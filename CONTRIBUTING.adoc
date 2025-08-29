@@ -98,22 +98,39 @@ This can give you valuable information.
 Therefore, in the following paragraphs, we'll present how to run each step individually.
 Feel free to skip them, if you're fine with running all of them with `pre-commit`.
 
+If you want to run the pre-commit scripts on all of your files manually, you can run:
+
+[source,bash]
+----
+pre-commit run --all-files
+----
+
 === Testing
 
 MeteoFungi uses tests to help prevent the introduction of bugs into working code.
-Thus, we use `pytest`.
+Thus, we use `pytest`:
 
 [source,bash]
 ----
 uv run pytest
 ----
 
+Tests are located in the `tests` folder and each test file has the following naming convention: `test_[module_name].py`, for example `test_data_preparation.py`.
+If you know how to write tests, add your tests for any function you add to the code, otherwise at least ensure that all currently defined tests pass.
+If you upload code that has failing tests, you will be asked to resolve the issues before a PR can be accepted.
+
 === Type-Checking
+
+To check for code quality issues regarding types, use:
 
 [sourc,bash]
 ----
 uv run mypy
 ----
+
+This checks performs a static type analysis.
+Take a look at the errors (if there are any) and resolve them, as good as you are able to.
+Currently, I lack knowledge to fix all mypy errors, so feel free to either add your insights to the repo or ignore any error you do not understand, for the time being.
 
 === Linting
 
@@ -166,9 +183,18 @@ After successfully completing all of the above steps, either manually or with `p
 
 === Documenting your changes
 
+Currently, we do not have documentation beyond the Asciidoc-Files on the repository (e.g. no readthedocs, etc.).
+This means that code and functionality are entirely documented either in the source code files or the Asciidoc files.
+Any contributions should be properly described in commits, PRs and, most importantly, in the source code itself.
+If you do not consider yourself good enough to document your code, please ask, there will always be someone willing to help out.
+Contributions lacking useful documentation will not be accepted in PRs.
+
 === Update CHANGELOG and CONTRIBUTORS
 
-=== Committing
+Before submitting your Pull Request, update the `CHANGELOG.adoc` file, briefly describing what you've done.
+Be sure to follow the format seen in the rest of the document.
+
+If this is your first time contributing to MeteoFungi, also add your Github username and optionally your real name to CONTRIBUTORS.adoc.
 
 == Creating a Pull Request
 
