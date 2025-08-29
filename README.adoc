@@ -13,7 +13,7 @@ endif::[]
 [NOTE]
 ====
 Contributors Welcome!
-See section _Contributing_ for more info...
+See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
 ====
 
 With _MeteoFungi_, You can keep track of the perfect conditions for mushroom hunting.
@@ -41,18 +41,13 @@ Its _LazyFrames_ optimize the workflow.
 Data quality is validated through _Pandera_.
 Compressed _Parquet_-Files save storage space and up-/download bandwith.
 
+Furthermore, my aim is to create a model that learns from past mushroom sightings, local soil and meteo conditions, etc., and which then helps predict when a user has the chance to find edible mushrooms of their choosing.
+If you feel well versed in creating such a model, now's your time.
+
 === Visualization
 
 Metrics and time series visulizations are currently hosted as a Streamlit dashboard, so please check it out at https://meteofungi.streamlit.app[https://meteofungi.streamlit.app]
 
-== Contributing
 
-_MeteoFungi_ is right at the beginning of the development process: I've got some ideas and inspirations as well as motivation to write Python code; but so far, _MeteoFungi_ cannot realistically increase Your chances of success when hunting mushrooms.
-However, that is about to change: If you want to contribute to the project, feel free to fork it, improve it and create a Pull Request.
-Alternatively, create an Issue. _MeteoFungi_ is mainly written in Python at the moment.
-Should you fancy coding in Rust, be my guest.
-
-Furthermore, my aim is to create a model that learns from past mushroom sightings, local soil and meteo conditions, etc., and which then helps predict when a user has the chance to find edible mushrooms of their choosing.
-If you feel well versed in creating such a model, now's your time.
 
 
