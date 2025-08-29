@@ -1,0 +1,5 @@
+= Contributors
+
+The following people have contributed to the development of MeteoFungi:
+
+* https://github.com/networkscientist[Peter Zweifel]
