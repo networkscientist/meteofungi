@@ -10,6 +10,24 @@ dependencies = [
     "streamlit>=1.48.1",
 ]
 
+[dependency-groups]
+data-exploration = [
+    "geopandas>=1.1.1",
+    "marimo>=0.15.0",
+    "matplotlib>=3.10.5",
+    "plotly>=6.3.0",
+]
+dev = [
+    "mypy>=1.17.1",
+    "pre-commit>=4.3.0",
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
+    "pytest-emoji>=0.2.0",
+    "pytest-md>=0.2.0",
+    "ruff>=0.12.10",
+    "uv>=0.8.13",
+]
+
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -97,16 +115,46 @@ warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 
-[dependency-groups]
-data-exploration = [
-    "geopandas>=1.1.1",
-    "marimo>=0.15.0",
-    "matplotlib>=3.10.5",
-    "plotly>=6.3.0",
+[tool.pytest.ini_options]
+markers = [
+    "unit: unit tests",
+    "integration: integration tests",
+    "regression: regression tests",
+    "performance: performance tests",
+    "skip: slow tests or depending on local data"
 ]
-dev = [
-    "mypy>=1.17.1",
-    "pre-commit>=4.3.0",
-    "ruff>=0.12.10",
-    "uv>=0.8.13",
+
+[tool.coverage.run]
+branch = true
+data_file = 'tests/cover/.coverage'
+
+[tool.coverage.paths]
+source = [
+    "src/meteofungi",
+    "*/site-packages/meteofungi"
 ]
+
+[tool.coverage.report]
+
+# Regexes for lines to exclude from consideration
+exclude_also = [
+    # Don't complain about missing debug-only code:
+    "def __repr__",
+    "if self\\.debug",
+    # Don't complain if tests don't hit defensive assertion code:
+    "raise AssertionError",
+    "raise NotImplementedError",
+    # Don't complain if non-runnable code isn't run:
+    "if 0:",
+    "if __name__ == .__main__.:",
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+show_missing = true
+skip_empty = true
+skip_covered = true
+#fail_under=80
+#ignore_errors = true
+
+[tool.coverage.html]
+directory = "tests/coverage_html_report"
