@@ -1,5 +1,6 @@
 """Tests module meteofungi.data_preparation.data_preparation.py"""
 
+from pathlib import Path
 import polars as pl
 import polars.selectors as cs
 import pytest
@@ -16,19 +17,25 @@ from meteofungi.data_preparation.data_preparation import (
 
 
 @pytest.fixture(scope='session')
-def meta_file_path_dict():
+def data_path():
+    data_path: Path = Path(__file__).resolve().parents[0].joinpath('data')
+    return data_path
+
+
+@pytest.fixture(scope='session')
+def meta_file_path_dict(data_path):
     """Creates Dictionary with local metadata file paths"""
     meta_file_path_dict: dict[str, list[str]] = {
         'stations': [
-            f'data/ogd-smn{meta_suffix}_meta_stations_test_data.csv'
+            str(Path(data_path, f'ogd-smn{meta_suffix}_meta_stations_test_data.csv'))
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ],
         'parameters': [
-            f'data/ogd-smn{meta_suffix}_meta_parameters_test_data.csv'
+            str(Path(data_path, f'ogd-smn{meta_suffix}_meta_parameters_test_data.csv'))
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ],
         'datainventory': [
-            f'data/ogd-smn{meta_suffix}_meta_datainventory_test_data.csv'
+            str(Path(data_path, f'ogd-smn{meta_suffix}_meta_datainventory_test_data.csv'))
             for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
         ],
     }
@@ -36,21 +43,21 @@ def meta_file_path_dict():
 
 
 @pytest.fixture
-def lf_meta_stations_test_result():
+def lf_meta_stations_test_result(data_path):
     """Loads stations test result into LazyFrame"""
-    return pl.scan_csv('data/ogd-smn_meta_stations_test_result.csv')
+    return pl.scan_csv(str(Path(data_path, 'ogd-smn_meta_stations_test_result.csv')))
 
 
 @pytest.fixture
-def lf_meta_parameters_test_result():
+def lf_meta_parameters_test_result(data_path):
     """Loads parameters test result into LazyFrame"""
-    return pl.scan_csv('data/ogd-smn_meta_parameters_test_result.csv').cast({cs.integer(): pl.Int8})
+    return pl.scan_csv(str(Path(data_path, 'ogd-smn_meta_parameters_test_result.csv'))).cast({cs.integer(): pl.Int8})
 
 
 @pytest.fixture
-def lf_meta_datainventory_test_result():
+def lf_meta_datainventory_test_result(data_path):
     """Loads datainventory test result into LazyFrame"""
-    return pl.scan_csv('data/ogd-smn_meta_datainventory_test_result.csv').cast(
+    return pl.scan_csv(str(Path(data_path, 'ogd-smn_meta_datainventory_test_result.csv'))).cast(
         {cs.integer(): pl.Int8, cs.starts_with('data_'): pl.Datetime}
     )
 
