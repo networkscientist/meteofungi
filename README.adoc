@@ -1,4 +1,7 @@
 = MeteoFungi
+
+image::https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml/badge.svg["Tests", link=https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml]
+
 :toc: auto
 :icons: font
 
