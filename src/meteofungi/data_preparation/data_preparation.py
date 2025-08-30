@@ -113,7 +113,7 @@ def load_metadata(
             for file_path in file_path_dict[meta_type]
         ]
     )
-    stations.write_parquet(Path(DATA_PATH, 'meta_stations.parquet'))
+    stations.write_parquet(Path(DATA_PATH, f'meta_{meta_type}.parquet'))
     return stations.lazy()
 
 
