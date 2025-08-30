@@ -1,0 +1,21 @@
+station_abbr;parameter_shortname;meas_cat_nr;data_since;data_till;owner
+ABO;dkl010d0;1;25.11.1983 00:00;;MeteoSchweiz
+ABO;dkl010h0;1;23.11.1983 10:00;;MeteoSchweiz
+ABO;dkl010z0;1;01.02.2004 00:00;;MeteoSchweiz
+ABO;erefaod0;1;25.11.1983 00:00;;MeteoSchweiz
+ABO;erefaoh0;1;01.05.2011 00:00;;MeteoSchweiz
+ABO;erefaom0;1;01.12.1983 00:00;;MeteoSchweiz
+ABO;erefaoy0;1;01.01.1984 00:00;;MeteoSchweiz
+ABO;fkl010d0;1;01.01.1966 00:00;;MeteoSchweiz
+ABO;fkl010d1;1;23.11.1983 00:00;;MeteoSchweiz
+ABO;fkl010d3;1;25.08.2009 00:00;;MeteoSchweiz
+ABO;fkl010h0;1;23.11.1983 10:00;;MeteoSchweiz
+ABO;fkl010h1;1;23.11.1983 10:00;;MeteoSchweiz
+ABO;fkl010h3;1;24.08.2009 15:00;;MeteoSchweiz
+ABO;fkl010m0;1;01.01.1966 00:00;;MeteoSchweiz
+ABO;fkl010m1;1;01.12.1983 00:00;;MeteoSchweiz
+ABO;fkl010y0;1;01.01.1966 00:00;;MeteoSchweiz
+ABO;fkl010y1;1;01.01.1984 00:00;;MeteoSchweiz
+ABO;fkl010z0;1;24.08.2009 15:10;;MeteoSchweiz
+ABO;fkl010z1;1;01.02.2004 00:00;;MeteoSchweiz
+ABO;fkl010z3;1;24.08.2009 15:10;;MeteoSchweiz

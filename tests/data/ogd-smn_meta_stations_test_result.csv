@@ -1,0 +1,45 @@
+station_abbr,station_name,station_canton,station_type_de,station_type_en,station_dataowner,station_data_since,station_height_masl,station_height_barometer_masl,station_coordinates_lv95_east,station_coordinates_lv95_north,station_coordinates_wgs84_lat,station_coordinates_wgs84_lon
+ABO,Adelboden,BE,Automatische Wetterstationen,Automatic weather stations,"MeteoSchweiz, SLF",01.01.1901,1321.0,1326.0,2609372.0,1148939.0,46.491703,7.560703
+AEG,Oberägeri,ZG,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.02.1993,724.0,,2688729.0,1220956.0,47.133636,8.608206
+AIG,Aigle,VD,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1961,381.0,382.0,2560404.0,1130713.0,46.326647,6.924472
+ALT,Altdorf,UR,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1864,438.0,440.0,2690181.0,1193564.0,46.887069,8.621894
+AND,Andeer,GR,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1901,987.0,988.0,2752692.0,1164038.0,46.610139,9.431981
+ANT,Andermatt,UR,Automatische Wetterstationen,Automatic weather stations,"MeteoSchweiz, SLF",01.01.1864,1435.0,1436.0,2687445.0,1165044.0,46.630914,8.580553
+ARH,Altenrhein,SG,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,15.01.1993,398.0,399.0,2760387.0,1261382.0,47.483631,9.56685
+ARO,Arosa,GR,Automatische Wetterstationen,Automatic weather stations,"MeteoSchweiz, SLF",01.01.1890,1878.0,1879.0,2771031.0,1184830.0,46.792661,9.679014
+ATT,Les Attelas,VS,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,10.08.1993,2734.0,2735.0,2586854.0,1105302.0,46.0991,7.26865
+BAN,Bantiger,BE,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,16.12.1992,942.0,,2606850.0,1202975.0,46.977806,7.528667
+BAS,Basel / Binningen,BL,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1755,316.0,318.0,2610909.0,1265612.0,47.541142,7.583525
+BEH,Passo del Bernina,GR,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.11.1908,2260.0,2261.0,2798423.0,1143020.0,46.409158,10.019567
+BER,Bern / Zollikofen,BE,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1864,553.0,554.0,2601934.0,1204410.0,46.990744,7.464061
+BEZ,Beznau,AG,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1959,326.0,327.0,2659813.0,1267696.0,47.557256,8.233325
+BIA,Biasca,TI,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1900,278.0,279.0,2718535.0,1132792.0,46.336053,8.978197
+BIE,Bière,VD,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.05.1974,684.0,684.0,2515887.0,1153211.0,46.524908,6.342386
+BIN,Binn,VS,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.08.1899,1479.0,,2657996.0,1135421.0,46.367661,8.192306
+BIV,Bivio,GR,Automatische Wetterstationen,Automatic weather stations,"MeteoSchweiz, SLF",01.01.1892,1856.0,,2771283.0,1148119.0,46.462494,9.668639
+BIZ,Bischofszell / Sitterdorf,TG,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1900,507.0,508.0,2737714.0,1263613.0,47.508828,9.266797
+BLA,"Blatten, Lötschental",VS,Automatische Wetterstationen,Automatic weather stations,MeteoSchweiz,01.01.1959,1538.0,1539.0,2629564.0,1141084.0,46.420453,7.823194
+ABE,Aarberg,BE,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1900,444.0,,2588354.0,1211894.0,47.057969,7.28535
+AFI,Andelfingen,ZH,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1902,360.0,,2692617.0,1273392.0,47.604669,8.670289
+AGATT,Attelwil,AG,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,22.04.2014,475.0,,2646308.0,1235106.0,47.265233,8.050519
+AGSTE,Stetten,AG,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,19.05.2015,355.0,,2665027.0,1249877.0,47.396503,8.299992
+AIE,Affoltern i. E.,BE,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1864,755.0,,2622940.0,1212500.0,47.063125,7.740614
+AIR,Airolo,TI,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,17.10.1883,1139.0,,2688910.0,1153417.0,46.526142,8.597444
+ALS,"Altstätten, SG",SG,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1864,430.0,,2759910.0,1250202.0,47.383225,9.556531
+AMW,Amriswil,TG,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1901,420.0,,2741797.0,1268304.0,47.550136,9.322475
+APP,Appenzell,AI,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1891,750.0,,2748013.0,1245040.0,47.339592,9.397314
+AUB,L' Auberson,VD,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1915,1096.0,,2523852.0,1186296.0,46.82345,6.440692
+AVA,Les Avants,VD,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1974,1036.0,,2561880.0,1145178.0,46.45685,6.942444
+BAW,Barmelweid,AG,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1945,777.0,,2640058.0,1252430.0,47.421456,7.969492
+BEC,Bernina / Curtinatsch,GR,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1972,2090.0,,2795796.0,1146486.0,46.441094,9.986886
+BEP,Belp,BE,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1901,510.0,,2605082.0,1195001.0,46.906094,7.505339
+BEX,Bex,VD,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1864,402.0,,2565805.0,1121511.0,46.244167,6.995286
+BEY,Bellelay,BE,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.10.1900,923.0,,2579603.0,1234881.0,47.264514,7.169133
+BLZ,Bellinzona,TI,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1864,224.0,,2720913.0,1116587.0,46.189886,9.004881
+BOS,Bosco/Gurin,TI,Automatische Niederschlagsstationen,Automatic precipitation stations,"MeteoSchweiz, SLF",01.01.1959,1486.0,,2680880.0,1130029.0,46.316789,8.488719
+BRI,Brig,VS,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.01.1895,665.0,,2640567.0,1129069.0,46.311794,7.965264
+BRP,Brusio,GR,Automatische Niederschlagsstationen,Automatic precipitation stations,MeteoSchweiz,01.02.1864,856.0,,2806479.0,1127184.0,46.264358,10.117231
+BAN,Bantiger,BE,Automatische Turmstationen,Automatic tower stations,MeteoSchweiz,16.12.1992,942.0,,2606850.0,1202975.0,46.977806,7.528667
+PSI,Würenlingen / PSI,AG,Automatische Turmstationen,Automatic tower stations,MeteoSchweiz,14.01.1992,334.0,336.0,2659356.0,1265381.0,47.536475,8.226944
+STC,St. Chrischona,BS,Automatische Turmstationen,Automatic tower stations,MeteoSchweiz,12.12.1991,493.0,,2618696.0,1269037.0,47.571767,7.687094
+UEB,Uetliberg,ZH,Automatische Turmstationen,Automatic tower stations,MeteoSchweiz,14.11.1991,854.0,,2679455.0,1245034.0,47.351364,8.490225

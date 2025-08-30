@@ -1,0 +1,47 @@
+parameter_shortname,parameter_description_de,parameter_description_en,parameter_group_de,parameter_group_en,parameter_granularity,parameter_decimals,parameter_datatype,parameter_unit
+dkl010d0,Windrichtung; Tagesmittel,Wind direction; daily mean,Wind,wind,D,0,Integer,°
+dkl010h0,Windrichtung; Stundenmittel,Wind direction; hourly mean,Wind,wind,H,0,Integer,°
+dkl010z0,Windrichtung; Zehnminutenmittel,Wind direction; ten minutes mean,Wind,wind,T,0,Integer,°
+erefaod0,Referenzverdunstung nach FAO; Tagessumme,Reference evaporation from FAO; daily total,Verdunstung,evaporation,D,1,Float,mm/d
+erefaoh0,Referenzverdunstung nach FAO; Stundensumme,Reference evaporation from FAO; hourly total,Verdunstung,evaporation,H,3,Float,mm/h
+erefaom0,Referenzverdunstung nach FAO; Monatssumme,Reference evaporation from FAO; monthly total,Verdunstung,evaporation,M,1,Float,mm/d
+erefaoy0,Referenzverdunstung nach FAO; Jahressumme,Reference evaporation from FAO; annual total,Verdunstung,evaporation,Y,1,Float,mm/d
+fkl010d0,Windgeschwindigkeit skalar; Tagesmittel in m/s,Wind speed scalar; daily mean in m/s,Wind,wind,D,1,Float,m/s
+fkl010d1,Böenspitze (Sekundenböe); Tagesmaximum in m/s,Gust peak (one second); daily maximum in m/s,Wind,wind,D,1,Float,m/s
+fkl010d3,Böenspitze (3-Sekundenböe); Tagesmaximum in m/s,Gust peak (three seconds); daily maximum in m/s,Wind,wind,D,1,Float,m/s
+fkl010h0,Windgeschwindigkeit skalar; Stundenmittel in m/s,Wind speed scalar; hourly mean in m/s,Wind,wind,H,1,Float,m/s
+fkl010h1,Böenspitze (Sekundenböe); Stundenmaximum in m/s,Gust peak (one second); hourly maximum in m/s,Wind,wind,H,1,Float,m/s
+fkl010h3,Böenspitze (3-Sekundenböe); Stundenmaximum in m/s,Gust peak (three seconds); hourly maximum in m/s,Wind,wind,H,1,Float,m/s
+fkl010m0,Windgeschwindigkeit skalar; Monatsmittel in m/s,Wind speed scalar; monthly mean in m/s,Wind,wind,M,1,Float,m/s
+fkl010m1,Böenspitze (Sekundenböe); Monatsmaximum in m/s,Gust peak (one second); monthly maximum in m/s,Wind,wind,M,1,Float,m/s
+fkl010y0,Windgeschwindigkeit skalar; Jahresmittel in m/s,Wind speed scalar; annual mean in m/s,Wind,wind,Y,1,Float,m/s
+fkl010y1,Böenspitze (Sekundenböe); Jahresmaximum in m/s,Gust peak (one second); annual maximum in m/s,Wind,wind,Y,1,Float,m/s
+fkl010z0,Windgeschwindigkeit skalar; Zehnminutenmittel in m/s,Wind speed scalar; ten minutes mean in m/s,Wind,wind,T,1,Float,m/s
+fkl010z1,Böenspitze (Sekundenböe); Maximum in m/s,Gust peak (one second); maximum in m/s,Wind,wind,T,1,Float,m/s
+fkl010z3,Böenspitze (3-Sekundenböe); Maximum in m/s,Gust peak (three seconds); maximum in m/s,Wind,wind,T,1,Float,m/s
+rka150d0,Niederschlag; Tagessumme 0 UTC - 0 UTC,Precipitation; daily total 0 UTC - 0 UTC,Niederschlag,precipitation,D,1,Float,mm
+rre150d0,Niederschlag; Tagessumme 6 UTC - 6 UTC Folgetag,Precipitation; daily total 6 UTC - 6 UTC following day,Niederschlag,precipitation,D,1,Float,mm
+rre150h0,Niederschlag; Stundensumme,Precipitation; hourly total,Niederschlag,precipitation,H,1,Float,mm
+rre150m0,Niederschlag; Monatssumme,Precipitation; monthly total,Niederschlag,precipitation,M,1,Float,mm
+rre150y0,Niederschlag; Jahressumme,Precipitation; annual total,Niederschlag,precipitation,Y,1,Float,mm
+rre150z0,Niederschlag; Zehnminutensumme,Precipitation; ten minutes total,Niederschlag,precipitation,T,1,Float,mm
+dk1towh0,Windrichtung Turm; Stundenmittel,Wind direction tower; hourly mean,Wind,wind,H,0,Integer,°
+dv1towz0,Windrichtung vektoriell Turm; Zehnminutenmittel,Wind direction vectorial tower; ten minutes mean,Wind,wind,T,0,Integer,°
+fk1towd0,Windgeschwindigkeit skalar Turm; Tagesmittel in m/s,Wind speed scalar tower; daily mean in m/s,Wind,wind,D,1,Float,m/s
+fk1towd1,Böenspitze (Sekundenböe) Turm; Tagesmaximum in m/s,Gust peak (one second) tower; daily maximum in m/s,Wind,wind,D,1,Float,m/s
+fk1towh0,Windgeschwindigkeit skalar Turm; Stundenmittel in m/s,Wind speed scalar tower; hourly mean in m/s,Wind,wind,H,1,Float,m/s
+fk1towh1,Böenspitze (Sekundenböe) Turm; Stundenmaximum in m/s,Gust peak (one second) tower; hourly maximum in m/s,Wind,wind,H,1,Float,m/s
+fk1towm0,Windgeschwindigkeit skalar Turm; Monatsmittel in m/s,Wind speed scalar tower; monthly mean in m/s,Wind,wind,M,1,Float,m/s
+fk1towm1,Böenspitze (Sekundenböe) Turm; Monatsmaximum in m/s,Gust peak (one second) tower; monthly maximum in m/s,Wind,wind,M,1,Float,m/s
+fk1towy0,Windgeschwindigkeit skalar Turm; Jahresmittel in m/s,Wind speed scalar tower; annual mean in m/s,Wind,wind,Y,1,Float,m/s
+fk1towy1,Böenspitze (Sekundenböe) Turm; Jahresmaximum in m/s,Gust peak (one second) tower; annual maximum in m/s,Wind,wind,Y,1,Float,m/s
+fk1towz0,Windgeschwindigkeit skalar Turm; Zehnminutenmittel in m/s,Wind speed scalar tower; ten minutes mean in m/s,Wind,wind,T,1,Float,m/s
+fkltowz1,Böenspitze (Sekundenböe) Turm; Maximum in m/s,Gust peak (one second) tower; maximum in m/s,Wind,wind,T,1,Float,m/s
+fu3towd0,Windgeschwindigkeit skalar Turm; Tagesmittel in km/h,Wind speed scalar tower; daily mean in km/h,Wind,wind,D,1,Float,km/h
+fu3towd1,Böenspitze (Sekundenböe) Turm; Tagesmaximum in km/h,Gust peak (one second) tower; daily maximum in km/h,Wind,wind,D,1,Float,km/h
+fu3towh0,Windgeschwindigkeit skalar Turm; Stundenmittel in km/h,Wind speed scalar tower; hourly mean in km/h,Wind,wind,H,1,Float,km/h
+fu3towh1,Böenspitze (Sekundenböe) Turm; Stundenmaximum in km/h,Gust peak (one second) tower; hourly maximum in km/h,Wind,wind,H,1,Float,km/h
+fu3towz0,Windgeschwindigkeit skalar Turm; Zehnminutenmittel in km/h,Wind speed scalar tower; ten minutes mean in km/h,Wind,wind,T,1,Float,km/h
+fu3towz1,Böenspitze (Sekundenböe) Turm; Maximum in km/h,Gust peak (one second) tower; maximum in km/h,Wind,wind,T,1,Float,km/h
+gre000d0,Globalstrahlung; Tagesmittel,Global radiation; daily mean,Strahlung,radiation,D,0,Integer,W/m²
+gre000h0,Globalstrahlung; Stundenmittel,Global radiation; hourly mean,Strahlung,radiation,H,0,Integer,W/m²

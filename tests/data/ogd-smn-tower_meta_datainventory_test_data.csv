@@ -1,0 +1,21 @@
+station_abbr;parameter_shortname;meas_cat_nr;data_since;data_till;owner
+BAN;dk1towh0;1;17.12.1992 09:00;;MeteoSchweiz
+BAN;dv1towz0;1;01.02.2004 00:00;;MeteoSchweiz
+BAN;fk1towd0;1;17.12.1992 00:00;;MeteoSchweiz
+BAN;fk1towd1;1;17.12.1992 00:00;;MeteoSchweiz
+BAN;fk1towh0;1;17.12.1992 00:00;;MeteoSchweiz
+BAN;fk1towh1;1;17.12.1992 00:00;;MeteoSchweiz
+BAN;fk1towz0;1;01.02.2004 00:00;;MeteoSchweiz
+BAN;fkltowz1;1;01.02.2004 00:00;;MeteoSchweiz
+BAN;fu3towd0;1;01.01.2018 00:00;;MeteoSchweiz
+BAN;fu3towd1;1;01.01.2018 00:00;;MeteoSchweiz
+BAN;fu3towh0;1;26.02.2013 00:00;;MeteoSchweiz
+BAN;fu3towh1;1;26.02.2013 00:00;;MeteoSchweiz
+BAN;fu3towz0;1;19.02.2005 13:50;;MeteoSchweiz
+BAN;fu3towz1;1;19.02.2005 13:50;;MeteoSchweiz
+BAN;gre000d0;1;07.01.2012 00:00;;MeteoSchweiz
+BAN;gre000h0;1;06.01.2012 08:00;;MeteoSchweiz
+BAN;gre000m0;1;01.02.2012 00:00;;MeteoSchweiz
+BAN;gre000y0;1;01.01.2015 00:00;;MeteoSchweiz
+BAN;gre000z0;1;06.01.2012 08:00;;MeteoSchweiz
+BAN;sre000d0;1;07.01.2012 00:00;;MeteoSchweiz
