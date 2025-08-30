@@ -75,10 +75,8 @@ jobs:
           python-version-file: "pyproject.toml"
 
       - name: "Install Project"
-        run: uv sync
+        run: uv sync --all-groups
 
-      - uses: pavelzw/pytest-action@v2.2.0
-        with:
-          emoji: true
-          verbose: true
-          job-summary: true
+      - name: Run tests
+        # For example, using `pytest`
+        run: uv run pytest
