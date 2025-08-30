@@ -10,11 +10,14 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-
 [NOTE]
 ====
-Name change incoming: I discovered the project https://www.meteofunghi.it/[meteofunghi], an Italian web site that seems to predict mushrooms occurences with meteo data. I had not previously known of the project; however, since its purpose is very similar to ours and their name is nearly identical, I decided to change the name of our project. Their work deserves respect and they were the first ones to come up with the name meteofunghi, so it is only fair that we adapt.
-Therefore, the MeteoFungi repository will change its name to MeteoShrooms. Not immediately, though, because I currently lack insight what consequences a name change has. I don't want to mess up the project, so you'll have to wait a bit for the new name...
+Name change incoming: I discovered the project https://www.meteofunghi.it/[meteofunghi], an Italian web site that seems to predict mushrooms occurences with meteo data.
+I had not previously known of the project; however, since its purpose is very similar to ours and their name is nearly identical, I decided to change the name of our project.
+Their work deserves respect and they were the first ones to come up with the name meteofunghi, so it is only fair that we adapt.
+Therefore, the MeteoFungi repository will change its name to MeteoShrooms.
+Not immediately, though, because I currently lack insight what consequences a name change has.
+I don't want to mess up the project, so you'll have to wait a bit for the new name...
 This means that the dashboard is now available at https://meteoshrooms.streamlit.app[https://meteoshrooms.streamlit.app]
 ====
 
@@ -39,7 +42,7 @@ Meteorological data, time series of past findings as well as other datasets can 
 
 == Concept
 
-== Overarching Vision
+=== Overarching Vision
 
 The main goal is to develop a model to predict mushrooms occurences using OGD data.
 I suggest starting with _meteo_ data by https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[MeteoSwiss], _soil_ properties (see for example https://data.geo.admin.ch/browser/index.html[data.geo.admin.ch] or https://opendata.swiss/de[opendata.swiss]) and using open _mushroom observation data_ from https://www.gbif.org/[GBIF].
