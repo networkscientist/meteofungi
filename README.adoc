@@ -29,6 +29,11 @@ Meteorological data, time series of past findings as well as other datasets can 
 
 == Concept
 
+== Overarching Vision
+
+The main goal is to develop a model to predict mushrooms occurences using OGD data.
+I suggest starting with _meteo_ data by https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[MeteoSwiss], _soil_ properties (see for example https://data.geo.admin.ch/browser/index.html[data.geo.admin.ch] or https://opendata.swiss/de[opendata.swiss]) and using open _mushroom observation data_ from https://www.gbif.org/[GBIF].
+
 === Spatial
 
 Currently, the _MeteoFungi_ project is focussed on Switzerland, as https://www.meteoswiss.admin.ch[MeteoSwiss] has started to provide access to their data as https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[OGD].
@@ -41,8 +46,20 @@ Its _LazyFrames_ optimize the workflow.
 Data quality is validated through _Pandera_.
 Compressed _Parquet_-Files save storage space and up-/download bandwith.
 
-Furthermore, my aim is to create a model that learns from past mushroom sightings, local soil and meteo conditions, etc., and which then helps predict when a user has the chance to find edible mushrooms of their choosing.
-If you feel well versed in creating such a model, now's your time.
+Currently, the repository hosts all parts of the modelling process: 1. Data Preparation, 2. Model Calculations and 3. Data Presentation:
+
+. Data Preparation: Download data from OGD sources and bring them into form needed for next step.
+Ensure data quality,
+. Model Calculations: Perform the calculations to generate predictions from observed data,
+. Data Presentation: Show results on map and/or dashboard.
+Include documentation of sources and methodology.
+
+[source,mermaid]
+....
+flowchart TD
+    A(Prepare Data) --> B(Calculate Model Predictions)
+    B --> C(Present Results)
+....
 
 === Visualization
 
