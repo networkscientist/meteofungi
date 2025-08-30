@@ -19,6 +19,8 @@ See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING
 With _MeteoFungi_, You can keep track of the perfect conditions for mushroom hunting.
 We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
 
+image::assets/meteofungi_start_page.png[]
+
 == Motivation
 
 While hunting mushrooms happens in nature, a lot of the planning can be carried out beforehand.
