@@ -15,6 +15,7 @@ endif::[]
 ====
 Name change incoming: I discovered the project https://www.meteofunghi.it/[meteofunghi], an Italian web site that seems to predict mushrooms occurences with meteo data. I had not previously known of the project; however, since its purpose is very similar to ours and their name is nearly identical, I decided to change the name of our project. Their work deserves respect and they were the first ones to come up with the name meteofunghi, so it is only fair that we adapt.
 Therefore, the MeteoFungi repository will change its name to MeteoShrooms. Not immediately, though, because I currently lack insight what consequences a name change has. I don't want to mess up the project, so you'll have to wait a bit for the new name...
+This means that the dashboard is now available at https://meteoshrooms.streamlit.app[https://meteoshrooms.streamlit.app]
 ====
 
 [NOTE]
