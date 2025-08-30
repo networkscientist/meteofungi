@@ -2,21 +2,50 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on https://keepachangelog.com/en/1.0.0/[keep a changelog], and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
+The format is based on https://keepachangelog.com/en/1.1.0/[keep a changelog], and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 
-== [MAJOR.MINOR.PATCH] - YYYY-MM-DD
+////
+Allowed types of change:
+- Added:  For new features.
+- Changed: For changes in existing functionality.
+- Deprecated: For soon-to-be removed features.
+- Removed: For now removed features.
+- Fixed: For any bug fixes.
+- Security: In case of vulnerabilities.
+////
 
-=== Changed
-
-* Summarize Change and link to PR
-
-=== Fixed
-
-* Summarize Change and link to PR
+== [https://github.com/networkscientist/meteofungi/releases/tag/0.2.0[0.2.0]] - 2025-08-30
 
 === Added
 
-* Summarize Change and link to PR
+- Docs written; they are ready for contributors
+- Pytest implemented
+- CI action for tests written
+- Pre-commit config file written
+
+== [https://github.com/networkscientist/meteofungi/releases/tag/0.1[0.1.0]] - 2025-08-25
+
+=== Added
+
+* Added map feature
+
+== [https://github.com/networkscientist/meteofungi/releases/tag/0.0.3[0.0.3]] - 2025-07-02
+
+=== Changed
+
+* Switch to polars entirely
+
+== [https://github.com/networkscientist/meteofungi/releases/tag/0.0.2[0.0.2]] - 2025-06-24
+
+=== Added
+
+* Download separated into weather and rainfall data
+
+== [https://github.com/networkscientist/meteofungi/releases/tag/0.0.1[0.0.1]] - 2025-06-20
+
+=== Added
+
+* First release with title and one chart
 
 == Credits
 
