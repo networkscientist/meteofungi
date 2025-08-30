@@ -10,32 +10,32 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-# Give the default GITHUB_TOKEN write permission to commit and push the
-# added or changed files to the repository.
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
       contents: write
 
     steps:
-    - name: "Checkout"
-      uses: actions/checkout@v4.2.2
-      with:
-        ssh-key: ${{ secrets.DEPLOY_KEY }}
+      - name: "Checkout"
+        uses: actions/checkout@v4.2.2
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
 
-    - name: "Install uv"
-      uses: astral-sh/setup-uv@v6.3.1
-      with:
-        enable-cache: true
-        cache-dependency-glob: "uv.lock"
+      - name: "Install uv"
+        uses: astral-sh/setup-uv@v6.3.1
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
-    - name: "Set up Python"
-      uses: actions/setup-python@v5.6.0
-      with:
-        python-version-file: "pyproject.toml"
+      - name: "Set up Python"
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version-file: "pyproject.toml"
 
-    - name: "Install Project"
-      run: uv sync
+      - name: "Install Project"
+        run: uv sync
 
-    - name: "Data Preparation with Python"
-      run: uv run data_preparation.py
-  
-  # Commit all changed files back to the repository
-    - uses: stefanzweifel/git-auto-commit-action@v6.0.1
+      - name: "Data Preparation with Python"
+        run: uv run "src/meteofungi/data_preparation/data_preparation.py"
+
+      # Commit all changed files back to the repository
+      - uses: stefanzweifel/git-auto-commit-action@v6.0.1
