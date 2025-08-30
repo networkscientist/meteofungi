@@ -1,0 +1,84 @@
+name: Pytest CI
+on:
+  push:
+    branches:
+      [ master ]
+    paths-ignore:
+      - 'docs/**'
+      - 'data/**'
+      - 'assets/**'
+      - '**.md'
+      - '**.adoc'
+      - 'requirements.txt'
+      - 'requirements_dev.txt'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      [ master ]
+    paths-ignore:
+      - 'docs/**'
+      - 'data/**'
+      - 'assets/**'
+      - '**.md'
+      - '**.adoc'
+      - 'requirements.txt'
+      - 'requirements_dev.txt'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+# Minimum permissions required by skip-duplicate-actions
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  pre_job:
+    # continue-on-error: true # Uncomment once integration is finished
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v5
+        with:
+          # All of these options are optional, so you can remove them if you are happy with the defaults
+          concurrent_skipping: 'never'
+          skip_after_successful_duplicate: 'true'
+          paths_ignore: '["**/README.md", "**/docs/**", "data/**", "assets/**"]'
+          do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+  build:
+    name: Run Python Tests
+    needs: pre_job
+    if: needs.pre_job.outputs.should_skip != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Set Timezone"
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Berlin"
+
+      - name: "Checkout Repo"
+        uses: actions/checkout@v4.2.2
+        with:
+          ssh-key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: "Install uv"
+        uses: astral-sh/setup-uv@v6.3.1
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version-file: "pyproject.toml"
+
+      - name: "Install Project"
+        run: uv sync
+
+      - uses: pavelzw/pytest-action@v2.2.0
+        with:
+          emoji: true
+          verbose: true
+          job-summary: true
