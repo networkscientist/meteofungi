@@ -204,26 +204,23 @@ def calculate_metric_delta(
                     station_name, number_days=number_days, metric_short_code=metric_name
                 ).item()
             ) / number_days
-        elif metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
+        if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
             return (
                 value
                 - filter_metrics_time_period(
                     station_name, number_days=number_days, metric_short_code=metric_name
                 ).item()
             )
-        else:
-            return None
-    else:
         return None
+    return None
 
 
 def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
     if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
         return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days) / number_days
-    elif metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
+    if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
         return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days)
-    else:
-        return None
+    return None
 
 
 def calculate_metric_value_if_greater_zero(metric_name: str, station_name: str, number_days: int) -> int:
