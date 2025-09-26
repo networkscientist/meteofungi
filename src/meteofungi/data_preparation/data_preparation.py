@@ -140,10 +140,10 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
         raise ValueError(timeframe_value_error_string)
     if station_type == 'rainfall':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_{timeframe}.csv'
-    elif station_type == 'weather':
+    if station_type == 'weather':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn/{station}/ogd-smn_{station}_h_{timeframe}.csv'
-    else:
-        raise TypeError('station_type must be String and cannot be None')
+    station_type_type_error_string = 'station_type must be String and cannot be None'
+    raise TypeError(station_type_type_error_string)
 
 
 def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.LazyFrame:
