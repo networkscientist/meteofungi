@@ -29,7 +29,16 @@ def get_metric_emoji(val: float) -> str:
     return '🌧️🌊'  # Very heavy rain
 
 
-def create_metrics_expander_info(num_days_value, num_days_delta):
+def create_metrics_expander_info(num_days_value: float, num_days_delta: float) -> None:
+    """Add a Streamlit expander element with info on time aggregation
+
+    Parameters
+    ----------
+    num_days_value: float
+        Number of days over which averaging has been done for the metric
+    num_days_delta: float
+        Number of days, whose average has been take as a comparison
+    """
     with st.expander('Further Information'):
         st.text(
             f'Delta values indicate difference between {num_days_value}-day average and {num_days_delta}-day average.'
