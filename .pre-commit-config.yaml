@@ -1,3 +1,4 @@
+default_stages: [ commit ]
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     # Ruff version.
@@ -14,3 +15,12 @@ repos:
     rev: 0.8.13
     hooks:
       - id: uv-lock
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: uv run pytest
+        pass_filenames: false
+        language: system
+        types: [ python ]
