@@ -16,7 +16,7 @@ def get_metric_emoji(val: float) -> str:
         Emoji representing rainfall intensity
     """
     if val < 0:
-        val_below_zero_value_error_string = 'Value cannot be negative'
+        val_below_zero_value_error_string: str = 'Value cannot be negative'
         raise ValueError(val_below_zero_value_error_string)
     if 0 < val < 1:
         return '☀️'  # No rain
