@@ -7,20 +7,27 @@ import plotly.express as px
 import polars as pl
 import streamlit as st
 
-from meteofungi.dashboard.ux_metrics import create_metrics_expander_info, get_metric_emoji
+from meteofungi.dashboard.ux_metrics import (
+    create_metrics_expander_info,
+    get_metric_emoji,
+)
 
 DATA_PATH = Path(__file__).resolve().parents[3].joinpath('data')
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
-TIME_PERIODS: dict[int, datetime] = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
+TIME_PERIODS: dict[int, datetime] = {
+    period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]
+}
 NUM_DAYS_VAL: int = next(iter(TIME_PERIODS.keys()))
 NUM_DAYS_DELTA: int = list(TIME_PERIODS.keys())[1]
 PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
     'sum': ['rre150h0'],
     'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'],
 }
-METRICS_LIST: list[str] = list(chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values()))
+METRICS_LIST: list[str] = list(
+    chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values())
+)
 
 
 @st.cache_data
@@ -29,13 +36,18 @@ def load_weather_data() -> pl.LazyFrame:
 
 
 @st.cache_data
-def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime]) -> pl.LazyFrame:
+def create_metrics(
+    _weather_data: pl.LazyFrame, time_periods: dict[int, datetime]
+) -> pl.LazyFrame:
     return pl.concat(
         [
             _weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
             .drop('reference_timestamp')
             .group_by(['station_abbr', 'station_name'])
-            .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
+            .agg(
+                pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
+                pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
+            )
             .with_columns(pl.lit(period).alias('time_period'))
             for period, datetime_period in time_periods.items()
         ]
@@ -93,7 +105,10 @@ def create_station_frame_for_map(_frame_with_stations: pl.LazyFrame) -> pl.DataF
         _frame_with_stations.with_columns(
             pl.col('station_type_en').alias('Station Type'),
             pl.col('station_abbr').alias('Short Code'),
-            Altitude=pl.col('station_height_masl').cast(pl.Int16).cast(pl.String).add(' m.a.s.l'),
+            Altitude=pl.col('station_height_masl')
+            .cast(pl.Int16)
+            .cast(pl.String)
+            .add(' m.a.s.l'),
         )
         .select(
             pl.col(
@@ -116,7 +131,10 @@ meta_parameters: pl.LazyFrame = load_meta_params()
 
 regexp = re.compile(r'([\w\s()]+)')
 rows = meta_parameters.collect().to_dicts()
-meta_map = {r['parameter_shortname']: re.search(regexp, r['parameter_description_en']).group() for r in rows}
+meta_map = {
+    r['parameter_shortname']: re.search(regexp, r['parameter_description_en']).group()
+    for r in rows
+}
 METRICS_NAMES_DICT = {m: meta_map.get(m, '') for m in METRICS_LIST}
 WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
     {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
@@ -147,11 +165,17 @@ st.area_chart(
     data=(
         df_weather.sort('reference_timestamp')
         .filter(
-            (pl.col('reference_timestamp') >= (datetime.now() - timedelta(days=NUM_DAYS_DELTA)))
+            (
+                pl.col('reference_timestamp')
+                >= (datetime.now() - timedelta(days=NUM_DAYS_DELTA))
+            )
             & (pl.col('station_name').is_in(stations_options_selected))
         )
         .group_by_dynamic('reference_timestamp', every='6h', group_by='station_name')
-        .agg(pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']), pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']))
+        .agg(
+            pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
+            pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
+        )
         .with_columns(pl.selectors.numeric().round(1))
         .rename(WEATHER_COLUMN_NAMES_DICT)
     ),
@@ -195,15 +219,23 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
         metrics_list,
         strict=False,
     ):
-        val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=NUM_DAYS_VAL)
-        delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
+        val: int | float | None = calculate_metric_value(
+            metric_name, station_name, number_days=NUM_DAYS_VAL
+        )
+        delta: int | float | None = calculate_metric_delta(
+            metric_name, station_name, val, number_days=NUM_DAYS_DELTA
+        )
         metric_label = WEATHER_SHORT_LABEL_DICT[metric_name]
         metric_tooltip = f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {meta_parameters.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").collect().item()}'
         metric_kwargs = {'border': True, 'help': metric_tooltip, 'height': 'stretch'}
         if val is not None:
             col.metric(
                 label=metric_label,
-                value=(str(round(val, 1)) + ' ' + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')),
+                value=(
+                    str(round(val, 1))
+                    + ' '
+                    + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
+                ),
                 delta=str(round(delta, 1)),
                 **metric_kwargs,
             )
@@ -233,25 +265,50 @@ def calculate_metric_delta(
     return None
 
 
-def calculate_metric_value(metric_name: str, station_name: str, number_days: int) -> int | float | None:
+def calculate_metric_value(
+    metric_name: str, station_name: str, number_days: int
+) -> int | float | None:
     if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-        return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days) / number_days
+        return (
+            calculate_metric_value_if_greater_zero(
+                metric_name, station_name, number_days
+            )
+            / number_days
+        )
     if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-        return calculate_metric_value_if_greater_zero(metric_name, station_name, number_days)
+        return calculate_metric_value_if_greater_zero(
+            metric_name, station_name, number_days
+        )
     return None
 
 
-def calculate_metric_value_if_greater_zero(metric_name: str, station_name: str, number_days: int) -> int:
+def calculate_metric_value_if_greater_zero(
+    metric_name: str, station_name: str, number_days: int
+) -> int:
     return (
-        filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name).item()
-        if (len(filter_metrics_time_period(station_name, number_days=number_days, metric_short_code=metric_name)) > 0)
+        filter_metrics_time_period(
+            station_name, number_days=number_days, metric_short_code=metric_name
+        ).item()
+        if (
+            len(
+                filter_metrics_time_period(
+                    station_name, number_days=number_days, metric_short_code=metric_name
+                )
+            )
+            > 0
+        )
         else 0
     )
 
 
-def filter_metrics_time_period(station_name: str, number_days: int, metric_short_code: str) -> pl.DataFrame:
+def filter_metrics_time_period(
+    station_name: str, number_days: int, metric_short_code: str
+) -> pl.DataFrame:
     return (
-        metrics.filter((pl.col('station_name') == station_name) & (pl.col('time_period') == number_days))
+        metrics.filter(
+            (pl.col('station_name') == station_name)
+            & (pl.col('time_period') == number_days)
+        )
         .select(pl.col(metric_short_code))
         .collect()
     )

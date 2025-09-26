@@ -12,7 +12,9 @@ METEO_CSV_ENCODING: str = 'ISO-8859-1'
 META_FILE_PATH_DICT: dict[str, list[str]] = {
     meta_type: [
         f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn{ogd_smn_prefix}/ogd-smn{meta_suffix}_meta_{meta_type}.csv'
-        for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'], strict=False)
+        for ogd_smn_prefix, meta_suffix in zip(
+            ['', '-precip', '-tower'], ['', '-precip', '-tower'], strict=False
+        )
     ]
     for meta_type in ['stations', 'parameters', 'datainventory']
 }
@@ -97,11 +99,20 @@ COLS_TO_KEEP_META_PARAMETERS: list[str] = [
     'parameter_unit',
 ]
 
-COLS_TO_KEEP_META_DATAINVENTORY: list[str] = ['data_since', 'data_till', 'owner', 'parameter_shortname', 'station_abbr']
+COLS_TO_KEEP_META_DATAINVENTORY: list[str] = [
+    'data_since',
+    'data_till',
+    'owner',
+    'parameter_shortname',
+    'station_abbr',
+]
 
 
 def load_metadata(
-    meta_type: str, file_path_dict: dict[str, list[str]], meta_schema: dict, meta_cols_to_keep: list[str]
+    meta_type: str,
+    file_path_dict: dict[str, list[str]],
+    meta_schema: dict,
+    meta_cols_to_keep: list[str],
 ) -> pl.LazyFrame:
     """Load metadata from a Parquet file.
 
@@ -151,13 +162,22 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
 
 def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.LazyFrame:
     stations: pl.DataFrame = (
-        metadata.select('station_abbr', 'station_type_en').unique('station_abbr').sort('station_abbr').collect()
+        metadata.select('station_abbr', 'station_type_en')
+        .unique('station_abbr')
+        .sort('station_abbr')
+        .collect()
     )
-    kwargs_lazyframe: dict = {'separator': ';', 'try_parse_dates': True, 'schema_overrides': schema_dict_lazyframe}
+    kwargs_lazyframe: dict = {
+        'separator': ';',
+        'try_parse_dates': True,
+        'schema_overrides': schema_dict_lazyframe,
+    }
     station_series_precipitation: pl.Series = filter_stations_to_series(
         stations, station_type='Automatic precipitation stations'
     )
-    station_series_weather: pl.Series = filter_stations_to_series(stations, station_type='Automatic weather stations')
+    station_series_weather: pl.Series = filter_stations_to_series(
+        stations, station_type='Automatic weather stations'
+    )
     rainfall_recent: pl.LazyFrame = create_rainfall_weather_lazyframes(
         station_series_precipitation, 'rainfall', 'recent', kwargs_lazyframe
     )
@@ -185,9 +205,13 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
     return (
         pl.concat([rainfall, weather], how='diagonal')
         .sort('reference_timestamp')
-        .filter(pl.col('reference_timestamp') >= pl.lit(datetime.now() - timedelta(days=31)))
+        .filter(
+            pl.col('reference_timestamp') >= pl.lit(datetime.now() - timedelta(days=31))
+        )
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
-        .agg(pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'))
+        .agg(
+            pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0')
+        )
         .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
     )
 
@@ -213,7 +237,10 @@ def create_rainfall_weather_lazyframes(
         Polars LazyFrame with rainfall/weather data
     """
     return pl.scan_csv(
-        [generate_download_url(station, station_type, timeframe) for station in station_series],
+        [
+            generate_download_url(station, station_type, timeframe)
+            for station in station_series
+        ],
         **kwargs_lazyframe,
     )
 
@@ -233,7 +260,10 @@ def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.S
         Polars Series with station names
     """
     return (
-        stations.filter(pl.col('station_type_en') == station_type).select('station_abbr').to_series().str.to_lowercase()
+        stations.filter(pl.col('station_type_en') == station_type)
+        .select('station_abbr')
+        .to_series()
+        .str.to_lowercase()
     )
 
 
@@ -241,7 +271,10 @@ if __name__ == '__main__':
     weather_schema_dict: dict = {
         colname: DTYPE_DICT[datatype]
         for colname, datatype in load_metadata(
-            'parameters', META_FILE_PATH_DICT, SCHEMA_META_PARAMETERS, COLS_TO_KEEP_META_PARAMETERS
+            'parameters',
+            META_FILE_PATH_DICT,
+            SCHEMA_META_PARAMETERS,
+            COLS_TO_KEEP_META_PARAMETERS,
         )
         .select(pl.col('parameter_shortname'), pl.col('parameter_datatype'))
         .collect()
@@ -249,10 +282,22 @@ if __name__ == '__main__':
     }
 
     meta_stations: pl.LazyFrame = load_metadata(
-        'stations', META_FILE_PATH_DICT, SCHEMA_META_STATIONS, COLS_TO_KEEP_META_STATIONS
+        'stations',
+        META_FILE_PATH_DICT,
+        SCHEMA_META_STATIONS,
+        COLS_TO_KEEP_META_STATIONS,
     )
     meta_datainventory: pl.LazyFrame = load_metadata(
-        'datainventory', META_FILE_PATH_DICT, SCHEMA_META_DATAINVENTORY, COLS_TO_KEEP_META_DATAINVENTORY
+        'datainventory',
+        META_FILE_PATH_DICT,
+        SCHEMA_META_DATAINVENTORY,
+        COLS_TO_KEEP_META_DATAINVENTORY,
     )
-    weather_data: pl.LazyFrame = load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
-    weather_data.sink_parquet(Path(DATA_PATH, 'weather_data.parquet'), compression='brotli', compression_level=11)
+    weather_data: pl.LazyFrame = load_weather(
+        meta_stations, schema_dict_lazyframe=weather_schema_dict
+    )
+    weather_data.sink_parquet(
+        Path(DATA_PATH, 'weather_data.parquet'),
+        compression='brotli',
+        compression_level=11,
+    )
