@@ -14,7 +14,7 @@ DATA_PATH = Path(__file__).resolve().parents[3].joinpath('data')
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 TIME_PERIODS: dict[int, datetime] = {period: (datetime.now() - timedelta(days=period)) for period in [3, 7, 14, 30]}
-NUM_DAYS_VAL: int = list(TIME_PERIODS.keys())[0]
+NUM_DAYS_VAL: int = next(iter(TIME_PERIODS.keys()))
 NUM_DAYS_DELTA: int = list(TIME_PERIODS.keys())[1]
 PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
     'sum': ['rre150h0'],
