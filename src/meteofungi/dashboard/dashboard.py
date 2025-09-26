@@ -55,6 +55,12 @@ def load_meta_stations() -> pl.LazyFrame:
 
 @st.cache_data
 def load_meta_params() -> pl.LazyFrame:
+    """Load parameter metadata
+
+    Returns
+    -------
+        Parameter metadata in Polars LazyFrame
+    """
     return pl.scan_parquet(Path(DATA_PATH, 'meta_parameters.parquet')).unique()
 
 
