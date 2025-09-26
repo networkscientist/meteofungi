@@ -1,7 +1,7 @@
-import polars as pl
 from datetime import datetime, timedelta
-
 from pathlib import Path
+
+import polars as pl
 
 DATA_PATH: Path = Path(__file__).resolve().parents[3].joinpath('data')
 DTYPE_DICT: dict = {'Integer': pl.Int16, 'Float': pl.Float32, 'String': pl.String}
@@ -10,7 +10,7 @@ METEO_CSV_ENCODING: str = 'ISO-8859-1'
 META_FILE_PATH_DICT: dict[str, list[str]] = {
     meta_type: [
         f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn{ogd_smn_prefix}/ogd-smn{meta_suffix}_meta_{meta_type}.csv'
-        for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'])
+        for ogd_smn_prefix, meta_suffix in zip(['', '-precip', '-tower'], ['', '-precip', '-tower'], strict=False)
     ]
     for meta_type in ['stations', 'parameters', 'datainventory']
 }
@@ -101,6 +101,23 @@ COLS_TO_KEEP_META_DATAINVENTORY: list[str] = ['data_since', 'data_till', 'owner'
 def load_metadata(
     meta_type: str, file_path_dict: dict[str, list[str]], meta_schema: dict, meta_cols_to_keep: list[str]
 ) -> pl.LazyFrame:
+    """Loads metadata from a Parquet file.
+
+    Parameters
+    ----------
+    meta_type: str
+        Metadata source, one of 'parameters', 'stations' or 'datainventory'
+    file_path_dict: dict[str, list[str]]
+        Dict with URLs to metadata
+    meta_schema: dict
+        Dict with polars schema, structured as 'column_name': polars.Datatype
+    meta_cols_to_keep: list[str]
+        Column names to keep in metadata DataFrame
+
+    Returns
+    -------
+        Metadata loaded into a LazyFrame
+    """
     stations: pl.DataFrame = pl.concat(
         [
             pl.read_csv(
