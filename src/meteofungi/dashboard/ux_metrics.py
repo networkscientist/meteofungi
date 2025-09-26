@@ -20,14 +20,13 @@ def get_metric_emoji(val: float) -> str:
         raise ValueError(val_below_zero_value_error_string)
     if 0 < val < 1:
         return '☀️'  # No rain
-    elif 1 <= val < 10:
+    if 1 <= val < 10:
         return '🌦️'  # Light rain
-    elif 10 <= val < 20:
+    if 10 <= val < 20:
         return '🌧️'  # Moderate rain
-    elif 20 <= val < 50:
+    if 20 <= val < 50:
         return '🌊'  # Heavy rain
-    else:
-        return '🌧️🌊'  # Very heavy rain
+    return '🌧️🌊'  # Very heavy rain
 
 
 def create_metrics_expander_info(num_days_value, num_days_delta):
