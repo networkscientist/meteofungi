@@ -1,3 +1,5 @@
+"""Prepare data for the MeteoShrooms dashboard"""
+
 from datetime import datetime, timedelta
 from pathlib import Path
 
