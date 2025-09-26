@@ -216,6 +216,19 @@ def create_rainfall_weather_lazyframes(
 
 
 def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.Series:
+    """Filter stations according to station type
+
+    Parameters
+    ----------
+    stations: pl.DataFrame
+        Weather stations DataFrame
+    station_type
+        Station type, one of 'rainfall' or 'weather'
+
+    Returns
+    -------
+        Polars Series with station names
+    """
     return (
         stations.filter(pl.col('station_type_en') == station_type).select('station_abbr').to_series().str.to_lowercase()
     )
