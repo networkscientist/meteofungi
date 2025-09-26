@@ -66,6 +66,12 @@ def load_meta_params() -> pl.LazyFrame:
 
 @st.cache_data
 def load_meta_datainventory() -> pl.LazyFrame:
+    """Load data inventory metadata
+
+    Returns
+    -------
+        Data inventory metadata in Polars LazyFrame
+    """
     return pl.scan_parquet(Path(DATA_PATH, 'meta_datainventory.parquet'))
 
 
