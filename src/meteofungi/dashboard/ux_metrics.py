@@ -3,8 +3,22 @@
 import streamlit as st
 
 
-def get_metric_emoji(val):
-    if val < 1:
+def get_metric_emoji(val: float) -> str:
+    """Retun emoji for rainfall intensity
+
+    Parameters
+    ----------
+    val: float
+        Rainfall intensity
+
+    Returns
+    -------
+        Emoji representing rainfall intensity
+    """
+    if val < 0:
+        val_below_zero_value_error_string = 'Value cannot be negative'
+        raise ValueError(val_below_zero_value_error_string)
+    if 0 < val < 1:
         return '☀️'  # No rain
     elif 1 <= val < 10:
         return '🌦️'  # Light rain
