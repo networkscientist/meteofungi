@@ -1,5 +1,6 @@
 """Prepare data for the MeteoShrooms dashboard"""
 
+from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -71,7 +72,7 @@ SCHEMA_META_DATAINVENTORY: dict = {
     'owner': pl.String,
 }
 
-COLS_TO_KEEP_META_STATIONS: list[str] = [
+COLS_TO_KEEP_META_STATIONS: Sequence[str] = (
     'station_abbr',
     'station_name',
     'station_canton',
@@ -85,9 +86,9 @@ COLS_TO_KEEP_META_STATIONS: list[str] = [
     'station_coordinates_lv95_north',
     'station_coordinates_wgs84_lat',
     'station_coordinates_wgs84_lon',
-]
+)
 
-COLS_TO_KEEP_META_PARAMETERS: list[str] = [
+COLS_TO_KEEP_META_PARAMETERS: Sequence[str] = (
     'parameter_datatype',
     'parameter_decimals',
     'parameter_description_de',
@@ -97,22 +98,22 @@ COLS_TO_KEEP_META_PARAMETERS: list[str] = [
     'parameter_group_en',
     'parameter_shortname',
     'parameter_unit',
-]
+)
 
-COLS_TO_KEEP_META_DATAINVENTORY: list[str] = [
+COLS_TO_KEEP_META_DATAINVENTORY: Sequence[str] = (
     'data_since',
     'data_till',
     'owner',
     'parameter_shortname',
     'station_abbr',
-]
+)
 
 
 def load_metadata(
     meta_type: str,
     file_path_dict: dict[str, list[str]],
     meta_schema: dict,
-    meta_cols_to_keep: list[str],
+    meta_cols_to_keep: Sequence[str],
 ) -> pl.LazyFrame:
     """Load metadata from a Parquet file.
 
@@ -124,7 +125,7 @@ def load_metadata(
         Dict with URLs to metadata
     meta_schema: dict
         Dict with polars schema, structured as 'column_name': polars.Datatype
-    meta_cols_to_keep: list[str]
+    meta_cols_to_keep: Sequence[str]
         Column names to keep in metadata DataFrame
 
     Returns
@@ -212,7 +213,7 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
         .agg(
             pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0')
         )
-        .join(metadata.select(['station_abbr', 'station_name']), on=['station_abbr'])
+        .join(metadata.select(('station_abbr', 'station_name')), on=['station_abbr'])
     )
 
 
