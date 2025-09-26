@@ -135,7 +135,9 @@ def load_metadata(
 
 
 def generate_download_url(station: str, station_type: str, timeframe: str) -> str:
-    assert timeframe in ['recent', 'now'], "timeframe needs to be 'recent' or 'now'"
+    if timeframe not in ['recent', 'now']:
+        timeframe_value_error_string = "timeframe needs to be 'recent' or 'now'"
+        raise ValueError(timeframe_value_error_string)
     if station_type == 'rainfall':
         return f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn-precip/{station}/ogd-smn-precip_{station}_h_{timeframe}.csv'
     elif station_type == 'weather':
