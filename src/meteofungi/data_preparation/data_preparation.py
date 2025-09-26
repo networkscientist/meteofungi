@@ -101,7 +101,7 @@ COLS_TO_KEEP_META_DATAINVENTORY: list[str] = ['data_since', 'data_till', 'owner'
 def load_metadata(
     meta_type: str, file_path_dict: dict[str, list[str]], meta_schema: dict, meta_cols_to_keep: list[str]
 ) -> pl.LazyFrame:
-    """Loads metadata from a Parquet file.
+    """Load metadata from a Parquet file.
 
     Parameters
     ----------
@@ -192,6 +192,23 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
 def create_rainfall_weather_lazyframes(
     station_series: pl.Series, station_type: str, timeframe: str, kwargs_lazyframe: dict
 ) -> pl.LazyFrame:
+    """Create LazyFrame from CSV urls
+
+    Parameters
+    ----------
+    station_series: pl.Series
+        Station names
+    station_type: str
+        Station type, one of 'rainfall' or 'weather'
+    timeframe: str
+        Time range, one of 'recent' or 'now'
+    kwargs_lazyframe: dict
+        Arguments to pass to LazyFrame constructor
+
+    Returns
+    -------
+        Polars LazyFrame with rainfall/weather data
+    """
     return pl.scan_csv(
         [generate_download_url(station, station_type, timeframe) for station in station_series],
         **kwargs_lazyframe,
