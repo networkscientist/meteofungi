@@ -44,6 +44,12 @@ def create_metrics(_weather_data: pl.LazyFrame, time_periods: dict[int, datetime
 
 @st.cache_data
 def load_meta_stations() -> pl.LazyFrame:
+    """Load station metadata
+
+    Returns
+    -------
+        Station metadata in Polars LazyFrame
+    """
     return pl.scan_parquet(Path(DATA_PATH, 'meta_stations.parquet'))
 
 
