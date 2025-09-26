@@ -1,3 +1,5 @@
+"""Provide static data for the MeteoShrooms dashboard ui"""
+
 import streamlit as st
 
 
