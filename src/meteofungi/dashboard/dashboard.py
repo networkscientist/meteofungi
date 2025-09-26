@@ -1,13 +1,13 @@
-import streamlit as st
-from datetime import datetime, timedelta
-from pathlib import Path
-from itertools import chain
-
-import polars as pl
 import re
+from datetime import datetime, timedelta
+from itertools import chain
+from pathlib import Path
 
 import plotly.express as px
-from meteofungi.dashboard.ux_metrics import get_metric_emoji, create_metrics_expander_info
+import polars as pl
+import streamlit as st
+
+from meteofungi.dashboard.ux_metrics import create_metrics_expander_info, get_metric_emoji
 
 DATA_PATH = Path(__file__).resolve().parents[3].joinpath('data')
 # --- Load data ---
@@ -175,6 +175,7 @@ def create_metric_section(station_name: str, metrics_list: list[str]):
     for col, metric_name in zip(
         cols_metric,
         metrics_list,
+        strict=False,
     ):
         val: int | float | None = calculate_metric_value(metric_name, station_name, number_days=NUM_DAYS_VAL)
         delta: int | float | None = calculate_metric_delta(metric_name, station_name, val, number_days=NUM_DAYS_DELTA)
