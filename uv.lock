@@ -311,6 +311,7 @@ dependencies = [
 dev = [
     { name = "mypy" },
     { name = "pandas-stubs" },
+    { name = "plotly-stubs" },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -336,6 +337,7 @@ requires-dist = [
 dev = [
     { name = "mypy", specifier = ">=1.17.1" },
     { name = "pandas-stubs", specifier = ">=2.3.2.250827" },
+    { name = "plotly-stubs", specifier = ">=0.0.6" },
     { name = "pre-commit", specifier = ">=4.3.0" },
     { name = "pytest", specifier = ">=8.4.1" },
     { name = "pytest-cov", specifier = ">=6.2.1" },
@@ -537,6 +539,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a0/64/850de5076f4436410e1ce4f6a69f4313ef6215dfea155f3f6559335cad29/plotly-6.3.0.tar.gz", hash = "sha256:8840a184d18ccae0f9189c2b9a2943923fd5cae7717b723f36eef78f444e5a73", size = 6923926, upload-time = "2025-08-12T20:22:14.127Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/95/a9/12e2dc726ba1ba775a2c6922d5d5b4488ad60bdab0888c337c194c8e6de8/plotly-6.3.0-py3-none-any.whl", hash = "sha256:7ad806edce9d3cdd882eaebaf97c0c9e252043ed1ed3d382c3e3520ec07806d4", size = 9791257, upload-time = "2025-08-12T20:22:09.205Z" },
+]
+
+[[package]]
+name = "plotly-stubs"
+version = "0.0.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/07/80/928585fcf5d78377291e02081d816753cfa5669ffa08f4cc612e06c16097/plotly_stubs-0.0.6.tar.gz", hash = "sha256:ddd83fd9f440dac00fcb29524c127598f740a3e93c6b43c95f471603265e14ea", size = 50722, upload-time = "2025-07-29T07:09:35.375Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0d/fd/0eef6785d0a7363f7024c9e2c8ff4fb6f1174aff8e6ab2f0f6397b659b42/plotly_stubs-0.0.6-py3-none-any.whl", hash = "sha256:7cc0b438c4daf58f83c37fefac54c0251664664e5a429b73f1ab0a80169d625e", size = 104430, upload-time = "2025-07-29T07:09:34.21Z" },
 ]
 
 [[package]]
