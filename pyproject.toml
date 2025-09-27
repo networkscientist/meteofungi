@@ -87,6 +87,7 @@ select = [
     "PTH", # https://docs.astral.sh/ruff/rules/#flake8-use-pathlib-pth
     "PERF", # https://docs.astral.sh/ruff/rules/#perflint-perf
     "RUF", # https://docs.astral.sh/ruff/rules/#ruff-specific-rules-ruf
+    "DTZ", # https://docs.astral.sh/ruff/rules/#flake8-datetimez-dtz
 ]
 fixable = [
     "I",

@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import polars as pl
 
@@ -207,7 +208,8 @@ def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.Lazy
         pl.concat([rainfall, weather], how='diagonal')
         .sort('reference_timestamp')
         .filter(
-            pl.col('reference_timestamp') >= pl.lit(datetime.now() - timedelta(days=31))
+            pl.col('reference_timestamp')
+            >= pl.lit(datetime.now(tz=ZoneInfo('Europe/Zurich')) - timedelta(days=31))
         )
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .agg(
@@ -243,6 +245,10 @@ def create_rainfall_weather_lazyframes(
             for station in station_series
         ],
         **kwargs_lazyframe,
+    ).with_columns(
+        pl.col('reference_timestamp').dt.replace_time_zone(
+            'Europe/Zurich', non_existent='null'
+        )
     )
 
 

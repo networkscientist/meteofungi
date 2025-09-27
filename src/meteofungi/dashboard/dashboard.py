@@ -5,6 +5,7 @@ from itertools import chain
 from pathlib import Path
 from re import Pattern
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import plotly.express as px
 import polars as pl
@@ -23,7 +24,8 @@ DATA_PATH: Path = Path(__file__).resolve().parents[3].joinpath('data')
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 
 TIME_PERIODS: dict[int, datetime] = {
-    period: (datetime.now() - timedelta(days=period)) for period in (3, 7, 14, 30)
+    period: (datetime.now(tz=ZoneInfo('Europe/Zurich')) - timedelta(days=period))
+    for period in (3, 7, 14, 30)
 }
 NUM_DAYS_VAL: int = next(iter(TIME_PERIODS.keys()))
 NUM_DAYS_DELTA: int = tuple(TIME_PERIODS.keys())[1]
@@ -173,7 +175,10 @@ st.area_chart(
         .filter(
             (
                 pl.col('reference_timestamp')
-                >= (datetime.now() - timedelta(days=NUM_DAYS_DELTA))
+                >= (
+                    datetime.now(tz=ZoneInfo('Europe/Zurich'))
+                    - timedelta(days=NUM_DAYS_DELTA)
+                )
             )
             & (pl.col('station_name').is_in(stations_options_selected))
         )
