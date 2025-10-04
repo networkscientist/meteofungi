@@ -1,0 +1,38 @@
+= Issue Management
+
+This document outlines how issues are managed on GitHub.
+
+== Categorization
+
+Issues are labelled.
+There are six broad categories of labels used (colour category in brackets):
+
+. **New or Expanded Functionality (blue shades)**
+.. _feature_ – Proposes new capability or functionality.
+.. _enhancement_ – Requests an improvement or extension of existing functionality.
+
+. **Code‑Quality & Performance (green shades)**
+.. _optimization_ – Suggests performance, memory, or speed improvements without changing behaviour.
+.. _refactor_ – Involves restructuring code while preserving external behaviour.
+.. _test_ – Adds, fixes, or improves automated tests.
+.. _ci_ – Concerns continuous‑integration (CI) configuration, pipelines, or related failures.
+
+. **User‑Facing Experience (amber/orange shades)**
+.. _ux_ – Addresses UI layout, accessibility, or workflow improvements.
+.. _docs_ – Updates, corrects, or adds documentation.
+
+. **Issue Management & Triage (red shades)**
+.. _bug_ – Reports an error, crash, or incorrect behaviour.
+.. _duplicate_ – This issue or pull request already exists.
+.. _invalid_ – Issue is malformed, off‑topic, or lacks necessary information.
+.. _question_ – Seeks clarification, usage guidance, or information rather than reporting a problem.
+.. _wontfix_ – Maintainers have decided not to address the issue.
+
+. **Community & Contribution (violet shades)**
+.. _good first issue_ – Good for newcomers, relatively easy and well-scoped.
+.. _help wanted_ – The maintainers need assistance; open to contributions.
+
+. **AI Model Development (teal shades)**
+.. _model‑architecture_ – Designing or modifying the AI model’s layers/structure.
+.. _model training_ – Running, monitoring, and troubleshooting AI model training.
+.. _deployment_ – Packaging, containerizing, and releasing the AI model for inference.
