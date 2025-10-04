@@ -96,7 +96,7 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 * [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
 * [ ] Make CI test action mandatory to pass on PR https://github.com/networkscientist/meteofungi/issues/56[#56]
 * [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
-* [ ] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
+* [x] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
 * [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
 * [ ] _Release v0.3_
 
