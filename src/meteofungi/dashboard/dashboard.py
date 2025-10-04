@@ -40,7 +40,11 @@ METRICS_LIST: Sequence[str] = tuple(
 
 @st.cache_data
 def load_weather_data() -> pl.LazyFrame:
-    return pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet'))
+    return pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet')).with_columns(
+        pl.col('reference_timestamp').dt.replace_time_zone(
+            'Europe/Zurich', non_existent='null'
+        )
+    )
 
 
 @st.cache_data
