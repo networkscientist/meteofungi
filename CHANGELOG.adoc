@@ -14,6 +14,13 @@ Allowed types of change:
 - Security: In case of vulnerabilities.
 ////
 
+== [Unreleased]
+
+=== Added
+
+- (https://github.com/networkscientist/meteofungi/issues/57[#57]) Ruff linting rules defined - https://github.com/networkscientist[@networkscientist]
+- (https://github.com/networkscientist/meteofungi/issues/40[#40]) Issue tags defined - https://github.com/networkscientist[@networkscientist]
+
 == [https://github.com/networkscientist/meteofungi/releases/tag/0.2.0[0.2.0]] - 2025-08-30
 
 === Added
