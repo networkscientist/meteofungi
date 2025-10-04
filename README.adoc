@@ -96,27 +96,29 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 
 * [x] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
 * [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
-* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
-* [ ] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
-* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
 * [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
+* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
+* [ ] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
+* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
 * [ ] _Release v0.3_
 
 === Release v0.4 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/2[GitHub milestone details]
 
-* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
-* [ ] Define consistent mypy concept https://github.com/networkscientist/meteofungi/issues/58[#58]
 * [ ] Increase test coverage to 25% https://github.com/networkscientist/meteofungi/issues/53[#53]
+* [ ] Define consistent mypy concept https://github.com/networkscientist/meteofungi/issues/58[#58]
+* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
 * [ ] Develop issue templates https://github.com/networkscientist/meteofungi/issues/64[#64]
+* [ ] Make passing of CI test action mandatory https://github.com/networkscientist/meteofungi/issues/67[#67]
+* [ ] Write Concept on the AI Part https://github.com/networkscientist/meteofungi/issues/68[#68]
 * [ ] _Release v0.4_
 
 === Release v0.5 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/3[GitHub milestone details]
 
-* [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
-* [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
-* [ ] Move from Streamlit Cloud to stlite for WASM https://github.com/networkscientist/meteofungi/issues/52[#52]
-* [ ] Add badges to Readme https://github.com/networkscientist/meteofungi/issues/60[#60]
+* [x] Add badges to Readme https://github.com/networkscientist/meteofungi/issues/60[#60]
 * [ ] Add st.pills element to select type of station to display in st.multiselect https://github.com/networkscientist/meteofungi/issues/22[#22]
+* [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
+* [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
+* [ ] Define Geodata Model Basics https://github.com/networkscientist/meteofungi/issues/69[#69]
 * [ ] _Release v0.5_
 
 === Release v0.6 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/4[GitHub milestone details]
@@ -126,8 +128,14 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 
 === Release v0.7 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/7[GitHub milestone details]
 
+* [ ] Move from Streamlit Cloud to stlite for WASM https://github.com/networkscientist/meteofungi/issues/52[#52]
+
 === Release v0.8 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/8[GitHub milestone details]
+
+* [ ] Develop First Version of AI Model https://github.com/networkscientist/meteofungi/issues/71[#71]
 
 === Release v0.9 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/9[GitHub milestone details]
 
 === Release v1.0 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/10[GitHub milestone details]
+
+* [ ] Develop AI Model for Mushroom Occurence Prediction https://github.com/networkscientist/meteofungi/issues/70[#70]
