@@ -30,7 +30,7 @@ Contributors Welcome!
 See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
 ====
 
-With _MeteoFungi_, You can keep track of the perfect conditions for mushroom hunting.
+With _MeteoFungi_, you can keep track of the perfect conditions for mushroom hunting.
 We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
 
 image::assets/meteofungi_start_page.png[]
@@ -38,9 +38,13 @@ image::assets/meteofungi_start_page.png[]
 == Motivation
 
 While hunting mushrooms happens in nature, a lot of the planning can be carried out beforehand.
+
 Where are possible areas to find boletes?
-Should You leave the house right now or are you already too late?
-And will Your current small basket be large enough or is it time to invest in something bigger?
+
+Should you leave the house right now or are you already too late?
+
+And will your current small basket be large enough or is it time to invest in something bigger?
+
 Meteorological data, time series of past findings as well as other datasets can give us valuable insights.
 
 == Concept
@@ -79,35 +83,43 @@ flowchart TD
 
 === Visualization
 
-Metrics and time series visulizations are currently hosted as a Streamlit dashboard, so please check it out at https://meteofungi.streamlit.app[https://meteofungi.streamlit.app]
+Metrics and time series visulizations are currently hosted as a Streamlit dashboard, so https://meteoshrooms.streamlit.app[check it out].
 
 == Roadmap
 
-A high-level roadmap outlining planned milestones and timelines.
+A high-level roadmap structured along the planned release milestones.
+For a more detailed overview, see either https://github.com/networkscientist/meteofungi/issues[Issues] or the detailed https://github.com/users/networkscientist/projects/7[Project Planner].
 
-=== v0.3.0
+=== v0.3
 
-* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
 * [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
-* [ ] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
+* [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
 * [ ] Make CI test action mandatory to pass on PR https://github.com/networkscientist/meteofungi/issues/56[#56]
 * [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
 * [ ] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
-* [ ] Release v0.3.0
+* [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
+* [ ] _Release v0.3_
 
-=== v0.4.0
+=== v0.4
 
+* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
 * [ ] Define consistent mypy concept https://github.com/networkscientist/meteofungi/issues/58[#58]
 * [ ] Increase test coverage to 25% https://github.com/networkscientist/meteofungi/issues/53[#53]
 * [ ] Develop issue templates https://github.com/networkscientist/meteofungi/issues/64[#64]
+* [ ] _Release v0.4_
+
+=== v0.5
+
 * [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
-* [ ] Release v0.4.0
-
-=== v0.5.0
-
 * [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
-* [ ] Set up PyPI publishing workflow https://github.com/networkscientist/meteofungi/issues/63[#63]
 * [ ] Move from Streamlit Cloud to stlite for WASM https://github.com/networkscientist/meteofungi/issues/52[#52]
-* [ ] Release v0.5.0
+* [ ] Add badges to Readme https://github.com/networkscientist/meteofungi/issues/60[#60]
+* [ ] Add st.pills element to select type of station to display in st.multiselect https://github.com/networkscientist/meteofungi/issues/22[#22]
+* [ ] _Release v0.5_
+
+=== v0.6
+
+* [ ] Set up PyPI publishing workflow https://github.com/networkscientist/meteofungi/issues/63[#63]
+* [ ] _Release v0.6_
 
 
