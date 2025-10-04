@@ -162,7 +162,7 @@ df_weather: pl.LazyFrame = load_weather_data()
 metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
 station_name_list: Sequence[str] = create_station_name_list(metrics)
 
-st.title('MeteoFungi')
+st.title('MeteoShrooms')
 
 with st.sidebar:
     st.title('Stations')

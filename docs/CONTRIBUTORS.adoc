@@ -1,5 +1,5 @@
 = Contributors
 
-The following people have contributed to the development of MeteoFungi:
+The following people have contributed to the development of MeteoShrooms:
 
-* https://github.com/networkscientist[Peter Zweifel]
+* https://github.com/networkscientist[Peter Zweifel (networkscientist)]

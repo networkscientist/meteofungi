@@ -1,4 +1,4 @@
-= Contributing to MeteoFungi
+= Contributing to MeteoShrooms
 :toc: auto
 :icons: font
 
@@ -13,24 +13,24 @@ endif::[]
 :docs: https://docs.spring.io/spring-boot
 :github: https://github.com/spring-projects/spring-boot
 
-The MeteoFungi project welcomes contributions of all kinds!
+The MeteoShrooms project welcomes contributions of all kinds!
 You can submit them in the form of Pull Requests (PR).
 For clear bug-fixes / typos etc. just submit a PR.
 For new features, feature request or if there is any doubt in how to fix a bug, it is recommended to open an issue prior to starting work.
 
 == Prerequisites
 
-MeteoFungi uses https://docs.astral.sh/uv/[uv] for packaging and dependency management.
-To start developing MeteoFungi, install uv using the https://docs.astral.sh/uv/getting-started/installation/[recommended method].
+MeteoShrooms uses https://docs.astral.sh/uv/[uv] for packaging and dependency management.
+To start developing MeteoShrooms, install uv using the https://docs.astral.sh/uv/getting-started/installation/[recommended method].
 
-Next, you'll need to https://docs.github.com/en/get-started/quickstart/fork-a-repo[create a _fork_] (your own personal copy) of the MeteoFungi repository and _clone_ it to your local machine.
-Now you're almost ready to start coding on your local copy of the MeteoFungi source code.
+Next, you'll need to https://docs.github.com/en/get-started/quickstart/fork-a-repo[create a _fork_] (your own personal copy) of the MeteoShrooms repository and _clone_ it to your local machine.
+Now you're almost ready to start coding on your local copy of the MeteoShrooms source code.
 
-Next, enter the directory that contains your local clone of MeteoFungi and open a terminal.
+Next, enter the directory that contains your local clone of MeteoShrooms and open a terminal.
 The present guide uses Bash syntax; depending on your setup (operating system, etc.), you might have to change some commands.
 If you're on Linux, you'll most probably be fine.
 
-Install the Python packages required to run and develop MeteoFungi with:
+Install the Python packages required to run and develop MeteoShrooms with:
 
 [source,bash]
 ----
@@ -42,22 +42,22 @@ Furthermore, it creates a new virtual environment.
 If you don't like uv or otherwise want to use a different package manager, feel free to do so.
 Note, however, that all guides on this repo solely support uv.
 
-You are now ready to run the MeteoFungi dashboard from within the newly created virtual environment:
+You are now ready to run the MeteoShrooms dashboard from within the newly created virtual environment:
 
 [source,bash]
 ----
 uv run streamlit run dashboard.py
 ----
 
-This should open up your web browser and show the MeteoFungi dashboard.
+This should open up your web browser and show the MeteoShrooms dashboard.
 
 All of the following instructions assume that you are within the created virtual environment.
 Commands should hence be run with `uv run [commandXY]`
 
-Feel free to have a look at the files in the MeteoFungi folder.
-You will notice that most of them are copies of the files on the MeteoFungi online repository.
+Feel free to have a look at the files in the MeteoShrooms folder.
+You will notice that most of them are copies of the files on the MeteoShrooms online repository.
 There will be additional files and folders used by uv, git, etc.
-Understanding them is not required to contribute to MeteoFungi.
+Understanding them is not required to contribute to MeteoShrooms.
 You are left to investigate on your own, should you feel interested.
 
 == Developing
@@ -65,11 +65,11 @@ You are left to investigate on your own, should you feel interested.
 At this point, you are ready to start coding.
 It is worth noting a few basics first, however:
 
-* Before you spend considerable time developing a new feature, make sure it has a chance of being implemented in MeteoFungi.
+* Before you spend considerable time developing a new feature, make sure it has a chance of being implemented in MeteoShrooms.
 Otherwise you might feel unpleasantly surprised when your Pull Request is rejected.
 Feel free to get prior feedback on your ideas.
 * Always document your code.
-MeteoFungi uses docstrings in the https://numpydoc.readthedocs.io/en/latest/format.html[numpy format].
+MeteoShrooms uses docstrings in the https://numpydoc.readthedocs.io/en/latest/format.html[numpy format].
 Where it helps to understand your code, add line comments.
 
 Before each https://github.com/git-guides/git-commit[commit], you should:
@@ -82,8 +82,8 @@ Before each https://github.com/git-guides/git-commit[commit], you should:
 
 You do not need to start each of these steps individually, if you want to commit your changes.
 When you used uv to install all the dependencies, the tool `pre-commit` was added to your system.
-The MeteoFungi repository contains https://github.com/networkscientist/meteofungi/blob/master/.pre-commit-config.yaml[configuration files] outlining each step.
-From within your local MeteoFungi folder, run:
+The MeteoShrooms repository contains https://github.com/networkscientist/meteofungi/blob/master/.pre-commit-config.yaml[configuration files] outlining each step.
+From within your local MeteoShrooms folder, run:
 
 [source,bash]
 ----
@@ -107,7 +107,7 @@ pre-commit run --all-files
 
 === Testing
 
-MeteoFungi uses tests to help prevent the introduction of bugs into working code.
+MeteoShrooms uses tests to help prevent the introduction of bugs into working code.
 Thus, we use `pytest`:
 
 [source,bash]
@@ -153,7 +153,7 @@ Always make sure to fix all errors prior to commiting your code.
 === Formatting
 
 Although there are recommendations about Python code style (see for example https://peps.python.org/pep-0008/[PEP8 - Style Guide for Python Code]), there is still plenty of room to disagree about style details.
-MeteoFungi uses ruff to automatically format code according to a set of predefined rules (see the section `[tool.ruff.format]` in https://github.com/networkscientist/meteofungi/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/formatter/[ruff documentation] for a detailed explanation).
+MeteoShrooms uses ruff to automatically format code according to a set of predefined rules (see the section `[tool.ruff.format]` in https://github.com/networkscientist/meteofungi/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/formatter/[ruff documentation] for a detailed explanation).
 Always make sure your code is properly formatted prior to commiting it with:
 
 [source,bash]
@@ -167,7 +167,7 @@ uv run ruff format
 
 Most of the contributions will not alter package versions of the project dependencies.
 If they do, however, it is necessary to _lock_ them in a text file.
-This allows users to work with a working set of packages, whose versions have been tested to work with MeteoFungi.
+This allows users to work with a working set of packages, whose versions have been tested to work with MeteoShrooms.
 Since we use uv for managing our project, you can run:
 
 [source,bash]
@@ -194,7 +194,7 @@ Contributions lacking useful documentation will not be accepted in PRs.
 Before submitting your Pull Request, update the `CHANGELOG.adoc` file, briefly describing what you've done.
 Be sure to follow the format seen in the rest of the document.
 
-If this is your first time contributing to MeteoFungi, also add your Github username and optionally your real name to CONTRIBUTORS.adoc.
+If this is your first time contributing to MeteoShrooms, also add your Github username and optionally your real name to CONTRIBUTORS.adoc.
 
 == Creating a Pull Request
 
@@ -216,9 +216,9 @@ This is standard procedure in developing software, so do not be discouraged when
 
 == Next Steps
 
-Once the PR is approved, your changes will be merged into the `main` branch of the MeteoFungi repository.
+Once the PR is approved, your changes will be merged into the `main` branch of the MeteoShrooms repository.
 Anyone cloning the repo will now get the source code with your contribution implemented.
-This is the time for celebration: Well done, the MeteoFungi community is grateful to you!
+This is the time for celebration: Well done, the MeteoShrooms community is grateful to you!
 
 == Credits
 

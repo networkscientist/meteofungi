@@ -1,6 +1,6 @@
 = Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to the MeteoShrooms project will be documented in this file.
 
 The format is based on https://keepachangelog.com/en/1.1.0/[keep a changelog], and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Versioning].
 

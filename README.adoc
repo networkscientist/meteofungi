@@ -1,4 +1,4 @@
-= MeteoFungi
+= MeteoShrooms
 
 image::https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml/badge.svg["Tests",link=https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml]
 
@@ -13,6 +13,17 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
+With _MeteoShrooms_, you can keep track of the perfect conditions for mushroom hunting.
+We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
+
+image::assets/meteoshrooms_start_page.png[]
+
+[NOTE]
+====
+Contributors Welcome!
+See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
+====
+
 [NOTE]
 ====
 Name change incoming: I discovered the project https://www.meteofunghi.it/[meteofunghi], an Italian web site that seems to predict mushrooms occurences with meteo data.
@@ -23,17 +34,6 @@ Not immediately, though, because I currently lack insight what consequences a na
 I don't want to mess up the project, so you'll have to wait a bit for the new name...
 This means that the dashboard is now available at https://meteoshrooms.streamlit.app[https://meteoshrooms.streamlit.app]
 ====
-
-[NOTE]
-====
-Contributors Welcome!
-See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
-====
-
-With _MeteoFungi_, you can keep track of the perfect conditions for mushroom hunting.
-We take Open Government Data (OGD) from the official Swiss Meteorological Service MeteoSwiss to calculate key metrics.
-
-image::assets/meteofungi_start_page.png[]
 
 == Motivation
 
@@ -56,7 +56,7 @@ I suggest starting with _meteo_ data by https://www.meteoswiss.admin.ch/services
 
 === Spatial
 
-Currently, the _MeteoFungi_ project is focussed on Switzerland, as https://www.meteoswiss.admin.ch[MeteoSwiss] has started to provide access to their data as https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[OGD].
+Currently, the _MeteoShrooms_ project is focussed on Switzerland, as the Swiss meteorological agency https://www.meteoswiss.admin.ch[MeteoSwiss] has started to provide access to their data as https://www.meteoswiss.admin.ch/services-and-publications/service/open-data.html[Open Government Data (OGD)].
 
 === Technical
 
