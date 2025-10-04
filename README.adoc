@@ -88,19 +88,19 @@ Metrics and time series visulizations are currently hosted as a Streamlit dashbo
 == Roadmap
 
 A high-level roadmap structured along the planned release milestones.
-For a more detailed overview, see either https://github.com/networkscientist/meteofungi/issues[Issues] or the detailed https://github.com/users/networkscientist/projects/7[Project Planner].
+For a more detailed overview, see either https://github.com/networkscientist/meteofungi/issues[Issues] or the detailed https://github.com/users/networkscientist/projects/7[Project Planner], where the project is managed.
 
-=== v0.3
+=== Release v0.3 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/1[GitHub milestone details]
 
-* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
-* [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
-* [ ] Make CI test action mandatory to pass on PR https://github.com/networkscientist/meteofungi/issues/56[#56]
-* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
 * [x] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
+* [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
+* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
+* [ ] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
+* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
 * [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
 * [ ] _Release v0.3_
 
-=== v0.4
+=== Release v0.4 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/2[GitHub milestone details]
 
 * [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
 * [ ] Define consistent mypy concept https://github.com/networkscientist/meteofungi/issues/58[#58]
@@ -108,7 +108,7 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 * [ ] Develop issue templates https://github.com/networkscientist/meteofungi/issues/64[#64]
 * [ ] _Release v0.4_
 
-=== v0.5
+=== Release v0.5 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/3[GitHub milestone details]
 
 * [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
 * [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
@@ -117,9 +117,15 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 * [ ] Add st.pills element to select type of station to display in st.multiselect https://github.com/networkscientist/meteofungi/issues/22[#22]
 * [ ] _Release v0.5_
 
-=== v0.6
+=== Release v0.6 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/4[GitHub milestone details]
 
 * [ ] Set up PyPI publishing workflow https://github.com/networkscientist/meteofungi/issues/63[#63]
 * [ ] _Release v0.6_
 
+=== Release v0.7 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/7[GitHub milestone details]
 
+=== Release v0.8 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/8[GitHub milestone details]
+
+=== Release v0.9 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/9[GitHub milestone details]
+
+=== Release v1.0 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/10[GitHub milestone details]
