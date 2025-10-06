@@ -4,26 +4,32 @@ on:
     branches:
       [ master ]
     paths-ignore:
-      - 'docs/**'
-      - 'data/**'
+      - '.gitattributes'
+      - '.github/workflows/**'
+      - '.pre-commit-config.yaml'
       - 'assets/**'
-      - '**.md'
-      - '**.adoc'
+      - 'data/**'
+      - 'docs/**'
       - 'requirements.txt'
       - 'requirements_dev.txt'
-      - '.github/workflows/**'
+      - '**.adoc'
+      - '**.md'
+      - '**.svg'
   pull_request:
     branches:
       [ master ]
     paths-ignore:
-      - 'docs/**'
-      - 'data/**'
+      - '.gitattributes'
+      - '.github/workflows/**'
+      - '.pre-commit-config.yaml'
       - 'assets/**'
-      - '**.md'
-      - '**.adoc'
+      - 'data/**'
+      - 'docs/**'
       - 'requirements.txt'
       - 'requirements_dev.txt'
-      - '.github/workflows/**'
+      - '**.adoc'
+      - '**.md'
+      - '**.svg'
   workflow_dispatch:
 
 # Minimum permissions required by skip-duplicate-actions
@@ -40,7 +46,7 @@ jobs:
       should_skip: ${{ steps.skip_check.outputs.should_skip }}
     steps:
       - id: skip_check
-        uses: fkirc/skip-duplicate-actions@v5
+        uses: fkirc/skip-duplicate-actions@v5.3.1
         with:
           # All of these options are optional, so you can remove them if you are happy with the defaults
           concurrent_skipping: 'never'
@@ -59,20 +65,20 @@ jobs:
           timezoneLinux: "Europe/Berlin"
 
       - name: "Checkout Repo"
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v5.0.0
         with:
           ssh-key: ${{ secrets.DEPLOY_KEY }}
 
+      #      - name: "Set up Python"
+      #        uses: actions/setup-python@v6.0.0
+      #        with:
+      #          python-version-file: "pyproject.toml"
+
       - name: "Install uv"
-        uses: astral-sh/setup-uv@v6.3.1
+        uses: astral-sh/setup-uv@v6.8.0
         with:
           enable-cache: true
           cache-dependency-glob: "uv.lock"
-
-      - name: "Set up Python"
-        uses: actions/setup-python@v5.6.0
-        with:
-          python-version-file: "pyproject.toml"
 
       - name: "Install Project"
         run: uv sync --all-groups
