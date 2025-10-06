@@ -3,12 +3,17 @@
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
+from typing import Mapping
 from zoneinfo import ZoneInfo
 
 import polars as pl
 
 DATA_PATH: Path = Path(__file__).resolve().parents[3].joinpath('data')
-DTYPE_DICT: dict = {'Integer': pl.Int16, 'Float': pl.Float32, 'String': pl.String}
+DTYPE_DICT: dict[str, type[pl.DataType]] = {
+    'Integer': pl.Int16,
+    'Float': pl.Float32,
+    'String': pl.String,
+}
 
 METEO_CSV_ENCODING: str = 'ISO-8859-1'
 META_FILE_PATH_DICT: dict[str, list[str]] = {
@@ -21,7 +26,7 @@ META_FILE_PATH_DICT: dict[str, list[str]] = {
     for meta_type in ['stations', 'parameters', 'datainventory']
 }
 
-SCHEMA_META_STATIONS: dict = {
+SCHEMA_META_STATIONS: dict[str, type[pl.DataType]] = {
     'station_abbr': pl.String,
     'station_name': pl.String,
     'station_canton': pl.String,
@@ -48,7 +53,7 @@ SCHEMA_META_STATIONS: dict = {
     'station_url_en': pl.String,
 }
 
-SCHEMA_META_PARAMETERS: dict = {
+SCHEMA_META_PARAMETERS: dict[str, type[pl.DataType]] = {
     'parameter_shortname': pl.String,
     'parameter_description_de': pl.String,
     'parameter_description_fr': pl.String,
@@ -64,7 +69,7 @@ SCHEMA_META_PARAMETERS: dict = {
     'parameter_unit': pl.String,
 }
 
-SCHEMA_META_DATAINVENTORY: dict = {
+SCHEMA_META_DATAINVENTORY: dict[str, type[pl.DataType]] = {
     'station_abbr': pl.String,
     'parameter_shortname': pl.String,
     'meas_cat_nr': pl.Int8,
@@ -113,7 +118,7 @@ COLS_TO_KEEP_META_DATAINVENTORY: tuple[str, ...] = (
 def load_metadata(
     meta_type: str,
     file_path_dict: dict[str, list[str]],
-    meta_schema: dict,
+    meta_schema: Mapping[str, type[pl.DataType]],
     meta_cols_to_keep: Sequence[str],
 ) -> pl.LazyFrame:
     """Load metadata from a Parquet file.
@@ -162,7 +167,9 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
     raise TypeError(station_type_type_error_string)
 
 
-def load_weather(metadata: pl.LazyFrame, schema_dict_lazyframe: dict) -> pl.LazyFrame:
+def load_weather(
+    metadata: pl.LazyFrame, schema_dict_lazyframe: Mapping[str, type[pl.DataType]]
+) -> pl.LazyFrame:
     stations: pl.DataFrame = (
         metadata.select('station_abbr', 'station_type_en')
         .unique('station_abbr')
@@ -275,7 +282,7 @@ def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.S
 
 
 if __name__ == '__main__':
-    weather_schema_dict: dict = {
+    weather_schema_dict: dict[str, type[pl.DataType]] = {
         colname: DTYPE_DICT[datatype]
         for colname, datatype in load_metadata(
             'parameters',
