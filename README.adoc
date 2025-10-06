@@ -96,9 +96,9 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 
 * [x] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
 * [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
+* [x] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
 * [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
 * [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
-* [ ] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
 * [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
 * [ ] _Release v0.3_
 

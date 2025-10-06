@@ -20,6 +20,7 @@ Allowed types of change:
 
 - (https://github.com/networkscientist/meteofungi/issues/57[#57]) Ruff linting rules defined - https://github.com/networkscientist[@networkscientist]
 - (https://github.com/networkscientist/meteofungi/issues/40[#40]) Issue tags defined - https://github.com/networkscientist[@networkscientist]
+- (https://github.com/networkscientist/meteofungi/issues/56[#56]) CI Action to run pytest on Push/PR written https://github.com/networkscientist[@networkscientist]
 
 == [https://github.com/networkscientist/meteofungi/releases/tag/0.2.0[0.2.0]] - 2025-08-30
 
