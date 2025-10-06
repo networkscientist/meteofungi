@@ -79,8 +79,14 @@ Include documentation of sources and methodology.
 [source,mermaid]
 ....
 flowchart TD
-    A(Prepare Data) --> B(Calculate Model Predictions)
-    B --> C(Present Results)
+    ground[(Ground Properties)] --> prep
+    meteo[(Meteo Data)] --> prep
+    mush[(Mushroom Observations)] --> prep
+    prep[Prepare Data] --> train
+    train[Train AI Model] --> calc
+    train --> model@{ shape: lean-l , label: AI Model}
+    calc[Calculate Model Predictions] --> present
+    present[Present Results]
 ....
 
 === Visualization
