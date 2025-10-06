@@ -29,11 +29,11 @@ TIME_PERIODS: dict[int, datetime] = {
 }
 NUM_DAYS_VAL: int = next(iter(TIME_PERIODS.keys()))
 NUM_DAYS_DELTA: int = tuple(TIME_PERIODS.keys())[1]
-PARAMETER_AGGREGATION_TYPES: dict[str, list[str]] = {
-    'sum': ['rre150h0'],
-    'mean': ['tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'],
+PARAMETER_AGGREGATION_TYPES: dict[str, str | tuple[str, ...]] = {
+    'sum': ('rre150h0',),
+    'mean': ('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
 }
-METRICS_LIST: Sequence[str] = tuple(
+METRICS_LIST: tuple[str, ...] = tuple(
     chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values())
 )
 
@@ -100,7 +100,7 @@ def load_meta_datainventory() -> pl.LazyFrame:
 
 
 @st.cache_data
-def create_station_name_list(_frame_with_stations: pl.LazyFrame) -> Sequence[str]:
+def create_station_name_list(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
     return tuple(
         _frame_with_stations.unique(subset=['station_name'])
         .sort('station_name')
@@ -160,7 +160,7 @@ WEATHER_SHORT_LABEL_DICT: dict[str, str] = {
 }
 df_weather: pl.LazyFrame = load_weather_data()
 metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
-station_name_list: Sequence[str] = create_station_name_list(metrics)
+station_name_list: tuple[str, ...] = create_station_name_list(metrics)
 
 st.title('MeteoShrooms')
 
