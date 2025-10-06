@@ -73,7 +73,7 @@ SCHEMA_META_DATAINVENTORY: dict = {
     'owner': pl.String,
 }
 
-COLS_TO_KEEP_META_STATIONS: Sequence[str] = (
+COLS_TO_KEEP_META_STATIONS: tuple[str, ...] = (
     'station_abbr',
     'station_name',
     'station_canton',
@@ -89,7 +89,7 @@ COLS_TO_KEEP_META_STATIONS: Sequence[str] = (
     'station_coordinates_wgs84_lon',
 )
 
-COLS_TO_KEEP_META_PARAMETERS: Sequence[str] = (
+COLS_TO_KEEP_META_PARAMETERS: tuple[str, ...] = (
     'parameter_datatype',
     'parameter_decimals',
     'parameter_description_de',
@@ -101,7 +101,7 @@ COLS_TO_KEEP_META_PARAMETERS: Sequence[str] = (
     'parameter_unit',
 )
 
-COLS_TO_KEEP_META_DATAINVENTORY: Sequence[str] = (
+COLS_TO_KEEP_META_DATAINVENTORY: tuple[str, ...] = (
     'data_since',
     'data_till',
     'owner',
