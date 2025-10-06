@@ -83,6 +83,9 @@ jobs:
       - name: "Install Project"
         run: uv sync --all-groups
 
-      - name: Run tests
-        # For example, using `pytest`
-        run: uv run pytest
+      - uses: pavelzw/pytest-action@v2.2.0
+        with:
+          custom-pytest: uv run pytest
+          emoji: true
+          verbose: true
+          job-summary: true
