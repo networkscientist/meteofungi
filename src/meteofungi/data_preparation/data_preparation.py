@@ -8,11 +8,11 @@ from zoneinfo import ZoneInfo
 
 import polars as pl
 
-from .constants import (
+from meteofungi.constants import DATA_PATH, TIMEZONE_SWITZERLAND_STRING
+from meteofungi.data_preparation.constants import (
     COLS_TO_KEEP_META_DATAINVENTORY,
     COLS_TO_KEEP_META_PARAMETERS,
     COLS_TO_KEEP_META_STATIONS,
-    DATA_PATH,
     DTYPE_DICT,
     META_FILE_PATH_DICT,
     METEO_CSV_ENCODING,
@@ -123,7 +123,10 @@ def load_weather(
         .sort('reference_timestamp')
         .filter(
             pl.col('reference_timestamp')
-            >= pl.lit(datetime.now(tz=ZoneInfo('Europe/Zurich')) - timedelta(days=31))
+            >= pl.lit(
+                datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
+                - timedelta(days=31)
+            )
         )
         .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
         .agg(
@@ -161,7 +164,7 @@ def create_rainfall_weather_lazyframes(
         **kwargs_lazyframe,
     ).with_columns(
         pl.col('reference_timestamp').dt.replace_time_zone(
-            'Europe/Zurich', non_existent='null'
+            TIMEZONE_SWITZERLAND_STRING, non_existent='null', ambiguous='earliest'
         )
     )
 
