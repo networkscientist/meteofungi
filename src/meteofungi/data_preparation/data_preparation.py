@@ -27,11 +27,13 @@ def load_metadata(
     file_path_dict: dict[str, list[str]],
     meta_schema: Mapping[str, type[pl.DataType]],
     meta_cols_to_keep: Sequence[str],
+    data_path: Path = DATA_PATH,
 ) -> pl.LazyFrame:
     """Load metadata from a Parquet file.
 
     Parameters
     ----------
+    data_path
     meta_type: str
         Metadata source, one of 'parameters', 'stations' or 'datainventory'
     file_path_dict: dict[str, list[str]]
@@ -57,7 +59,7 @@ def load_metadata(
             for file_path in file_path_dict[meta_type]
         ]
     )
-    stations.write_parquet(Path(DATA_PATH, f'meta_{meta_type}.parquet'))
+    stations.write_parquet(Path(data_path, f'meta_{meta_type}.parquet'))
     return stations.lazy()
 
 

@@ -19,23 +19,37 @@ from meteofungi.data_preparation.data_preparation import load_metadata
 
 
 @pytest.fixture(scope='session')
-def data_path():
+def test_data_path():
     data_path: Path = Path(__file__).resolve().parents[0].joinpath('data')
     return data_path
 
 
+@pytest.fixture(scope='class')
+def temporary_data_path(tmp_path_factory):
+    return tmp_path_factory.mktemp('data')
+
+
 @pytest.fixture(scope='session')
-def meta_file_path_dict(data_path):
+def meta_file_path_dict(test_data_path):
     """Creates Dictionary with local metadata file paths"""
     meta_file_path_dict: dict[str, list[str]] = {
         'stations': [
-            str(Path(data_path, f'ogd-smn{meta_suffix}_meta_stations_test_data.csv'))
+            str(
+                Path(
+                    test_data_path, f'ogd-smn{meta_suffix}_meta_stations_test_data.csv'
+                )
+            )
             for ogd_smn_prefix, meta_suffix in zip(
                 ['', '-precip', '-tower'], ['', '-precip', '-tower'], strict=False
             )
         ],
         'parameters': [
-            str(Path(data_path, f'ogd-smn{meta_suffix}_meta_parameters_test_data.csv'))
+            str(
+                Path(
+                    test_data_path,
+                    f'ogd-smn{meta_suffix}_meta_parameters_test_data.csv',
+                )
+            )
             for ogd_smn_prefix, meta_suffix in zip(
                 ['', '-precip', '-tower'], ['', '-precip', '-tower'], strict=False
             )
@@ -43,7 +57,8 @@ def meta_file_path_dict(data_path):
         'datainventory': [
             str(
                 Path(
-                    data_path, f'ogd-smn{meta_suffix}_meta_datainventory_test_data.csv'
+                    test_data_path,
+                    f'ogd-smn{meta_suffix}_meta_datainventory_test_data.csv',
                 )
             )
             for ogd_smn_prefix, meta_suffix in zip(
@@ -55,29 +70,31 @@ def meta_file_path_dict(data_path):
 
 
 @pytest.fixture
-def lf_meta_stations_test_result(data_path):
+def lf_meta_stations_test_result(test_data_path):
     """Loads stations test result into LazyFrame"""
-    return pl.scan_csv(str(Path(data_path, 'ogd-smn_meta_stations_test_result.csv')))
+    return pl.scan_csv(
+        str(Path(test_data_path, 'ogd-smn_meta_stations_test_result.csv'))
+    )
 
 
 @pytest.fixture
-def lf_meta_parameters_test_result(data_path):
+def lf_meta_parameters_test_result(test_data_path):
     """Loads parameters test result into LazyFrame"""
     return pl.scan_csv(
-        str(Path(data_path, 'ogd-smn_meta_parameters_test_result.csv'))
+        str(Path(test_data_path, 'ogd-smn_meta_parameters_test_result.csv'))
     ).cast({cs.integer(): pl.Int8})
 
 
 @pytest.fixture
-def lf_meta_datainventory_test_result(data_path):
+def lf_meta_datainventory_test_result(test_data_path):
     """Loads datainventory test result into LazyFrame"""
     return pl.scan_csv(
-        str(Path(data_path, 'ogd-smn_meta_datainventory_test_result.csv'))
+        str(Path(test_data_path, 'ogd-smn_meta_datainventory_test_result.csv'))
     ).cast({cs.integer(): pl.Int8, cs.starts_with('data_'): pl.Datetime})
 
 
 @pytest.fixture(scope='class')
-def attach_lf_meta_stations(request, meta_file_path_dict):
+def attach_lf_meta_stations(request, meta_file_path_dict, temporary_data_path):
     """Returns meta_stations created by load_metadata()"""
     cls = request.node.cls
     cls.lf_meta_stations = load_metadata(
@@ -85,13 +102,14 @@ def attach_lf_meta_stations(request, meta_file_path_dict):
         file_path_dict=meta_file_path_dict,
         meta_schema=SCHEMA_META_STATIONS,
         meta_cols_to_keep=COLS_TO_KEEP_META_STATIONS,
+        data_path=temporary_data_path,
     )
     yield
     del cls.lf_meta_stations
 
 
 @pytest.fixture(scope='class')
-def attach_lf_meta_parameters(request, meta_file_path_dict):
+def attach_lf_meta_parameters(request, meta_file_path_dict, temporary_data_path):
     """Returns meta_parameters created by load_metadata()"""
     cls = request.node.cls
     cls.lf_meta_parameters = load_metadata(
@@ -99,13 +117,14 @@ def attach_lf_meta_parameters(request, meta_file_path_dict):
         file_path_dict=meta_file_path_dict,
         meta_schema=SCHEMA_META_PARAMETERS,
         meta_cols_to_keep=COLS_TO_KEEP_META_PARAMETERS,
+        data_path=temporary_data_path,
     )
     yield
     del cls.lf_meta_parameters
 
 
 @pytest.fixture(scope='class')
-def attach_lf_meta_datainventory(request, meta_file_path_dict):
+def attach_lf_meta_datainventory(request, meta_file_path_dict, temporary_data_path):
     """Returns meta_datainventory created by load_metadata()"""
     cls = request.node.cls
     cls.lf_meta_datainventory = load_metadata(
@@ -113,6 +132,7 @@ def attach_lf_meta_datainventory(request, meta_file_path_dict):
         file_path_dict=meta_file_path_dict,
         meta_schema=SCHEMA_META_DATAINVENTORY,
         meta_cols_to_keep=COLS_TO_KEEP_META_DATAINVENTORY,
+        data_path=temporary_data_path,
     )
     yield
     del cls.lf_meta_datainventory
