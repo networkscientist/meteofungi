@@ -107,3 +107,5 @@ COLS_TO_KEEP_META_DATAINVENTORY: tuple[str, ...] = (
     'parameter_shortname',
     'station_abbr',
 )
+URL_GEO_ADMIN_BASE = 'https://data.geo.admin.ch'
+URL_GEO_ADMIN_STATION_TYPE_BASE = 'ch.meteoschweiz.ogd-smn'
