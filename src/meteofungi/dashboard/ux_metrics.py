@@ -90,16 +90,28 @@ def filter_metrics_time_period(
 
 def calculate_metric_value(
     metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
-) -> pl.LazyFrame | None:
-    if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-        return filter_metrics_time_period(
-            metrics, station_name, number_days, metric_name
-        ).select(pl.col(metric_name) / number_days)
-    if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-        return filter_metrics_time_period(
-            metrics, station_name, number_days, metric_name
-        )
-    return None
+) -> float | None:
+    try:
+        if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
+            return (
+                filter_metrics_time_period(
+                    metrics, station_name, number_days, metric_name
+                )
+                .select(pl.col(metric_name) / number_days)
+                .collect()
+                .item()
+            )
+        if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
+            return (
+                filter_metrics_time_period(
+                    metrics, station_name, number_days, metric_name
+                )
+                .collect()
+                .item()
+            )
+    except ValueError:
+        # If a station has data missing, return None
+        return None
 
 
 def calculate_metric_delta(
@@ -136,12 +148,8 @@ def create_metric_section(
         metrics_list,
         strict=False,
     ):
-        val: float | None = (
-            calculate_metric_value(
-                metrics, metric_name, station_name, number_days=NUM_DAYS_VAL
-            )
-            .collect()
-            .item()
+        val: float | None = calculate_metric_value(
+            metrics, metric_name, station_name, number_days=NUM_DAYS_VAL
         )
 
         metric_label: str = WEATHER_SHORT_LABEL_DICT[metric_name]
@@ -169,7 +177,7 @@ def create_metric_section(
 
 
 def convert_metric_value_to_string_for_metric_section(
-    metric_name: str, val: pl.LazyFrame
+    metric_name: str, val: float
 ) -> str:
     return (
         str(round(val, 1))
