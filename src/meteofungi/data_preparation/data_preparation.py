@@ -81,6 +81,29 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
     raise TypeError(station_type_type_error_string)
 
 
+def generate_download_urls(station: str, station_type: str, timeframe: str) -> str:
+    if timeframe not in {'recent', 'now'}:
+        timeframe_value_error_string = "timeframe needs to be 'recent' or 'now'"
+        raise ValueError(timeframe_value_error_string)
+    if not isinstance(station_type, str):
+        station_type_type_error_string = (
+            'station_type must be String and cannot be None'
+        )
+        raise TypeError(station_type_type_error_string)
+    match station_type:
+        case 'rainfall':
+            station_type_string = '-precip'
+        case 'weather':
+            station_type_string = ''
+    return (
+        f'{URL_GEO_ADMIN_BASE}/{URL_GEO_ADMIN_STATION_TYPE_BASE}{station_type_string}/'
+        + station
+        + f'/ogd-smn{station_type_string}_'
+        + station
+        + f'_h_{timeframe}.csv'
+    )
+
+
 def load_weather(
     metadata: pl.LazyFrame, schema_dict_lazyframe: Mapping[str, type[pl.DataType]]
 ) -> pl.LazyFrame:
@@ -101,29 +124,19 @@ def load_weather(
     station_series_weather: pl.Series = filter_stations_to_series(
         stations, station_type='Automatic weather stations'
     )
-    rainfall_recent: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        station_series_precipitation, 'rainfall', 'recent', kwargs_lazyframe
+    urls_weather = pl.concat(
+        generate_download_urls(station_series_weather, 'weather', period)
+        for period in {'recent', 'now'}
     )
-    rainfall_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        station_series_precipitation, 'rainfall', 'now', kwargs_lazyframe
+    urls_rainfall = pl.concat(
+        generate_download_urls(station_series_precipitation, 'rainfall', period)
+        for period in {'recent', 'now'}
     )
-    weather_recent: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        station_series_weather, 'weather', 'recent', kwargs_lazyframe
+    weather: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        urls_weather, kwargs_lazyframe
     )
-    weather_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        station_series_weather, 'weather', 'now', kwargs_lazyframe
-    )
-    rainfall: pl.LazyFrame = pl.concat(
-        [
-            rainfall_recent,
-            rainfall_now,
-        ]
-    )
-    weather: pl.LazyFrame = pl.concat(
-        [
-            weather_recent,
-            weather_now,
-        ],
+    rainfall: pl.LazyFrame = create_rainfall_weather_lazyframes(
+        urls_rainfall, kwargs_lazyframe
     )
     return (
         pl.concat([rainfall, weather], how='diagonal')
@@ -143,9 +156,7 @@ def load_weather(
     )
 
 
-def create_rainfall_weather_lazyframes(
-    station_series: pl.Series, station_type: str, timeframe: str, kwargs_lazyframe: dict
-) -> pl.LazyFrame:
+def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyFrame:
     """Create LazyFrame from CSV urls
 
     Parameters
@@ -164,10 +175,7 @@ def create_rainfall_weather_lazyframes(
         Polars LazyFrame with rainfall/weather data
     """
     return pl.scan_csv(
-        [
-            generate_download_url(station, station_type, timeframe)
-            for station in station_series
-        ],
+        urls.to_list(),
         **kwargs_lazyframe,
     ).with_columns(
         pl.col('reference_timestamp').dt.replace_time_zone(
