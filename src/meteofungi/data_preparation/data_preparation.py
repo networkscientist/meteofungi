@@ -16,9 +16,11 @@ from meteofungi.data_preparation.constants import (
     DTYPE_DICT,
     META_FILE_PATH_DICT,
     METEO_CSV_ENCODING,
+    PARAMETER_AGGREGATION_TYPES,
     SCHEMA_META_DATAINVENTORY,
     SCHEMA_META_PARAMETERS,
     SCHEMA_META_STATIONS,
+    TIME_PERIODS,
     URL_GEO_ADMIN_BASE,
     URL_GEO_ADMIN_STATION_TYPE_BASE,
 )
@@ -186,6 +188,26 @@ def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyF
     )
 
 
+def create_metrics(
+    weather_data: pl.LazyFrame, time_periods: Mapping[int, datetime]
+) -> pl.LazyFrame:
+    return pl.concat(
+        [
+            weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
+            .drop('reference_timestamp', 'station_name')
+            .group_by('station_abbr')
+            .agg(
+                pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
+                pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
+            )
+            .with_columns(pl.lit(period).alias('time_period').cast(pl.Int8))
+            .unpivot(index=('station_abbr', 'time_period'), variable_name='parameter')
+            .drop_nulls('value')
+            for period, datetime_period in time_periods.items()
+        ]
+    )
+
+
 def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.Series:
     """Filter stations according to station type
 
@@ -236,6 +258,10 @@ if __name__ == '__main__':
     )
     weather_data: pl.LazyFrame = load_weather(
         meta_stations, schema_dict_lazyframe=weather_schema_dict
+    )
+    metrics = create_metrics(weather_data, TIME_PERIODS)
+    metrics.sink_parquet(
+        Path(DATA_PATH, 'metrics.parquet'), compression='brotli', compression_level=11
     )
     weather_data.sink_parquet(
         Path(DATA_PATH, 'weather_data.parquet'),
