@@ -65,13 +65,12 @@ def create_metric_tooltip_string(metric_name: str) -> str:
     return f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {META_PARAMETERS.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").item()}'
 
 
-def create_metric_kwargs(metric_name):
-    metric_kwargs: dict[str, bool | str] = {
+def create_metric_kwargs(metric_name) -> dict[str, bool | str]:
+    return {
         'border': True,
         'help': create_metric_tooltip_string(metric_name),
         'height': 'stretch',
     }
-    return metric_kwargs
 
 
 def filter_metrics_time_period(
