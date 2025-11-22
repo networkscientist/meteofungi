@@ -194,14 +194,19 @@ def create_metrics(
     return pl.concat(
         [
             weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
-            .drop('reference_timestamp', 'station_name')
-            .group_by('station_abbr')
+            .drop(
+                'reference_timestamp',
+            )
+            .group_by(('station_abbr', 'station_name'))
             .agg(
                 pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
                 pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
             )
             .with_columns(pl.lit(period).alias('time_period').cast(pl.Int8))
-            .unpivot(index=('station_abbr', 'time_period'), variable_name='parameter')
+            .unpivot(
+                index=('station_abbr', 'station_name', 'time_period'),
+                variable_name='parameter',
+            )
             .drop_nulls('value')
             for period, datetime_period in time_periods.items()
         ]
