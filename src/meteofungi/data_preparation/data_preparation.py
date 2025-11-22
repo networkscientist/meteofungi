@@ -81,7 +81,9 @@ def generate_download_url(station: str, station_type: str, timeframe: str) -> st
     raise TypeError(station_type_type_error_string)
 
 
-def generate_download_urls(station: str, station_type: str, timeframe: str) -> str:
+def generate_download_urls(
+    station: pl.Series, station_type: str, timeframe: str
+) -> pl.Series:
     if timeframe not in {'recent', 'now'}:
         timeframe_value_error_string = "timeframe needs to be 'recent' or 'now'"
         raise ValueError(timeframe_value_error_string)
