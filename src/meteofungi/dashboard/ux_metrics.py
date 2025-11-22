@@ -44,7 +44,7 @@ def get_metric_emoji(val: float) -> str:
     return '🌧️🌊'  # Very heavy rain
 
 
-def create_metrics_expander_info(num_days_value: float, num_days_delta: float) -> None:
+def create_metrics_expander_info(num_days_value: float, num_days_delta: float):
     """Add a Streamlit expander element with info on time aggregation
 
     Parameters
