@@ -32,9 +32,9 @@ logger.debug('Logger created')
 # --- Load data ---
 st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 logger.debug('Page config set')
-df_weather: pl.LazyFrame = load_weather_data()
+df_weather: pl.LazyFrame = load_weather_data().lazy()
 logger.debug('Weather data LazyFrame loaded')
-metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
+metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS).lazy()
 logger.debug('Metrics LazyFrame created')
 station_name_list: tuple[str, ...] = create_station_name_list(metrics)
 
