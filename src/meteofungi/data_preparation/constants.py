@@ -1,4 +1,6 @@
+from datetime import datetime, timedelta
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import polars as pl
 
@@ -109,3 +111,16 @@ COLS_TO_KEEP_META_DATAINVENTORY: tuple[str, ...] = (
 )
 URL_GEO_ADMIN_BASE = 'https://data.geo.admin.ch'
 URL_GEO_ADMIN_STATION_TYPE_BASE = 'ch.meteoschweiz.ogd-smn'
+
+PARAMETER_AGGREGATION_TYPES: dict[str, tuple[str, ...]] = {
+    'sum': ('rre150h0',),
+    'mean': ('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
+}
+TIMEZONE_SWITZERLAND_STRING: str = 'Europe/Zurich'
+TIME_PERIOD_VALUES: tuple[int, ...] = (3, 7, 14, 30)
+TIME_PERIODS: dict[int, datetime] = {
+    period: (
+        datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING)) - timedelta(days=period)
+    )
+    for period in TIME_PERIOD_VALUES
+}
