@@ -1,7 +1,6 @@
 import re
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import polars as pl
 import streamlit as st
@@ -13,7 +12,6 @@ from meteofungi.constants import (
 )
 from meteofungi.dashboard.constants import (
     METRICS_STRINGS,
-    PARAMETER_AGGREGATION_TYPES,
     SIDEBAR_MAX_SELECTIONS,
 )
 
@@ -61,25 +59,6 @@ def create_stations_options_selected(station_name_list):
 
 
 @st.cache_data
-def create_metrics(
-    _weather_data: pl.LazyFrame, time_periods: Mapping[int, datetime]
-) -> pl.DataFrame:
-    return pl.concat(
-        [
-            _weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
-            .drop('reference_timestamp')
-            .group_by(('station_abbr', 'station_name'))
-            .agg(
-                pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
-                pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
-            )
-            .with_columns(pl.lit(period).alias('time_period'))
-            for period, datetime_period in time_periods.items()
-        ]
-    ).collect()
-
-
-@st.cache_data
 def create_station_name_list(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
     return tuple(
         _frame_with_stations.unique(subset=('station_name',))
@@ -120,6 +99,15 @@ def load_weather_data() -> pl.DataFrame:
         pl.col('reference_timestamp').dt.replace_time_zone(
             TIMEZONE_SWITZERLAND_STRING, non_existent='null'
         )
+    )
+
+
+@st.cache_data
+def load_metric_data() -> pl.DataFrame:
+    return pl.read_parquet(Path(DATA_PATH, 'metrics.parquet')).pivot(
+        'parameter',
+        index=('station_abbr', 'station_name', 'time_period'),
+        values='value',
     )
 
 

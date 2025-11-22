@@ -9,16 +9,15 @@ from meteofungi.dashboard.constants import (
     METRICS_STRINGS,
     NUM_DAYS_DELTA,
     NUM_DAYS_VAL,
-    TIME_PERIODS,
 )
 from meteofungi.dashboard.dashboard_map import draw_map
 from meteofungi.dashboard.dashboard_timeseries_chart import create_area_chart
 from meteofungi.dashboard.dashboard_utils import (
     META_STATIONS,
-    create_metrics,
     create_station_frame_for_map,
     create_station_name_list,
     create_stations_options_selected,
+    load_metric_data,
     load_weather_data,
 )
 from meteofungi.dashboard.ux_metrics import (
@@ -34,7 +33,7 @@ st.set_page_config(layout='wide', initial_sidebar_state='expanded')
 logger.debug('Page config set')
 df_weather: pl.LazyFrame = load_weather_data().lazy()
 logger.debug('Weather data LazyFrame loaded')
-metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS).lazy()
+metrics: pl.LazyFrame = load_metric_data().lazy()
 logger.debug('Metrics LazyFrame created')
 station_name_list: tuple[str, ...] = create_station_name_list(metrics)
 
