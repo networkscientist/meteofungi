@@ -38,21 +38,38 @@ metrics: pl.LazyFrame = create_metrics(df_weather, TIME_PERIODS)
 logger.debug('Metrics LazyFrame created')
 station_name_list: tuple[str, ...] = create_station_name_list(metrics)
 
-st.title('MeteoShrooms')
 
-with st.sidebar:
-    st.title('Stations')
-    stations_options_selected = create_stations_options_selected(station_name_list)
+def main():
+    st.title('MeteoShrooms')
 
-with st.container():
-    create_area_chart(df_weather, stations_options_selected)
-    on: bool = st.toggle('Hide Map')
+    with st.sidebar:
+        st.title('Stations')
+        stations_options_selected = create_stations_options_selected(station_name_list)
 
-    if not on:
-        draw_map(create_station_frame_for_map(META_STATIONS))
+    with st.container():
+        create_area_chart(df_weather, stations_options_selected)
+        on: bool = st.toggle('Hide Map')
 
-    for station in stations_options_selected:
-        create_metric_section(metrics, station, METRICS_STRINGS)
-    create_metrics_expander_info(
-        num_days_value=NUM_DAYS_VAL, num_days_delta=NUM_DAYS_DELTA
-    )
+        if not on:
+            draw_map(create_station_frame_for_map(META_STATIONS))
+
+        for station in stations_options_selected:
+            create_metric_section(metrics, station, METRICS_STRINGS)
+        create_metrics_expander_info(
+            num_days_value=NUM_DAYS_VAL, num_days_delta=NUM_DAYS_DELTA
+        )
+
+
+if __name__ == '__main__':
+    # cProfile.run("main()", sort='ncalls')
+    # import cProfile
+    # from pstats import Stats
+    #
+    # pr = cProfile.Profile()
+    # pr.enable()
+
+    main()
+
+    # pr.disable()
+    # stats = Stats(pr)
+    # stats.sort_stats('tottime').print_stats(10)
