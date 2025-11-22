@@ -118,21 +118,34 @@ def create_metric_section(
 
         metric_label: str = WEATHER_SHORT_LABEL_DICT[metric_name]
         if val is not None:
-            delta: float | None = val - calculate_metric_value(
-                metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
+            delta: str | None = calculate_metric_delta(
+                metric_name, metrics, station_name, val
             )
             col.metric(
                 label=metric_label,
                 value=convert_metric_value_to_string_for_metric_section(
                     metric_name, val
                 ),
-                delta=str(round(delta, 1)),
+                delta=delta,
                 **create_metric_kwargs(metric_name),
             )
         else:
             col.metric(
                 label=metric_label, value='-', **create_metric_kwargs(metric_name)
             )
+
+
+def calculate_metric_delta(
+    metric_name: str, metrics: pl.LazyFrame, station_name: str, val: float
+) -> str:
+    val_delta = calculate_metric_value(
+        metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
+    )
+    if isinstance(val_delta, float):
+        return str(
+            round(val - val_delta, 1),
+        )
+    return '-'
 
 
 def convert_metric_value_to_string_for_metric_section(
