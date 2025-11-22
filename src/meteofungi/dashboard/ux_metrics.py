@@ -63,7 +63,7 @@ def create_metrics_expander_info(num_days_value: float, num_days_delta: float) -
 
 
 def create_metric_tooltip_string(metric_name: str) -> str:
-    return f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {META_PARAMETERS.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").collect().item()}'
+    return f'{WEATHER_COLUMN_NAMES_DICT[metric_name]} in {META_PARAMETERS.filter(pl.col("parameter_shortname") == metric_name).select("parameter_unit").item()}'
 
 
 def create_metric_kwargs(metric_name):
@@ -75,57 +75,29 @@ def create_metric_kwargs(metric_name):
     return metric_kwargs
 
 
-def calculate_metric_value_if_greater_zero(
-    metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
-) -> int:
-    return (
-        filter_metrics_time_period(
-            metrics,
-            station_name,
-            number_days=number_days,
-            metric_short_code=metric_name,
-        ).item()
-        if (
-            len(
-                filter_metrics_time_period(
-                    metrics,
-                    station_name,
-                    number_days=number_days,
-                    metric_short_code=metric_name,
-                )
-            )
-            > 0
-        )
-        else 0
-    )
-
-
 def filter_metrics_time_period(
     metrics: pl.LazyFrame, station_name: str, number_days: int, metric_short_code: str
-) -> pl.DataFrame:
+) -> pl.LazyFrame:
     return (
         metrics.filter(
             (pl.col('station_name') == station_name)
             & (pl.col('time_period') == number_days)
-        )
-        .select(pl.col(metric_short_code))
-        .collect()
+        ).select(pl.col(metric_short_code))
+        if metrics.select(pl.len()).collect().item() > 0
+        else 0
     )
 
 
 def calculate_metric_value(
     metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
-) -> float | None:
+) -> pl.LazyFrame | None:
     if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-        return (
-            calculate_metric_value_if_greater_zero(
-                metrics, metric_name, station_name, number_days
-            )
-            / number_days
-        )
+        return filter_metrics_time_period(
+            metrics, station_name, number_days, metric_name
+        ).select(pl.col(metric_name) / number_days)
     if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-        return calculate_metric_value_if_greater_zero(
-            metrics, metric_name, station_name, number_days
+        return filter_metrics_time_period(
+            metrics, station_name, number_days, metric_name
         )
     return None
 
@@ -134,31 +106,22 @@ def calculate_metric_delta(
     metrics: pl.LazyFrame,
     metric_name: str,
     station_name: str,
-    value: float | None,
     number_days: int,
-) -> float | None:
-    if value is not None:
-        if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-            return (
-                value
-                - filter_metrics_time_period(
-                    metrics,
-                    station_name,
-                    number_days=number_days,
-                    metric_short_code=metric_name,
-                ).item()
-            ) / number_days
-        if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-            return (
-                value
-                - filter_metrics_time_period(
-                    metrics,
-                    station_name,
-                    number_days=number_days,
-                    metric_short_code=metric_name,
-                ).item()
-            )
-        return None
+) -> pl.LazyFrame | None:
+    if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
+        return filter_metrics_time_period(
+            metrics,
+            station_name,
+            number_days,
+            metric_name,
+        ).select(pl.col(metric_name) / number_days)
+    if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
+        return filter_metrics_time_period(
+            metrics,
+            station_name,
+            number_days=number_days,
+            metric_short_code=metric_name,
+        )
     return None
 
 
@@ -173,20 +136,28 @@ def create_metric_section(
         metrics_list,
         strict=False,
     ):
-        val: float | None = calculate_metric_value(
-            metrics, metric_name, station_name, number_days=NUM_DAYS_VAL
+        val: float | None = (
+            calculate_metric_value(
+                metrics, metric_name, station_name, number_days=NUM_DAYS_VAL
+            )
+            .collect()
+            .item()
         )
-        delta: float | None = calculate_metric_delta(
-            metrics, metric_name, station_name, val, number_days=NUM_DAYS_DELTA
-        )
+
         metric_label: str = WEATHER_SHORT_LABEL_DICT[metric_name]
         if val is not None:
+            delta: float | None = (
+                val
+                - calculate_metric_delta(
+                    metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
+                )
+                .collect()
+                .item()
+            )
             col.metric(
                 label=metric_label,
-                value=(
-                    str(round(val, 1))
-                    + ' '
-                    + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
+                value=convert_metric_value_to_string_for_metric_section(
+                    metric_name, val
                 ),
                 delta=str(round(delta, 1)),
                 **create_metric_kwargs(metric_name),
@@ -195,3 +166,13 @@ def create_metric_section(
             col.metric(
                 label=metric_label, value='-', **create_metric_kwargs(metric_name)
             )
+
+
+def convert_metric_value_to_string_for_metric_section(
+    metric_name: str, val: pl.LazyFrame
+) -> str:
+    return (
+        str(round(val, 1))
+        + ' '
+        + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
+    )
