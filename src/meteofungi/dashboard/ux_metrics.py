@@ -112,29 +112,6 @@ def calculate_metric_value(
         return None
 
 
-def calculate_metric_delta(
-    metrics: pl.LazyFrame,
-    metric_name: str,
-    station_name: str,
-    number_days: int,
-) -> pl.LazyFrame | None:
-    if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-        return filter_metrics_time_period(
-            metrics,
-            station_name,
-            number_days,
-            metric_name,
-        ).select(pl.col(metric_name) / number_days)
-    if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-        return filter_metrics_time_period(
-            metrics,
-            station_name,
-            number_days=number_days,
-            metric_short_code=metric_name,
-        )
-    return None
-
-
 def create_metric_section(
     metrics: pl.LazyFrame, station_name: str, metrics_list: Sequence[str]
 ):
@@ -152,13 +129,8 @@ def create_metric_section(
 
         metric_label: str = WEATHER_SHORT_LABEL_DICT[metric_name]
         if val is not None:
-            delta: float | None = (
-                val
-                - calculate_metric_delta(
-                    metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
-                )
-                .collect()
-                .item()
+            delta: float | None = val - calculate_metric_value(
+                metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
             )
             col.metric(
                 label=metric_label,
