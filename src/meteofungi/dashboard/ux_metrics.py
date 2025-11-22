@@ -90,23 +90,12 @@ def calculate_metric_value(
     metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
 ) -> float | None:
     try:
+        df_filtered = filter_metrics_time_period(
+            metrics, station_name, number_days, metric_name
+        )
         if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-            return (
-                filter_metrics_time_period(
-                    metrics, station_name, number_days, metric_name
-                )
-                .select(pl.col(metric_name) / number_days)
-                .collect()
-                .item()
-            )
-        if metric_name in PARAMETER_AGGREGATION_TYPES['mean']:
-            return (
-                filter_metrics_time_period(
-                    metrics, station_name, number_days, metric_name
-                )
-                .collect()
-                .item()
-            )
+            df_filtered = df_filtered.select(pl.col(metric_name) / number_days)
+        return df_filtered.collect().item()
     except ValueError:
         # If a station has data missing, return None
         return None
