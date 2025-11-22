@@ -9,7 +9,7 @@ from meteofungi.dashboard.constants import NUM_DAYS_DELTA, PARAMETER_AGGREGATION
 from meteofungi.dashboard.dashboard_utils import WEATHER_COLUMN_NAMES_DICT
 
 
-def create_area_chart_frame(frame_weather, stations_options_selected):
+def create_area_chart_frame(frame_weather: pl.DataFrame, stations_options_selected):
     return (
         frame_weather.sort('reference_timestamp')
         .filter(
@@ -32,7 +32,7 @@ def create_area_chart_frame(frame_weather, stations_options_selected):
     )
 
 
-def create_area_chart(df_weather, stations_options_selected):
+def create_area_chart(df_weather: pl.DataFrame, stations_options_selected):
     st.area_chart(
         data=create_area_chart_frame(df_weather, stations_options_selected),
         x='Time',
