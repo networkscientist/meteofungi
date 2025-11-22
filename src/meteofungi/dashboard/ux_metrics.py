@@ -149,8 +149,9 @@ def create_metric_section(
 def convert_metric_value_to_string_for_metric_section(
     metric_name: str, val: float
 ) -> str:
-    return (
-        str(round(val, 1))
-        + ' '
-        + (get_metric_emoji(val) if metric_name == 'rre150h0' else '')
+    return ' '.join(
+        (
+            str(round(val, 1)),
+            (get_metric_emoji(val) if metric_name == 'rre150h0' else ''),
+        )
     )
