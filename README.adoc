@@ -125,7 +125,7 @@ For a more detailed overview, see either https://github.com/networkscientist/met
 * [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
 * [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
 * [ ] Define Geodata Model Basics https://github.com/networkscientist/meteofungi/issues/69[#69]
-* [ ] Move Dashboard Calculations to dashboard.calculations https://github.com/networkscientist/meteofungi/issues/73[#73]
+* [x] Move Dashboard Calculations to dashboard.calculations https://github.com/networkscientist/meteofungi/issues/73[#73]
 * [ ] _Release v0.5_
 
 === Release v0.6 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/4[GitHub milestone details]
