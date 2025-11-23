@@ -142,7 +142,7 @@ def calculate_metric_delta(
     val_delta = calculate_metric_value(
         metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
     )
-    if isinstance(val_delta, float):
+    if val_delta:
         return str(
             round(val - val_delta, 1),
         )
