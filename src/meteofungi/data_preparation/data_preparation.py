@@ -16,6 +16,7 @@ from meteofungi.data_preparation.constants import (
     COLS_TO_KEEP_META_PARAMETERS,
     COLS_TO_KEEP_META_STATIONS,
     DTYPE_DICT,
+    EXPR_WEATHER_AGGREGATION_TYPES,
     META_FILE_PATH_DICT,
     METEO_CSV_ENCODING,
     PARAMETER_AGGREGATION_TYPES,
@@ -146,10 +147,7 @@ def load_weather(
             .group_by_dynamic(
                 'reference_timestamp', every='1h', group_by='station_abbr'
             )
-            .agg(
-                pl.sum('rre150h0'),
-                pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
-            )
+            .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
             .join(
                 metadata.select(('station_abbr', 'station_name')),
                 on=['station_abbr'],
@@ -191,20 +189,11 @@ def load_weather(
         return (
             pl.concat([rainfall, weather], how='diagonal')
             .sort('reference_timestamp')
-            .filter(
-                pl.col('reference_timestamp')
-                >= pl.lit(
-                    datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
-                    - timedelta(days=31)
-                )
-            )
+            .filter(filter_column_timedelta('reference_timestamp', 31))
             .group_by_dynamic(
                 'reference_timestamp', every='1h', group_by='station_abbr'
             )
-            .agg(
-                pl.sum('rre150h0'),
-                pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
-            )
+            .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
             .join(
                 metadata.select(('station_abbr', 'station_name')), on=['station_abbr']
             )
@@ -251,10 +240,7 @@ def create_metrics(
                     'reference_timestamp',
                 )
                 .group_by(('station_abbr', 'station_name'))
-                .agg(
-                    pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
-                    pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
-                )
+                .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
                 .with_columns(pl.lit(period).alias('time_period').cast(pl.Int8))
                 for period, datetime_period in time_periods.items()
             ]
