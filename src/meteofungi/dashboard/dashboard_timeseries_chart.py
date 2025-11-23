@@ -15,7 +15,7 @@ def create_area_chart_frame(
     frame_weather: pl.LazyFrame,
     stations_options_selected: Sequence[str],
     time_period: int,
-):
+) -> pl.LazyFrame:
     return (
         frame_weather.sort('reference_timestamp')
         .filter(
