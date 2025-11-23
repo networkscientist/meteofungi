@@ -95,7 +95,7 @@ def load_weather_data() -> pl.DataFrame:
 def load_metric_data() -> pl.DataFrame:
     return pl.read_parquet(Path(DATA_PATH, 'metrics.parquet')).pivot(
         'parameter',
-        index=('station_abbr', 'station_name', 'time_period'),
+        index={'station_abbr', 'station_name', 'time_period'},
         values='value',
     )
 
