@@ -139,7 +139,7 @@ def create_metric_section(
 def calculate_metric_delta(
     metric_name: str, metrics: pl.LazyFrame, station_name: str, val: float
 ) -> str:
-    val_delta = calculate_metric_value(
+    val_delta: float | None = calculate_metric_value(
         metrics, metric_name, station_name, number_days=NUM_DAYS_DELTA
     )
     if val_delta:
