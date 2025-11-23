@@ -130,3 +130,4 @@ EXPR_WEATHER_AGGREGATION_TYPES = (
 )
 STATION_TYPE_ERROR_STRING = 'station_type must be String and cannot be None'
 TIMEFRAME_VALUE_ERROR_STRING = "timeframe needs to be 'recent' or 'now'"
+TIMEFRAME_STRINGS = {'recent', 'now'}

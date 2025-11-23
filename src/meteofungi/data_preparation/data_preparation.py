@@ -25,6 +25,7 @@ from meteofungi.data_preparation.constants import (
     SCHEMA_META_STATIONS,
     STATION_TYPE_ERROR_STRING,
     TIME_PERIODS,
+    TIMEFRAME_STRINGS,
     TIMEFRAME_VALUE_ERROR_STRING,
     URL_GEO_ADMIN_BASE,
     URL_GEO_ADMIN_STATION_TYPE_BASE,
@@ -178,11 +179,11 @@ def load_weather(
     else:
         urls_weather = pl.concat(
             generate_download_urls(station_series_weather, 'weather', period)
-            for period in {'recent', 'now'}
+            for period in TIMEFRAME_STRINGS
         )
         urls_rainfall = pl.concat(
             generate_download_urls(station_series_precipitation, 'rainfall', period)
-            for period in {'recent', 'now'}
+            for period in TIMEFRAME_STRINGS
         )
         weather: pl.LazyFrame = create_rainfall_weather_lazyframes(
             urls_weather, kwargs_lazyframe
