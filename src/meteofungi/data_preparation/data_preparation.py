@@ -5,7 +5,7 @@ import logging
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Mapping
+from typing import Literal, Mapping
 from zoneinfo import ZoneInfo
 
 import polars as pl
@@ -23,7 +23,9 @@ from meteofungi.data_preparation.constants import (
     SCHEMA_META_DATAINVENTORY,
     SCHEMA_META_PARAMETERS,
     SCHEMA_META_STATIONS,
+    STATION_TYPE_ERROR_STRING,
     TIME_PERIODS,
+    TIMEFRAME_VALUE_ERROR_STRING,
     URL_GEO_ADMIN_BASE,
     URL_GEO_ADMIN_STATION_TYPE_BASE,
 )
@@ -77,22 +79,9 @@ def load_metadata(
     return frame_meta
 
 
-def generate_download_urls(
-    station: pl.Series, station_type: str, timeframe: str
+def combine_urls_parts_to_string(
+    station: pl.Series, station_type_string: str, timeframe: Literal['recent', 'now']
 ) -> pl.Series:
-    if timeframe not in {'recent', 'now'}:
-        timeframe_value_error_string = "timeframe needs to be 'recent' or 'now'"
-        raise ValueError(timeframe_value_error_string)
-    if not isinstance(station_type, str):
-        station_type_type_error_string = (
-            'station_type must be String and cannot be None'
-        )
-        raise TypeError(station_type_type_error_string)
-    match station_type:
-        case 'rainfall':
-            station_type_string = '-precip'
-        case 'weather':
-            station_type_string = ''
     return (
         f'{URL_GEO_ADMIN_BASE}/{URL_GEO_ADMIN_STATION_TYPE_BASE}{station_type_string}/'
         + station
@@ -102,7 +91,22 @@ def generate_download_urls(
     )
 
 
-def filter_column_timedelta(col_name, delta_time):
+def generate_download_urls(
+    station_series: pl.Series, station_type: str, timeframe: str
+) -> pl.Series:
+    if timeframe not in {'recent', 'now'}:
+        raise ValueError(TIMEFRAME_VALUE_ERROR_STRING)
+    if not isinstance(station_type, str):
+        raise TypeError(STATION_TYPE_ERROR_STRING)
+    match station_type:
+        case 'rainfall':
+            station_type_string = '-precip'
+        case 'weather':
+            station_type_string = ''
+    return combine_urls_parts_to_string(station_series, station_type_string, timeframe)
+
+
+def expr_filter_column_timedelta(col_name, delta_time):
     return pl.col(col_name) >= pl.lit(
         datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
         - timedelta(days=delta_time)
@@ -168,7 +172,7 @@ def load_weather(
                     weather,
                 )
             )
-            .filter(filter_column_timedelta('reference_timestamp', 31))
+            .filter(expr_filter_column_timedelta('reference_timestamp', 31))
             .unique()
         )
     else:
@@ -189,7 +193,7 @@ def load_weather(
         return (
             pl.concat([rainfall, weather], how='diagonal')
             .sort('reference_timestamp')
-            .filter(filter_column_timedelta('reference_timestamp', 31))
+            .filter(expr_filter_column_timedelta('reference_timestamp', 31))
             .group_by_dynamic(
                 'reference_timestamp', every='1h', group_by='station_abbr'
             )

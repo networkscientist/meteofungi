@@ -128,3 +128,5 @@ EXPR_WEATHER_AGGREGATION_TYPES = (
     pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
     pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
 )
+STATION_TYPE_ERROR_STRING = 'station_type must be String and cannot be None'
+TIMEFRAME_VALUE_ERROR_STRING = "timeframe needs to be 'recent' or 'now'"
