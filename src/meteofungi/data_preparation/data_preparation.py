@@ -96,7 +96,7 @@ def combine_urls_parts_to_string(
 
 
 def generate_download_urls(
-    station_series: pl.Series, station_type: str, timeframe: str
+    station_series: pl.Series, station_type: str, timeframe: Literal['recent', 'now']
 ) -> pl.Series:
     check_generate_download_urls_arguments_or_raise_error(station_type, timeframe)
     match station_type:
