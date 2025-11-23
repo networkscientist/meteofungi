@@ -31,6 +31,13 @@ logger: logging.Logger = logging.getLogger(__name__)
 console_handler = logging.StreamHandler()
 logger.addHandler(console_handler)
 
+EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN: pl.Expr = (
+    pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
+    .then(pl.lit('sum'))
+    .otherwise(pl.lit('mean'))
+    .alias('type')
+)
+
 
 def load_metadata(
     meta_type: str,
@@ -241,14 +248,6 @@ def create_rainfall_weather_lazyframes(
             TIMEZONE_SWITZERLAND_STRING, non_existent='null', ambiguous='earliest'
         )
     )
-
-
-EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN: pl.Expr = (
-    pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
-    .then(pl.lit('sum'))
-    .otherwise(pl.lit('mean'))
-    .alias('type')
-)
 
 
 def create_metrics(
