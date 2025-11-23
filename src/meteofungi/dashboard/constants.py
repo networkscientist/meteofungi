@@ -20,7 +20,6 @@ METRICS_STRINGS: tuple[str, ...] = tuple(
     chain.from_iterable(PARAMETER_AGGREGATION_TYPES.values())
 )
 
-
 WEATHER_SHORT_LABEL_DICT: dict[str, str] = {
     'rre150h0': 'Precipitation',
     'tre200h0': 'Air Temperature',
@@ -29,11 +28,11 @@ WEATHER_SHORT_LABEL_DICT: dict[str, str] = {
     'tde200h0': 'Dew Point',
 }
 SIDEBAR_MAX_SELECTIONS: int = 5
-COLUMNS_FOR_MAP_FRAME = (
+COLUMNS_FOR_MAP_FRAME = {
     'Short Code',
     'Station Type',
     'station_name',
     'station_coordinates_wgs84_lat',
     'station_coordinates_wgs84_lon',
     'Altitude',
-)
+}
