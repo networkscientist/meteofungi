@@ -119,12 +119,7 @@ def load_weather(
     schema_dict_lazyframe: Mapping[str, type[pl.DataType]],
     from_disk=False,
 ) -> pl.LazyFrame:
-    stations: pl.DataFrame = (
-        metadata.select('station_abbr', 'station_type_en')
-        .unique('station_abbr')
-        .sort('station_abbr')
-        .collect()
-    )
+    stations = filter_unique_station_names(metadata).collect()
     kwargs_lazyframe: dict = {
         'separator': ';',
         'try_parse_dates': True,
@@ -204,6 +199,14 @@ def load_weather(
             )
             .unique()
         )
+
+
+def filter_unique_station_names(metadata: pl.LazyFrame) -> pl.LazyFrame:
+    return (
+        metadata.select('station_abbr', 'station_type_en')
+        .unique('station_abbr')
+        .sort('station_abbr')
+    )
 
 
 def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyFrame:
