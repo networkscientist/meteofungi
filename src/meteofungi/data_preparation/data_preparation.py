@@ -288,16 +288,14 @@ def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.S
     )
 
 
-def create_weather_schema_dict() -> dict[Any, type[pl.DataType]]:
+def create_weather_schema_dict(
+    meta_parameters: pl.LazyFrame,
+) -> dict[Any, type[pl.DataType]]:
     return {
         colname: DTYPE_DICT[datatype]
-        for colname, datatype in load_metadata(
-            'parameters',
-            META_FILE_PATH_DICT,
-            SCHEMA_META_PARAMETERS,
-            COLS_TO_KEEP_META_PARAMETERS,
+        for colname, datatype in meta_parameters.select(
+            pl.col('parameter_shortname'), pl.col('parameter_datatype')
         )
-        .select(pl.col('parameter_shortname'), pl.col('parameter_datatype'))
         .collect()
         .iter_rows()
     }
@@ -312,7 +310,15 @@ if __name__ == '__main__':
     if args.debug:
         logger.setLevel(logging.DEBUG)
     logger.debug('Logger created')
-    weather_schema_dict: dict[str, type[pl.DataType]] = create_weather_schema_dict()
+    meta_parameters: pl.LazyFrame = load_metadata(
+        'parameters',
+        META_FILE_PATH_DICT,
+        SCHEMA_META_PARAMETERS,
+        COLS_TO_KEEP_META_PARAMETERS,
+    )
+    weather_schema_dict: dict[str, type[pl.DataType]] = create_weather_schema_dict(
+        meta_parameters
+    )
     meta_stations: pl.LazyFrame = (
         load_metadata(
             'stations',
