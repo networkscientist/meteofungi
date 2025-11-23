@@ -49,14 +49,17 @@ def main():
         stations_options_selected: list = create_stations_options_selected(
             station_name_list
         )
-        selection = st.pills('Time Period', TIME_PERIODS.keys(), default=7)
-
-    with st.container():
-        create_area_chart(df_weather, stations_options_selected, selection, 'rre150h0')
+        time_period_selected: int = st.pills(
+            'Time Period', TIME_PERIODS.keys(), default=7
+        )
         on: bool = st.toggle('Hide Map')
+    with st.container():
+        create_area_chart(
+            df_weather, stations_options_selected, time_period_selected, 'rre150h0'
+        )
 
         if not on:
-            draw_map(metrics, 'rre150h0', selection)
+            draw_map(metrics, 'rre150h0', time_period_selected)
 
         for station in stations_options_selected:
             create_metric_section(metrics, station, METRICS_STRINGS)
