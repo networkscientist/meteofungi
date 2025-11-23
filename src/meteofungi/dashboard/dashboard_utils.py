@@ -31,7 +31,7 @@ def load_metadata_to_frame(meta_type: str) -> pl.DataFrame:
 
 
 @st.cache_data
-def collect_meta_params_to_dicts(_metadata):
+def collect_meta_params_to_dicts(_metadata: pl.DataFrame) -> tuple[dict[str, Any]]:
     rows: tuple[dict[str, Any]] = tuple(
         _metadata.to_dicts(),
     )
@@ -39,7 +39,7 @@ def collect_meta_params_to_dicts(_metadata):
 
 
 @st.cache_data
-def create_meta_map(_metadata):
+def create_meta_map(_metadata: pl.DataFrame):
     meta_map: dict = {
         r['parameter_shortname']: re.search(
             parameter_description_extraction_pattern, r['parameter_description_en']
