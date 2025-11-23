@@ -29,3 +29,11 @@ WEATHER_SHORT_LABEL_DICT: dict[str, str] = {
     'tde200h0': 'Dew Point',
 }
 SIDEBAR_MAX_SELECTIONS: int = 5
+COLUMNS_FOR_MAP_FRAME = (
+    'Short Code',
+    'Station Type',
+    'station_name',
+    'station_coordinates_wgs84_lat',
+    'station_coordinates_wgs84_lon',
+    'Altitude',
+)

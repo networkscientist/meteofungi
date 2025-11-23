@@ -11,6 +11,7 @@ from meteofungi.constants import (
     parameter_description_extraction_pattern,
 )
 from meteofungi.dashboard.constants import (
+    COLUMNS_FOR_MAP_FRAME,
     METRICS_STRINGS,
     SIDEBAR_MAX_SELECTIONS,
 )
@@ -79,18 +80,7 @@ def create_station_frame_for_map(_frame_with_stations: pl.DataFrame) -> pl.DataF
         .cast(pl.Int16)
         .cast(pl.String)
         .add(' m.a.s.l'),
-    ).select(
-        pl.col(
-            (
-                'Short Code',
-                'Station Type',
-                'station_name',
-                'station_coordinates_wgs84_lat',
-                'station_coordinates_wgs84_lon',
-                'Altitude',
-            )
-        )
-    )
+    ).select(pl.col(COLUMNS_FOR_MAP_FRAME))
 
 
 @st.cache_data
