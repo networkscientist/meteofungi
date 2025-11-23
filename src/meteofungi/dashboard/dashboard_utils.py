@@ -19,11 +19,11 @@ from meteofungi.dashboard.constants import (
 
 @st.cache_data
 def load_metadata_to_frame(meta_type: str) -> pl.DataFrame:
-    """Load  metadata
+    """Load metadata
 
     Returns
     -------
-        Metadata in Polars LazyFrame
+        Metadata in Polars DataFrame
     """
     return pl.read_parquet(
         Path(DATA_PATH, f'meta_{meta_type.lower()}.parquet')
@@ -59,7 +59,7 @@ def create_stations_options_selected(station_name_list) -> list:
 
 
 @st.cache_data
-def create_station_name_list(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
+def create_station_names(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
     return tuple(
         _frame_with_stations.unique(subset=('station_name',))
         .sort('station_name')

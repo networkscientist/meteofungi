@@ -15,7 +15,7 @@ from meteofungi.dashboard.dashboard_timeseries_chart import create_area_chart
 from meteofungi.dashboard.dashboard_utils import (
     META_STATIONS,
     create_station_frame_for_map,
-    create_station_name_list,
+    create_station_names,
     create_stations_options_selected,
     load_metric_data,
     load_weather_data,
@@ -35,7 +35,7 @@ df_weather: pl.LazyFrame = load_weather_data().lazy()
 logger.debug('Weather data LazyFrame loaded')
 metrics: pl.LazyFrame = load_metric_data().lazy()
 logger.debug('Metrics LazyFrame created')
-station_name_list: tuple[str, ...] = create_station_name_list(metrics)
+station_name_list: tuple[str, ...] = create_station_names(metrics)
 
 
 def main():
