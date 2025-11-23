@@ -12,17 +12,13 @@ import polars as pl
 
 from meteofungi.constants import DATA_PATH, TIMEZONE_SWITZERLAND_STRING
 from meteofungi.data_preparation.constants import (
-    COLS_TO_KEEP_META_DATAINVENTORY,
-    COLS_TO_KEEP_META_PARAMETERS,
-    COLS_TO_KEEP_META_STATIONS,
+    ARGS_LOAD_META_DATAINVENTORY,
+    ARGS_LOAD_META_PARAMETERS,
+    ARGS_LOAD_META_STATIONS,
     DTYPE_DICT,
     EXPR_WEATHER_AGGREGATION_TYPES,
-    META_FILE_PATH_DICT,
     METEO_CSV_ENCODING,
     PARAMETER_AGGREGATION_TYPES,
-    SCHEMA_META_DATAINVENTORY,
-    SCHEMA_META_PARAMETERS,
-    SCHEMA_META_STATIONS,
     STATION_TYPE_ERROR_STRING,
     TIME_PERIODS,
     TIMEFRAME_STRINGS,
@@ -311,33 +307,16 @@ if __name__ == '__main__':
         logger.setLevel(logging.DEBUG)
     logger.debug('Logger created')
     meta_parameters: pl.LazyFrame = load_metadata(
-        'parameters',
-        META_FILE_PATH_DICT,
-        SCHEMA_META_PARAMETERS,
-        COLS_TO_KEEP_META_PARAMETERS,
+        'parameters', *ARGS_LOAD_META_PARAMETERS
     )
     weather_schema_dict: dict[str, type[pl.DataType]] = create_weather_schema_dict(
         meta_parameters
     )
     meta_stations: pl.LazyFrame = (
-        load_metadata(
-            'stations',
-            META_FILE_PATH_DICT,
-            SCHEMA_META_STATIONS,
-            COLS_TO_KEEP_META_STATIONS,
-        )
-        .collect()
-        .lazy()
+        load_metadata('stations', *ARGS_LOAD_META_STATIONS).collect().lazy()
     )
     meta_datainventory: pl.LazyFrame = (
-        load_metadata(
-            'datainventory',
-            META_FILE_PATH_DICT,
-            SCHEMA_META_DATAINVENTORY,
-            COLS_TO_KEEP_META_DATAINVENTORY,
-        )
-        .collect()
-        .lazy()
+        load_metadata('datainventory', *ARGS_LOAD_META_DATAINVENTORY).collect().lazy()
     )
     weather_data: pl.LazyFrame = (
         load_weather(
