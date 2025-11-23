@@ -1,5 +1,6 @@
 """Prepare data for the MeteoShrooms dashboard"""
 
+import argparse
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -236,6 +237,10 @@ def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.S
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--metrics', action='store_true')
+    parser.add_argument('-d', '--debug', action='store_true')
+    args = parser.parse_args()
     weather_schema_dict: dict[str, type[pl.DataType]] = {
         colname: DTYPE_DICT[datatype]
         for colname, datatype in load_metadata(
