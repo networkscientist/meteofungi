@@ -101,8 +101,17 @@ def generate_download_urls(
     )
 
 
+def filter_column_timedelta(col_name, delta_time):
+    return pl.col(col_name) >= pl.lit(
+        datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
+        - timedelta(days=delta_time)
+    )
+
+
 def load_weather(
-    metadata: pl.LazyFrame, schema_dict_lazyframe: Mapping[str, type[pl.DataType]]
+    metadata: pl.LazyFrame,
+    schema_dict_lazyframe: Mapping[str, type[pl.DataType]],
+    from_disk=False,
 ) -> pl.LazyFrame:
     stations: pl.DataFrame = (
         metadata.select('station_abbr', 'station_type_en')
@@ -121,36 +130,86 @@ def load_weather(
     station_series_weather: pl.Series = filter_stations_to_series(
         stations, station_type='Automatic weather stations'
     )
-    urls_weather = pl.concat(
-        generate_download_urls(station_series_weather, 'weather', period)
-        for period in {'recent', 'now'}
-    )
-    urls_rainfall = pl.concat(
-        generate_download_urls(station_series_precipitation, 'rainfall', period)
-        for period in {'recent', 'now'}
-    )
-    weather: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        urls_weather, kwargs_lazyframe
-    )
-    rainfall: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        urls_rainfall, kwargs_lazyframe
-    )
-    return (
-        pl.concat([rainfall, weather], how='diagonal')
-        .sort('reference_timestamp')
-        .filter(
-            pl.col('reference_timestamp')
-            >= pl.lit(
-                datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
-                - timedelta(days=31)
+    if from_disk:
+        weather = pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet'))
+        urls_weather = generate_download_urls(station_series_weather, 'weather', 'now')
+        urls_rainfall = generate_download_urls(
+            station_series_precipitation, 'rainfall', 'now'
+        )
+        weather_now = create_rainfall_weather_lazyframes(urls_weather, kwargs_lazyframe)
+        rainfall_now = create_rainfall_weather_lazyframes(
+            urls_rainfall, kwargs_lazyframe
+        )
+        weather_new = (
+            pl.concat([rainfall_now, weather_now], how='diagonal')
+            .sort('reference_timestamp')
+            .group_by_dynamic(
+                'reference_timestamp', every='1h', group_by='station_abbr'
+            )
+            .agg(
+                pl.sum('rre150h0'),
+                pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
+            )
+            .join(
+                metadata.select(('station_abbr', 'station_name')),
+                on=['station_abbr'],
             )
         )
-        .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
-        .agg(
-            pl.sum('rre150h0'), pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0')
+        return (
+            pl.concat(
+                (
+                    weather_new.filter(
+                        pl.col('reference_timestamp')
+                        > weather.select('reference_timestamp').max().collect().item()
+                    )
+                    .select(weather.drop('station_name').collect_schema().names())
+                    .join(
+                        metadata.select(('station_abbr', 'station_name')),
+                        on=['station_abbr'],
+                    ),
+                    weather,
+                )
+            )
+            .filter(filter_column_timedelta('reference_timestamp', 31))
+            .unique()
         )
-        .join(metadata.select(('station_abbr', 'station_name')), on=['station_abbr'])
-    )
+    else:
+        urls_weather = pl.concat(
+            generate_download_urls(station_series_weather, 'weather', period)
+            for period in {'recent', 'now'}
+        )
+        urls_rainfall = pl.concat(
+            generate_download_urls(station_series_precipitation, 'rainfall', period)
+            for period in {'recent', 'now'}
+        )
+        weather: pl.LazyFrame = create_rainfall_weather_lazyframes(
+            urls_weather, kwargs_lazyframe
+        )
+        rainfall: pl.LazyFrame = create_rainfall_weather_lazyframes(
+            urls_rainfall, kwargs_lazyframe
+        )
+        return (
+            pl.concat([rainfall, weather], how='diagonal')
+            .sort('reference_timestamp')
+            .filter(
+                pl.col('reference_timestamp')
+                >= pl.lit(
+                    datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
+                    - timedelta(days=31)
+                )
+            )
+            .group_by_dynamic(
+                'reference_timestamp', every='1h', group_by='station_abbr'
+            )
+            .agg(
+                pl.sum('rre150h0'),
+                pl.mean('tre200h0', 'ure200h0', 'fu3010h0', 'tde200h0'),
+            )
+            .join(
+                metadata.select(('station_abbr', 'station_name')), on=['station_abbr']
+            )
+            .unique()
+        )
 
 
 def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyFrame:
@@ -240,6 +299,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', '--metrics', action='store_true')
     parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument('-f', '--fulldownload', action='store_true')
     args = parser.parse_args()
     if args.debug:
         logger.setLevel(logging.DEBUG)
@@ -277,7 +337,11 @@ if __name__ == '__main__':
         .lazy()
     )
     weather_data: pl.LazyFrame = (
-        load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
+        load_weather(
+            meta_stations,
+            schema_dict_lazyframe=weather_schema_dict,
+            from_disk=args.fulldownload,
+        )
         .collect()
         .lazy()
     )
