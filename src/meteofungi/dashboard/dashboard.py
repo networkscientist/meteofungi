@@ -9,12 +9,11 @@ from meteofungi.dashboard.constants import (
     METRICS_STRINGS,
     NUM_DAYS_DELTA,
     NUM_DAYS_VAL,
+    TIME_PERIODS,
 )
 from meteofungi.dashboard.dashboard_map import draw_map
 from meteofungi.dashboard.dashboard_timeseries_chart import create_area_chart
 from meteofungi.dashboard.dashboard_utils import (
-    META_STATIONS,
-    create_station_frame_for_map,
     create_station_names,
     create_stations_options_selected,
     load_metric_data,
@@ -24,18 +23,6 @@ from meteofungi.dashboard.ux_metrics import (
     create_metric_section,
     create_metrics_expander_info,
 )
-
-logger: Logger = get_logger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.debug('Logger created')
-# --- Load data ---
-st.set_page_config(layout='wide', initial_sidebar_state='expanded')
-logger.debug('Page config set')
-df_weather: pl.LazyFrame = load_weather_data().lazy()
-logger.debug('Weather data LazyFrame loaded')
-metrics: pl.LazyFrame = load_metric_data().lazy()
-logger.debug('Metrics LazyFrame created')
-station_name_list: tuple[str, ...] = create_station_names(metrics)
 
 
 def main():
@@ -57,13 +44,14 @@ def main():
         stations_options_selected: list = create_stations_options_selected(
             station_name_list
         )
+        selection = st.pills('Time Period', TIME_PERIODS.keys(), default=7)
 
     with st.container():
-        create_area_chart(df_weather, stations_options_selected)
+        create_area_chart(df_weather, stations_options_selected, selection, 'rre150h0')
         on: bool = st.toggle('Hide Map')
 
         if not on:
-            draw_map(create_station_frame_for_map(META_STATIONS))
+            draw_map(metrics, 'rre150h0', selection)
 
         for station in stations_options_selected:
             create_metric_section(metrics, station, METRICS_STRINGS)
