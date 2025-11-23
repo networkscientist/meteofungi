@@ -31,11 +31,10 @@ def load_metadata_to_frame(meta_type: str) -> pl.DataFrame:
 
 
 @st.cache_data
-def collect_meta_params_to_dicts(_metadata: pl.DataFrame) -> tuple[dict[str, Any]]:
-    rows: tuple[dict[str, Any]] = tuple(
+def collect_meta_params_to_dicts(_metadata: pl.DataFrame) -> tuple[dict[str, Any], ...]:
+    return tuple(
         _metadata.to_dicts(),
     )
-    return rows
 
 
 @st.cache_data
@@ -49,7 +48,7 @@ def create_meta_map(_metadata: pl.DataFrame):
     return meta_map
 
 
-def create_stations_options_selected(station_name_list):
+def create_stations_options_selected(station_name_list) -> list:
     return st.multiselect(
         label='Stations:',
         options=station_name_list,

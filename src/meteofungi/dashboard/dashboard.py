@@ -43,7 +43,9 @@ def main():
 
     with st.sidebar:
         st.title('Stations')
-        stations_options_selected = create_stations_options_selected(station_name_list)
+        stations_options_selected: list = create_stations_options_selected(
+            station_name_list
+        )
 
     with st.container():
         create_area_chart(df_weather, stations_options_selected)
