@@ -141,17 +141,8 @@ def load_weather(
         rainfall_now = create_rainfall_weather_lazyframes(
             urls_rainfall, kwargs_lazyframe
         )
-        weather_new = (
-            pl.concat([rainfall_now, weather_now], how='diagonal')
-            .sort('reference_timestamp')
-            .group_by_dynamic(
-                'reference_timestamp', every='1h', group_by='station_abbr'
-            )
-            .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
-            .join(
-                metadata.select(('station_abbr', 'station_name')),
-                on=['station_abbr'],
-            )
+        weather_new = concat_rainfall_weather_lazyframes(
+            metadata, rainfall_now, weather_now
         )
         return (
             pl.concat(
@@ -186,19 +177,24 @@ def load_weather(
         rainfall: pl.LazyFrame = create_rainfall_weather_lazyframes(
             urls_rainfall, kwargs_lazyframe
         )
-        return (
-            pl.concat([rainfall, weather], how='diagonal')
-            .sort('reference_timestamp')
-            .filter(expr_filter_column_timedelta('reference_timestamp', 31))
-            .group_by_dynamic(
-                'reference_timestamp', every='1h', group_by='station_abbr'
-            )
-            .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
-            .join(
-                metadata.select(('station_abbr', 'station_name')), on=['station_abbr']
-            )
-            .unique()
+        return concat_rainfall_weather_lazyframes(metadata, rainfall, weather)
+
+
+def concat_rainfall_weather_lazyframes(
+    metadata: pl.LazyFrame, frame_rainfall: pl.LazyFrame, frame_weather: pl.LazyFrame
+) -> pl.LazyFrame:
+    return (
+        pl.concat([frame_rainfall, frame_weather], how='diagonal')
+        .sort('reference_timestamp')
+        .filter(expr_filter_column_timedelta('reference_timestamp', 31))
+        .group_by_dynamic('reference_timestamp', every='1h', group_by='station_abbr')
+        .agg(*EXPR_WEATHER_AGGREGATION_TYPES)
+        .join(
+            metadata.select(('station_abbr', 'station_name')),
+            on=['station_abbr'],
         )
+        .unique()
+    )
 
 
 def filter_unique_station_names(metadata: pl.LazyFrame) -> pl.LazyFrame:
