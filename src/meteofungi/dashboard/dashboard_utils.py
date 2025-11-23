@@ -73,7 +73,7 @@ def create_station_names(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
 
 @st.cache_data
 def create_station_frame_for_map(
-    _frame_with_stations: pl.LazyFrame, _metrics: pl.LazyFrame, period: int
+    _frame_with_stations: pl.LazyFrame, _metrics: pl.LazyFrame, time_period: int
 ) -> pl.LazyFrame:
     return (
         _frame_with_stations.with_columns(
@@ -86,7 +86,7 @@ def create_station_frame_for_map(
         )
         .select(pl.col(COLUMNS_FOR_MAP_FRAME))
         .join(
-            _metrics.filter(pl.col('time_period') == period),
+            _metrics.filter(pl.col('time_period') == time_period),
             left_on='Short Code',
             right_on='station_abbr',
         )
