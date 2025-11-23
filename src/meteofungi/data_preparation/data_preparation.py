@@ -91,10 +91,7 @@ def combine_urls_parts_to_string(
 def generate_download_urls(
     station_series: pl.Series, station_type: str, timeframe: str
 ) -> pl.Series:
-    if timeframe not in TIMEFRAME_STRINGS:
-        raise ValueError(TIMEFRAME_VALUE_ERROR_STRING)
-    if not isinstance(station_type, str):
-        raise TypeError(STATION_TYPE_ERROR_STRING)
+    check_generate_download_urls_arguments_or_raise_error(station_type, timeframe)
     match station_type:
         case 'rainfall':
             station_type_string = '-precip'
@@ -103,7 +100,16 @@ def generate_download_urls(
     return combine_urls_parts_to_string(station_series, station_type_string, timeframe)
 
 
-def expr_filter_column_timedelta(col_name, delta_time):
+def check_generate_download_urls_arguments_or_raise_error(
+    station_type: str, timeframe: str
+):
+    if timeframe not in TIMEFRAME_STRINGS:
+        raise ValueError(TIMEFRAME_VALUE_ERROR_STRING)
+    if not isinstance(station_type, str):
+        raise TypeError(STATION_TYPE_ERROR_STRING)
+
+
+def expr_filter_column_timedelta(col_name: str, delta_time: int) -> pl.Expr:
     return pl.col(col_name) >= pl.lit(
         datetime.now(tz=ZoneInfo(TIMEZONE_SWITZERLAND_STRING))
         - timedelta(days=delta_time)
