@@ -40,7 +40,7 @@ def main():
     st.title('MeteoShrooms')
 
     with st.sidebar:
-        st.title('Stations')
+        st.title('Selection')
         stations_options_selected: list = create_stations_options_selected(
             station_name_list
         )
