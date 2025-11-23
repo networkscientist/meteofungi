@@ -233,6 +233,14 @@ def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyF
     )
 
 
+EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN = (
+    pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
+    .then(pl.lit('sum'))
+    .otherwise(pl.lit('mean'))
+    .alias('type')
+)
+
+
 def create_metrics(
     weather_data: pl.LazyFrame, time_periods: Mapping[int, datetime]
 ) -> pl.LazyFrame:
@@ -254,12 +262,7 @@ def create_metrics(
             variable_name='parameter',
         )
         .drop_nulls('value')
-        .with_columns(
-            pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
-            .then(pl.lit('sum'))
-            .otherwise(pl.lit('mean'))
-            .alias('type'),
-        )
+        .with_columns(EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN)
     )
 
 
