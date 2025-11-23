@@ -94,9 +94,9 @@ def generate_download_urls(
     check_generate_download_urls_arguments_or_raise_error(station_type, timeframe)
     match station_type:
         case 'rainfall':
-            station_type_string = '-precip'
+            station_type_string: str = '-precip'
         case 'weather':
-            station_type_string = ''
+            station_type_string: str = ''
     return combine_urls_parts_to_string(station_series, station_type_string, timeframe)
 
 
@@ -171,11 +171,11 @@ def load_weather(
             .unique()
         )
     else:
-        urls_weather = pl.concat(
+        urls_weather: pl.Series = pl.concat(
             generate_download_urls(station_series_weather, 'weather', period)
             for period in TIMEFRAME_STRINGS
         )
-        urls_rainfall = pl.concat(
+        urls_rainfall: pl.Series = pl.concat(
             generate_download_urls(station_series_precipitation, 'rainfall', period)
             for period in TIMEFRAME_STRINGS
         )
@@ -213,7 +213,9 @@ def filter_unique_station_names(metadata: pl.LazyFrame) -> pl.LazyFrame:
     )
 
 
-def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyFrame:
+def create_rainfall_weather_lazyframes(
+    urls: pl.Series, kwargs_lazyframe: dict
+) -> pl.LazyFrame:
     """Create LazyFrame from CSV urls
 
     Parameters
@@ -241,7 +243,7 @@ def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyF
     )
 
 
-EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN = (
+EXPR_METRICS_AGGREGATION_TYPE_WHEN_THEN: pl.Expr = (
     pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
     .then(pl.lit('sum'))
     .otherwise(pl.lit('mean'))
@@ -340,7 +342,7 @@ if __name__ == '__main__':
         .lazy()
     )
     if args.metrics:
-        metrics = create_metrics(weather_data, TIME_PERIODS)
+        metrics: pl.LazyFrame = create_metrics(weather_data, TIME_PERIODS)
         metrics.sink_parquet(
             Path(DATA_PATH, 'metrics.parquet'),
             compression='brotli',
