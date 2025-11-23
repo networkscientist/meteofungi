@@ -121,7 +121,7 @@ def load_weather(
     schema_dict_lazyframe: Mapping[str, type[pl.DataType]],
     from_disk=False,
 ) -> pl.LazyFrame:
-    stations = filter_unique_station_names(metadata).collect()
+    stations: pl.DataFrame = filter_unique_station_names(metadata).collect()
     kwargs_lazyframe: dict = {
         'separator': ';',
         'try_parse_dates': True,
@@ -134,24 +134,30 @@ def load_weather(
         stations, station_type='Automatic weather stations'
     )
     if from_disk:
-        weather = pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet'))
-        urls_weather = generate_download_urls(station_series_weather, 'weather', 'now')
-        urls_rainfall = generate_download_urls(
+        weather: pl.LazyFrame = pl.scan_parquet(Path(DATA_PATH, 'weather_data.parquet'))
+        urls_weather: pl.Series = generate_download_urls(
+            station_series_weather, 'weather', 'now'
+        )
+        urls_rainfall: pl.Series = generate_download_urls(
             station_series_precipitation, 'rainfall', 'now'
         )
-        weather_now = create_rainfall_weather_lazyframes(urls_weather, kwargs_lazyframe)
-        rainfall_now = create_rainfall_weather_lazyframes(
+        weather_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
+            urls_weather, kwargs_lazyframe
+        )
+        rainfall_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
             urls_rainfall, kwargs_lazyframe
         )
-        weather_new = concat_rainfall_weather_lazyframes(
+        weather_new: pl.LazyFrame = concat_rainfall_weather_lazyframes(
             metadata, rainfall_now, weather_now
+        )
+        weather_max_timestamp: datetime = (
+            weather.select('reference_timestamp').max().collect().item()
         )
         return (
             pl.concat(
                 (
                     weather_new.filter(
-                        pl.col('reference_timestamp')
-                        > weather.select('reference_timestamp').max().collect().item()
+                        pl.col('reference_timestamp') > weather_max_timestamp
                     )
                     .select(weather.drop('station_name').collect_schema().names())
                     .join(
