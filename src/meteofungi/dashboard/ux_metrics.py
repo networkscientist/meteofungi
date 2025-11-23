@@ -4,6 +4,7 @@ from typing import Sequence
 
 import polars as pl
 import streamlit as st
+from polars import LazyFrame
 from streamlit.delta_generator import DeltaGenerator
 
 from meteofungi.dashboard.constants import (
@@ -90,7 +91,7 @@ def calculate_metric_value(
     metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
 ) -> float | None:
     try:
-        df_filtered = filter_metrics_time_period(
+        df_filtered: LazyFrame = filter_metrics_time_period(
             metrics, station_name, number_days, metric_name
         )
         if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
