@@ -51,7 +51,7 @@ def create_meta_map(_metadata: pl.DataFrame):
 
 def create_stations_options_selected(station_name_list) -> list:
     return st.multiselect(
-        label='Stations:',
+        label='Stations',
         options=station_name_list,
         default='Airolo',
         max_selections=SIDEBAR_MAX_SELECTIONS,
