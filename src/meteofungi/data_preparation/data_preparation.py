@@ -1,6 +1,7 @@
 """Prepare data for the MeteoShrooms dashboard"""
 
 import argparse
+import logging
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -26,6 +27,10 @@ from meteofungi.data_preparation.constants import (
     URL_GEO_ADMIN_STATION_TYPE_BASE,
 )
 
+logger: logging.Logger = logging.getLogger(__name__)
+console_handler = logging.StreamHandler()
+logger.addHandler(console_handler)
+
 
 def load_metadata(
     meta_type: str,
@@ -40,7 +45,7 @@ def load_metadata(
     ----------
     data_path
     meta_type: str
-        Metadata source, one of 'parameters', 'stations' or 'datainventory'
+        Metadata source, one of 'parameters', 'frame_meta' or 'datainventory'
     file_path_dict: dict[str, list[str]]
         Dict with URLs to metadata
     meta_schema: dict
@@ -52,7 +57,7 @@ def load_metadata(
     -------
         Metadata loaded into a LazyFrame
     """
-    stations: pl.DataFrame = pl.concat(
+    frame_meta: pl.LazyFrame = pl.concat(
         [
             pl.read_csv(
                 file_path,
@@ -63,25 +68,12 @@ def load_metadata(
             )
             for file_path in file_path_dict[meta_type]
         ]
-    )
-    stations.write_parquet(Path(data_path, f'meta_{meta_type}.parquet'))
-    return stations.lazy()
-
-
-def generate_download_url(station: str, station_type: str, timeframe: str) -> str:
-    if timeframe not in {'recent', 'now'}:
-        timeframe_value_error_string = "timeframe needs to be 'recent' or 'now'"
-        raise ValueError(timeframe_value_error_string)
-    match station_type:
-        case 'rainfall':
-            return (
-                f'{URL_GEO_ADMIN_BASE}/{URL_GEO_ADMIN_STATION_TYPE_BASE}-precip/'
-                f'{station}/ogd-smn-precip_{station}_h_{timeframe}.csv'
-            )
-        case 'weather':
-            return f'{URL_GEO_ADMIN_BASE}/{URL_GEO_ADMIN_STATION_TYPE_BASE}/{station}/ogd-smn_{station}_h_{timeframe}.csv'
-    station_type_type_error_string = 'station_type must be String and cannot be None'
-    raise TypeError(station_type_type_error_string)
+    ).lazy()
+    logger.debug(f'frame_meta with type {meta_type} as pl.LazyFrame created')
+    logger.debug('Try to write frame_meta to parquet')
+    frame_meta.sink_parquet(Path(data_path, f'meta_{meta_type}.parquet'))
+    logger.debug('frame_meta written to parquet')
+    return frame_meta
 
 
 def generate_download_urls(
@@ -192,25 +184,33 @@ def create_rainfall_weather_lazyframes(urls, kwargs_lazyframe: dict) -> pl.LazyF
 def create_metrics(
     weather_data: pl.LazyFrame, time_periods: Mapping[int, datetime]
 ) -> pl.LazyFrame:
-    return pl.concat(
-        [
-            weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
-            .drop(
-                'reference_timestamp',
-            )
-            .group_by(('station_abbr', 'station_name'))
-            .agg(
-                pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
-                pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
-            )
-            .with_columns(pl.lit(period).alias('time_period').cast(pl.Int8))
-            .unpivot(
-                index=('station_abbr', 'station_name', 'time_period'),
-                variable_name='parameter',
-            )
-            .drop_nulls('value')
-            for period, datetime_period in time_periods.items()
-        ]
+    return (
+        pl.concat(
+            [
+                weather_data.filter(pl.col('reference_timestamp') >= datetime_period)
+                .drop(
+                    'reference_timestamp',
+                )
+                .group_by(('station_abbr', 'station_name'))
+                .agg(
+                    pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
+                    pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
+                )
+                .with_columns(pl.lit(period).alias('time_period').cast(pl.Int8))
+                for period, datetime_period in time_periods.items()
+            ]
+        )
+        .unpivot(
+            index=('station_abbr', 'station_name', 'time_period'),
+            variable_name='parameter',
+        )
+        .drop_nulls('value')
+        .with_columns(
+            pl.when(pl.col('parameter').is_in(PARAMETER_AGGREGATION_TYPES['sum']))
+            .then(pl.lit('sum'))
+            .otherwise(pl.lit('mean'))
+            .alias('type'),
+        )
     )
 
 
@@ -241,6 +241,9 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--metrics', action='store_true')
     parser.add_argument('-d', '--debug', action='store_true')
     args = parser.parse_args()
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+    logger.debug('Logger created')
     weather_schema_dict: dict[str, type[pl.DataType]] = {
         colname: DTYPE_DICT[datatype]
         for colname, datatype in load_metadata(
@@ -253,26 +256,38 @@ if __name__ == '__main__':
         .collect()
         .iter_rows()
     }
-
-    meta_stations: pl.LazyFrame = load_metadata(
-        'stations',
-        META_FILE_PATH_DICT,
-        SCHEMA_META_STATIONS,
-        COLS_TO_KEEP_META_STATIONS,
+    meta_stations: pl.LazyFrame = (
+        load_metadata(
+            'stations',
+            META_FILE_PATH_DICT,
+            SCHEMA_META_STATIONS,
+            COLS_TO_KEEP_META_STATIONS,
+        )
+        .collect()
+        .lazy()
     )
-    meta_datainventory: pl.LazyFrame = load_metadata(
-        'datainventory',
-        META_FILE_PATH_DICT,
-        SCHEMA_META_DATAINVENTORY,
-        COLS_TO_KEEP_META_DATAINVENTORY,
+    meta_datainventory: pl.LazyFrame = (
+        load_metadata(
+            'datainventory',
+            META_FILE_PATH_DICT,
+            SCHEMA_META_DATAINVENTORY,
+            COLS_TO_KEEP_META_DATAINVENTORY,
+        )
+        .collect()
+        .lazy()
     )
-    weather_data: pl.LazyFrame = load_weather(
-        meta_stations, schema_dict_lazyframe=weather_schema_dict
+    weather_data: pl.LazyFrame = (
+        load_weather(meta_stations, schema_dict_lazyframe=weather_schema_dict)
+        .collect()
+        .lazy()
     )
-    metrics = create_metrics(weather_data, TIME_PERIODS)
-    metrics.sink_parquet(
-        Path(DATA_PATH, 'metrics.parquet'), compression='brotli', compression_level=11
-    )
+    if args.metrics:
+        metrics = create_metrics(weather_data, TIME_PERIODS)
+        metrics.sink_parquet(
+            Path(DATA_PATH, 'metrics.parquet'),
+            compression='brotli',
+            compression_level=11,
+        )
     weather_data.sink_parquet(
         Path(DATA_PATH, 'weather_data.parquet'),
         compression='brotli',
