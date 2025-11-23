@@ -95,7 +95,7 @@ def combine_urls_parts_to_string(
 def generate_download_urls(
     station_series: pl.Series, station_type: str, timeframe: str
 ) -> pl.Series:
-    if timeframe not in {'recent', 'now'}:
+    if timeframe not in TIMEFRAME_STRINGS:
         raise ValueError(TIMEFRAME_VALUE_ERROR_STRING)
     if not isinstance(station_type, str):
         raise TypeError(STATION_TYPE_ERROR_STRING)
