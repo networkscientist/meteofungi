@@ -14,6 +14,7 @@ from meteofungi.dashboard.constants import (
     COLUMNS_FOR_MAP_FRAME,
     METRICS_STRINGS,
     SIDEBAR_MAX_SELECTIONS,
+    WEATHER_SHORT_LABEL_DICT,
 )
 
 
@@ -71,15 +72,26 @@ def create_station_names(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
 
 
 @st.cache_data
-def create_station_frame_for_map(_frame_with_stations: pl.DataFrame) -> pl.DataFrame:
-    return _frame_with_stations.with_columns(
-        pl.col('station_type_en').alias('Station Type'),
-        pl.col('station_abbr').alias('Short Code'),
-        Altitude=pl.col('station_height_masl')
-        .cast(pl.Int16)
-        .cast(pl.String)
-        .add(' m.a.s.l'),
-    ).select(pl.col(COLUMNS_FOR_MAP_FRAME))
+def create_station_frame_for_map(
+    _frame_with_stations: pl.LazyFrame, _metrics: pl.LazyFrame, period: int
+) -> pl.LazyFrame:
+    return (
+        _frame_with_stations.with_columns(
+            pl.col('station_type_en').alias('Station Type'),
+            pl.col('station_abbr').alias('Short Code'),
+            Altitude=pl.col('station_height_masl')
+            .cast(pl.Int16)
+            .cast(pl.String)
+            .add(' m.a.s.l'),
+        )
+        .select(pl.col(COLUMNS_FOR_MAP_FRAME))
+        .join(
+            _metrics.filter(pl.col('time_period') == period),
+            left_on='Short Code',
+            right_on='station_abbr',
+        )
+        .rename(WEATHER_SHORT_LABEL_DICT)
+    )
 
 
 @st.cache_data
@@ -101,7 +113,7 @@ def load_metric_data() -> pl.DataFrame:
 
 
 META_PARAMETERS: pl.DataFrame = load_metadata_to_frame('parameters')
-META_STATIONS: pl.DataFrame = load_metadata_to_frame('stations')
+META_STATIONS: pl.LazyFrame = load_metadata_to_frame('stations').lazy()
 METRICS_NAMES_DICT: dict[str, str] = {
     m: create_meta_map(META_PARAMETERS).get(m, '') for m in METRICS_STRINGS
 }
