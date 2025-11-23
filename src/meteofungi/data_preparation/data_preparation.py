@@ -5,7 +5,7 @@ import logging
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Literal, Mapping
+from typing import Any, Literal, Mapping
 from zoneinfo import ZoneInfo
 
 import polars as pl
@@ -288,16 +288,8 @@ def filter_stations_to_series(stations: pl.DataFrame, station_type: str) -> pl.S
     )
 
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-m', '--metrics', action='store_true')
-    parser.add_argument('-d', '--debug', action='store_true')
-    parser.add_argument('-f', '--fulldownload', action='store_true')
-    args = parser.parse_args()
-    if args.debug:
-        logger.setLevel(logging.DEBUG)
-    logger.debug('Logger created')
-    weather_schema_dict: dict[str, type[pl.DataType]] = {
+def create_weather_schema_dict() -> dict[Any, type[pl.DataType]]:
+    return {
         colname: DTYPE_DICT[datatype]
         for colname, datatype in load_metadata(
             'parameters',
@@ -309,6 +301,18 @@ if __name__ == '__main__':
         .collect()
         .iter_rows()
     }
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--metrics', action='store_true')
+    parser.add_argument('-d', '--debug', action='store_true')
+    parser.add_argument('-f', '--fulldownload', action='store_true')
+    args = parser.parse_args()
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
+    logger.debug('Logger created')
+    weather_schema_dict: dict[str, type[pl.DataType]] = create_weather_schema_dict()
     meta_stations: pl.LazyFrame = (
         load_metadata(
             'stations',
