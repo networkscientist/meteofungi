@@ -1,3 +1,4 @@
+import argparse
 import logging
 from logging import Logger
 
@@ -26,8 +27,12 @@ from meteofungi.dashboard.ux_metrics import (
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-d', '--debug', action='store_true')
+    args = parser.parse_args()
     logger: Logger = get_logger(__name__)
-    logger.setLevel(logging.DEBUG)
+    if args.debug:
+        logger.setLevel(logging.DEBUG)
     logger.debug('Logger created')
     # --- Load data ---
     st.set_page_config(layout='wide', initial_sidebar_state='expanded')
