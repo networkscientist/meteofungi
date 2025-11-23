@@ -39,6 +39,17 @@ station_name_list: tuple[str, ...] = create_station_names(metrics)
 
 
 def main():
+    logger: Logger = get_logger(__name__)
+    logger.setLevel(logging.DEBUG)
+    logger.debug('Logger created')
+    # --- Load data ---
+    st.set_page_config(layout='wide', initial_sidebar_state='expanded')
+    logger.debug('Page config set')
+    df_weather: pl.LazyFrame = load_weather_data().lazy()
+    logger.debug('Weather data LazyFrame loaded')
+    metrics: pl.LazyFrame = load_metric_data().lazy()
+    logger.debug('Metrics LazyFrame created')
+    station_name_list: tuple[str, ...] = create_station_names(metrics)
     st.title('MeteoShrooms')
 
     with st.sidebar:
