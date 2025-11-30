@@ -74,7 +74,7 @@ def create_station_names(_frame_with_stations: pl.LazyFrame) -> tuple[str, ...]:
 @st.cache_data
 def create_station_frame_for_map(
     _frame_with_stations: pl.LazyFrame, _metrics: pl.LazyFrame, time_period: int
-) -> pl.LazyFrame:
+) -> pl.DataFrame:
     return (
         _frame_with_stations.with_columns(
             pl.col('station_type_en').alias('Station Type'),
@@ -91,6 +91,7 @@ def create_station_frame_for_map(
             right_on='station_abbr',
         )
         .rename(WEATHER_SHORT_LABEL_DICT)
+        .collect()
     )
 
 
