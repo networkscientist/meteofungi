@@ -10,7 +10,7 @@ from meteofungi.dashboard.constants import (
     NUM_DAYS_VAL,
     TIME_PERIODS,
 )
-from meteofungi.dashboard.dashboard_map import draw_map
+from meteofungi.dashboard.dashboard_map import create_map_section
 from meteofungi.dashboard.dashboard_timeseries_chart import create_area_chart
 from meteofungi.dashboard.dashboard_utils import (
     create_station_names,
@@ -43,16 +43,15 @@ def main():
         time_period_selected: int = st.pills(
             'Time Period', TIME_PERIODS.keys(), default=7
         )
-        on: bool = st.toggle('Hide Map')
+        toggle_hide_map: bool = st.toggle('Hide Map')
 
     with st.container():
         create_area_chart(
             df_weather, stations_options_selected, time_period_selected, 'rre150h0'
         )
-
-        if not on:
-            draw_map(metrics, 'rre150h0', time_period_selected)
-
+    if not toggle_hide_map:
+        create_map_section(metrics, 'rre150h0', time_period_selected)
+    with st.container():
         for station in stations_options_selected:
             create_metric_section(metrics, station, METRICS_STRINGS)
         create_metrics_expander_info(

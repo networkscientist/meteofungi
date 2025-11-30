@@ -17,11 +17,18 @@ init_logging(__name__)
 root_logger = logging.getLogger(__name__)
 
 
-def draw_map(metrics: pl.LazyFrame, param_short_code: str, time_period: int):
+@st.cache_data
+def create_map_section(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
+    with st.container():
+        draw_map(_metrics, param_short_code, time_period)
+
+
+@st.cache_data
+def draw_map(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
     if not time_period:
         time_period = 7
-    station_frame_for_map: pl.LazyFrame = create_station_frame_for_map(
-        META_STATIONS, metrics, time_period
+    station_frame_for_map: pl.DataFrame = create_station_frame_for_map(
+        META_STATIONS, _metrics, time_period
     )
     scatter_map_kwargs: dict[
         str, str | dict[str, bool] | list[str | Any] | int | None
@@ -48,6 +55,8 @@ def draw_map(metrics: pl.LazyFrame, param_short_code: str, time_period: int):
             else None
         ),
     }
+    fig: Figure = px.scatter_map(station_frame_for_map, **scatter_map_kwargs)
+    st.plotly_chart(fig, width='stretch')
     root_logger.debug('map created')
     fig: Figure = px.scatter_map(station_frame_for_map.collect(), **scatter_map_kwargs)
     st.plotly_chart(fig, width='stretch')
