@@ -154,7 +154,7 @@ def update_selection():
                 for pt in new_selection
             ):
                 root_logger.debug(new_selection)
-                st.session_state.stations_options_multiselect = (
+                st.session_state.stations_options_multiselect = sorted(
                     st.session_state.stations_options_multiselect
                     + list(
                         new_selection.difference(
