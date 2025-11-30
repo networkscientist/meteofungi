@@ -1,10 +1,8 @@
-import argparse
+import importlib.metadata
 import logging
-from logging import Logger
 
 import polars as pl
 import streamlit as st
-from streamlit.logger import get_logger
 
 from meteofungi.dashboard.constants import (
     METRICS_STRINGS,
@@ -20,6 +18,7 @@ from meteofungi.dashboard.dashboard_utils import (
     load_metric_data,
     load_weather_data,
 )
+from meteofungi.dashboard.log import init_logging
 from meteofungi.dashboard.ux_metrics import (
     create_metric_section,
     create_metrics_expander_info,
@@ -27,20 +26,12 @@ from meteofungi.dashboard.ux_metrics import (
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--debug', action='store_true')
-    args = parser.parse_args()
-    logger: Logger = get_logger(__name__)
-    if args.debug:
-        logger.setLevel(logging.DEBUG)
-    logger.debug('Logger created')
-    # --- Load data ---
     st.set_page_config(layout='wide', initial_sidebar_state='expanded')
-    logger.debug('Page config set')
+    root_logger.debug('Page config set')
     df_weather: pl.LazyFrame = load_weather_data().lazy()
-    logger.debug('Weather data LazyFrame loaded')
+    root_logger.debug('Weather data LazyFrame loaded')
     metrics: pl.LazyFrame = load_metric_data().lazy()
-    logger.debug('Metrics LazyFrame created')
+    root_logger.debug('Metrics LazyFrame created')
     station_name_list: tuple[str, ...] = create_station_names(metrics)
     st.title('MeteoShrooms')
 
@@ -53,6 +44,7 @@ def main():
             'Time Period', TIME_PERIODS.keys(), default=7
         )
         on: bool = st.toggle('Hide Map')
+
     with st.container():
         create_area_chart(
             df_weather, stations_options_selected, time_period_selected, 'rre150h0'
@@ -66,9 +58,14 @@ def main():
         create_metrics_expander_info(
             num_days_value=NUM_DAYS_VAL, num_days_delta=NUM_DAYS_DELTA
         )
+    st.caption(f'MeteoShrooms Version: {importlib.metadata.version("MeteoFungi")}')
 
 
 if __name__ == '__main__':
+    init_logging(__name__)
+    root_logger = logging.getLogger(__name__)
+    root_logger.debug('Logger created')
+
     # cProfile.run("main()", sort='ncalls')
     # import cProfile
     # from pstats import Stats
