@@ -1,3 +1,4 @@
+import logging
 import re
 from pathlib import Path
 from typing import Any
@@ -16,6 +17,10 @@ from meteofungi.dashboard.constants import (
     SIDEBAR_MAX_SELECTIONS,
     WEATHER_SHORT_LABEL_DICT,
 )
+from meteofungi.dashboard.log import init_logging
+
+init_logging(__name__)
+root_logger = logging.getLogger(__name__)
 
 
 @st.cache_data
