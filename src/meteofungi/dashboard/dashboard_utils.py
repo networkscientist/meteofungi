@@ -113,11 +113,16 @@ def load_metric_data() -> pl.DataFrame:
     )
 
 
+@st.cache_data
+def create_metrics_names_dict(meta_params_df: pl.DataFrame) -> dict[str, str]:
+    return {m: create_meta_map(meta_params_df).get(m, '') for m in METRICS_STRINGS}
+
+
 META_PARAMETERS: pl.DataFrame = load_metadata_to_frame('parameters')
+
 META_STATIONS: pl.LazyFrame = load_metadata_to_frame('stations').lazy()
-METRICS_NAMES_DICT: dict[str, str] = {
-    m: create_meta_map(META_PARAMETERS).get(m, '') for m in METRICS_STRINGS
-}
+
+METRICS_NAMES_DICT: dict[str, str] = create_metrics_names_dict(META_PARAMETERS)
 WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
     {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
 )
