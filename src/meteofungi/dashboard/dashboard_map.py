@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import polars as pl
@@ -10,6 +11,10 @@ from meteofungi.dashboard.dashboard_utils import (
     META_STATIONS,
     create_station_frame_for_map,
 )
+from meteofungi.dashboard.log import init_logging
+
+init_logging(__name__)
+root_logger = logging.getLogger(__name__)
 
 
 def draw_map(metrics: pl.LazyFrame, param_short_code: str, time_period: int):
@@ -43,5 +48,6 @@ def draw_map(metrics: pl.LazyFrame, param_short_code: str, time_period: int):
             else None
         ),
     }
+    root_logger.debug('map created')
     fig: Figure = px.scatter_map(station_frame_for_map.collect(), **scatter_map_kwargs)
     st.plotly_chart(fig, width='stretch')
