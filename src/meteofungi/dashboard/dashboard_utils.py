@@ -61,6 +61,7 @@ def create_stations_options_selected(station_name_list) -> list:
         default='Airolo',
         max_selections=SIDEBAR_MAX_SELECTIONS,
         placeholder='Choose Station(s)',
+        key='stations_options_multiselect',
     )
 
 
