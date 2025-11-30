@@ -35,8 +35,9 @@ def create_area_chart_frame(
     )
 
 
+@st.cache_data
 def create_area_chart(
-    df_weather: pl.LazyFrame,
+    _df_weather: pl.LazyFrame,
     stations_options_selected: Sequence[str],
     time_period: int,
     param_short_code: str,
@@ -45,7 +46,7 @@ def create_area_chart(
         time_period = 7
     st.area_chart(
         data=create_area_chart_frame(
-            df_weather, stations_options_selected, time_period
+            _df_weather, stations_options_selected, time_period
         ),
         x='Time',
         y='Precipitation',
