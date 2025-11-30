@@ -132,3 +132,40 @@ METRICS_NAMES_DICT: dict[str, str] = create_metrics_names_dict(META_PARAMETERS)
 WEATHER_COLUMN_NAMES_DICT: dict[str, str] = dict(
     {'reference_timestamp': 'Time', 'station_name': 'Station'} | METRICS_NAMES_DICT
 )
+
+
+def update_selection():
+    try:
+        if len(st.session_state.stations_selected_map.selection.points) > 0:
+            new_selection = {
+                pt['hovertext']
+                for pt in st.session_state.stations_selected_map.selection.points
+            }
+            st.session_state.stations_selected_last_time = (
+                st.session_state.stations_options_multiselect
+            )
+            root_logger.debug(len(st.session_state.stations_options_multiselect))
+            if len(st.session_state.stations_options_multiselect) == 5:
+                raise IndexError(
+                    'You have already selected the maximum number of stations (5).'
+                )
+            if any(
+                pt not in st.session_state.stations_options_multiselect
+                for pt in new_selection
+            ):
+                root_logger.debug(new_selection)
+                st.session_state.stations_options_multiselect = (
+                    st.session_state.stations_options_multiselect
+                    + list(
+                        new_selection.difference(
+                            set(st.session_state.stations_options_multiselect)
+                        )
+                    )
+                )[0:5]
+        else:
+            # new_list = st.session_state.stations_options_multiselect
+            # new_list.remove(st.session_state.stations_selected_map.selection.points[0]['hovertext'])
+            # st.session_state.stations_options_multiselect = new_list
+            pass
+    except Exception as e:
+        st.error(e)
