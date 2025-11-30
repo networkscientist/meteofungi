@@ -26,6 +26,10 @@ from meteofungi.dashboard.ux_metrics import (
 
 
 def main():
+    if 'stations_options_multiselect' not in st.session_state:
+        st.session_state.stations_options_multiselect = {'Airolo'}
+    if 'stations_selected_last_time' not in st.session_state:
+        st.session_state.stations_selected_last_time = {'Airolo'}
     st.set_page_config(layout='wide', initial_sidebar_state='expanded')
     root_logger.debug('Page config set')
     df_weather: pl.LazyFrame = load_weather_data().lazy()
