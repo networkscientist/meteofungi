@@ -162,10 +162,7 @@ def update_selection():
                         )
                     )
                 )[0:5]
-        else:
-            # new_list = st.session_state.stations_options_multiselect
-            # new_list.remove(st.session_state.stations_selected_map.selection.points[0]['hovertext'])
-            # st.session_state.stations_options_multiselect = new_list
+        else:  # Pass for the time being
             pass
     except Exception as e:
         st.error(e)
