@@ -58,5 +58,3 @@ def draw_map(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
     fig: Figure = px.scatter_map(station_frame_for_map, **scatter_map_kwargs)
     st.plotly_chart(fig, width='stretch')
     root_logger.debug('map created')
-    fig: Figure = px.scatter_map(station_frame_for_map.collect(), **scatter_map_kwargs)
-    st.plotly_chart(fig, width='stretch')
