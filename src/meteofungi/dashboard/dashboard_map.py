@@ -4,12 +4,12 @@ from typing import Any
 import polars as pl
 import streamlit as st
 from plotly import express as px
-from plotly.graph_objs import Figure
 
 from meteofungi.dashboard.constants import WEATHER_SHORT_LABEL_DICT
 from meteofungi.dashboard.dashboard_utils import (
     META_STATIONS,
     create_station_frame_for_map,
+    update_selection,
 )
 from meteofungi.dashboard.log import init_logging
 
@@ -17,10 +17,17 @@ init_logging(__name__)
 root_logger = logging.getLogger(__name__)
 
 
-@st.cache_data
 def create_map_section(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
     with st.container():
-        draw_map(_metrics, param_short_code, time_period)
+        fig = draw_map(_metrics, param_short_code, time_period)
+        st.plotly_chart(
+            fig,
+            width='stretch',
+            key='stations_selected_map',
+            on_select=update_selection,
+        )
+
+        root_logger.debug('map created')
 
 
 @st.cache_data
@@ -55,6 +62,4 @@ def draw_map(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
             else None
         ),
     }
-    fig: Figure = px.scatter_map(station_frame_for_map, **scatter_map_kwargs)
-    st.plotly_chart(fig, width='stretch')
-    root_logger.debug('map created')
+    return px.scatter_map(station_frame_for_map, **scatter_map_kwargs)
