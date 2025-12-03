@@ -347,7 +347,7 @@ wheels = [
 ]
 
 [[package]]
-name = "meteofungi"
+name = "meteoshrooms"
 version = "0.2.0"
 source = { editable = "." }
 dependencies = [

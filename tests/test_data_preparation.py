@@ -1,4 +1,4 @@
-"""Tests module meteofungi.data_preparation.data_preparation.py"""
+"""Tests module meteoshrooms.data_preparation.data_preparation.py"""
 
 from pathlib import Path
 
@@ -7,7 +7,7 @@ import polars.selectors as cs
 import pytest
 from polars.testing import assert_frame_equal
 
-from meteofungi.data_preparation.constants import (
+from meteoshrooms.data_preparation.constants import (
     COLS_TO_KEEP_META_DATAINVENTORY,
     COLS_TO_KEEP_META_PARAMETERS,
     COLS_TO_KEEP_META_STATIONS,
@@ -15,7 +15,7 @@ from meteofungi.data_preparation.constants import (
     SCHEMA_META_PARAMETERS,
     SCHEMA_META_STATIONS,
 )
-from meteofungi.data_preparation.data_preparation import load_metadata
+from meteoshrooms.data_preparation.data_preparation import load_metadata
 
 
 @pytest.fixture(scope='session')

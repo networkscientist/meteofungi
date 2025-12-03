@@ -7,13 +7,13 @@ import streamlit as st
 from polars import LazyFrame
 from streamlit.delta_generator import DeltaGenerator
 
-from meteofungi.dashboard.constants import (
+from meteoshrooms.dashboard.constants import (
     NUM_DAYS_DELTA,
     NUM_DAYS_VAL,
     PARAMETER_AGGREGATION_TYPES,
     WEATHER_SHORT_LABEL_DICT,
 )
-from meteofungi.dashboard.dashboard_utils import (
+from meteoshrooms.dashboard.dashboard_utils import (
     META_PARAMETERS,
     WEATHER_COLUMN_NAMES_DICT,
 )

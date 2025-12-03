@@ -4,22 +4,22 @@ import logging
 import polars as pl
 import streamlit as st
 
-from meteofungi.dashboard.constants import (
+from meteoshrooms.dashboard.constants import (
     METRICS_STRINGS,
     NUM_DAYS_DELTA,
     NUM_DAYS_VAL,
     TIME_PERIODS,
 )
-from meteofungi.dashboard.dashboard_map import create_map_section
-from meteofungi.dashboard.dashboard_timeseries_chart import create_area_chart
-from meteofungi.dashboard.dashboard_utils import (
+from meteoshrooms.dashboard.dashboard_map import create_map_section
+from meteoshrooms.dashboard.dashboard_timeseries_chart import create_area_chart
+from meteoshrooms.dashboard.dashboard_utils import (
     create_station_names,
     create_stations_options_selected,
     load_metric_data,
     load_weather_data,
 )
-from meteofungi.dashboard.log import init_logging
-from meteofungi.dashboard.ux_metrics import (
+from meteoshrooms.dashboard.log import init_logging
+from meteoshrooms.dashboard.ux_metrics import (
     create_metric_section,
     create_metrics_expander_info,
 )

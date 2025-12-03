@@ -143,7 +143,7 @@ uv run ruff check --fix
 
 ----
 
-This tool inspects the source code to see whether is conforms to a pre-defined set of rules (see the section `[tool.ruff.lint]` in https://github.com/networkscientist/meteofungi/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/rules/[ruff documentation] for a detailed explanation of each rule).
+This tool inspects the source code to see whether is conforms to a pre-defined set of rules (see the section `[tool.ruff.lint]` in https://github.com/networkscientist/meteoshrooms/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/rules/[ruff documentation] for a detailed explanation of each rule).
 If an issue can easily be fixed automatically, ruff will try to do so, otherwise you will have to do it manually.
 In either case, ruff will provide you with details for each issue in the terminal.
 Code that has errors must not be commited.
@@ -153,7 +153,7 @@ Always make sure to fix all errors prior to commiting your code.
 === Formatting
 
 Although there are recommendations about Python code style (see for example https://peps.python.org/pep-0008/[PEP8 - Style Guide for Python Code]), there is still plenty of room to disagree about style details.
-MeteoShrooms uses ruff to automatically format code according to a set of predefined rules (see the section `[tool.ruff.format]` in https://github.com/networkscientist/meteofungi/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/formatter/[ruff documentation] for a detailed explanation).
+MeteoShrooms uses ruff to automatically format code according to a set of predefined rules (see the section `[tool.ruff.format]` in https://github.com/networkscientist/meteoshrooms/blob/master/pyproject.toml[pyproject.toml] for the rules and the https://docs.astral.sh/ruff/formatter/[ruff documentation] for a detailed explanation).
 Always make sure your code is properly formatted prior to commiting it with:
 
 [source,bash]

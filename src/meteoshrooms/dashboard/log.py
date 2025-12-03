@@ -1,6 +1,6 @@
 import logging
 
-from meteofungi.dashboard import settings
+from meteoshrooms.dashboard import settings
 
 
 def init_logging(name):

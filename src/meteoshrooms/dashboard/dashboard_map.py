@@ -5,13 +5,13 @@ import polars as pl
 import streamlit as st
 from plotly import express as px
 
-from meteofungi.dashboard.constants import WEATHER_SHORT_LABEL_DICT
-from meteofungi.dashboard.dashboard_utils import (
+from meteoshrooms.dashboard.constants import WEATHER_SHORT_LABEL_DICT
+from meteoshrooms.dashboard.dashboard_utils import (
     META_STATIONS,
     create_station_frame_for_map,
     update_selection,
 )
-from meteofungi.dashboard.log import init_logging
+from meteoshrooms.dashboard.log import init_logging
 
 init_logging(__name__)
 root_logger = logging.getLogger(__name__)

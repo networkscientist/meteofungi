@@ -4,9 +4,9 @@ build-backend = "uv_build"
 
 
 [project]
-name = "MeteoFungi"
+name = "MeteoShrooms"
 version = "0.2.0"
-description = "Predict Mushroom Appearance from Meteo Data"
+description = "Dashboard with Key Mushroom Metrics (KMM)"
 requires-python = ">=3.13"
 dependencies = [
     "plotly>=6.3.0",
@@ -153,7 +153,7 @@ docstring-code-format = false
 docstring-code-line-length = "dynamic"
 
 [tool.mypy]
-packages = ['meteofungi']
+packages = ['meteoshrooms']
 warn_unused_configs = true
 warn_redundant_casts = true
 warn_unused_ignores = true
@@ -173,8 +173,8 @@ data_file = 'tests/cover/.coverage'
 
 [tool.coverage.paths]
 source = [
-    "src/meteofungi",
-    "*/site-packages/meteofungi"
+    "src/meteoshrooms",
+    "*/site-packages/meteoshrooms"
 ]
 
 [tool.coverage.report]

@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from itertools import chain
 from zoneinfo import ZoneInfo
 
-from meteofungi.constants import TIME_PERIOD_VALUES, TIMEZONE_SWITZERLAND_STRING
+from meteoshrooms.constants import TIME_PERIOD_VALUES, TIMEZONE_SWITZERLAND_STRING
 
 TIME_PERIODS: dict[int, datetime] = {
     period: (

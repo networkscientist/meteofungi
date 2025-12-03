@@ -6,18 +6,18 @@ from typing import Any
 import polars as pl
 import streamlit as st
 
-from meteofungi.constants import (
+from meteoshrooms.constants import (
     DATA_PATH,
     TIMEZONE_SWITZERLAND_STRING,
     parameter_description_extraction_pattern,
 )
-from meteofungi.dashboard.constants import (
+from meteoshrooms.dashboard.constants import (
     COLUMNS_FOR_MAP_FRAME,
     METRICS_STRINGS,
     SIDEBAR_MAX_SELECTIONS,
     WEATHER_SHORT_LABEL_DICT,
 )
-from meteofungi.dashboard.log import init_logging
+from meteoshrooms.dashboard.log import init_logging
 
 init_logging(__name__)
 root_logger = logging.getLogger(__name__)

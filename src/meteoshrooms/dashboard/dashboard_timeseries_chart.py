@@ -5,10 +5,10 @@ from zoneinfo import ZoneInfo
 import polars as pl
 import streamlit as st
 
-from meteofungi.constants import TIMEZONE_SWITZERLAND_STRING
-from meteofungi.dashboard.constants import WEATHER_SHORT_LABEL_DICT
-from meteofungi.dashboard.dashboard_utils import WEATHER_COLUMN_NAMES_DICT
-from meteofungi.data_preparation.constants import EXPR_WEATHER_AGGREGATION_TYPES
+from meteoshrooms.constants import TIMEZONE_SWITZERLAND_STRING
+from meteoshrooms.dashboard.constants import WEATHER_SHORT_LABEL_DICT
+from meteoshrooms.dashboard.dashboard_utils import WEATHER_COLUMN_NAMES_DICT
+from meteoshrooms.data_preparation.constants import EXPR_WEATHER_AGGREGATION_TYPES
 
 
 def create_area_chart_frame(

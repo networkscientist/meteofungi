@@ -10,8 +10,8 @@ from zoneinfo import ZoneInfo
 
 import polars as pl
 
-from meteofungi.constants import DATA_PATH, TIMEZONE_SWITZERLAND_STRING
-from meteofungi.data_preparation.constants import (
+from meteoshrooms.constants import DATA_PATH, TIMEZONE_SWITZERLAND_STRING
+from meteoshrooms.data_preparation.constants import (
     ARGS_LOAD_META_DATAINVENTORY,
     ARGS_LOAD_META_PARAMETERS,
     ARGS_LOAD_META_STATIONS,
