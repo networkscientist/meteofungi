@@ -146,3 +146,9 @@ ARGS_LOAD_META_DATAINVENTORY = (
     SCHEMA_META_DATAINVENTORY,
     COLS_TO_KEEP_META_DATAINVENTORY,
 )
+TIMEZONE_EXPRESSION = pl.col('reference_timestamp').dt.replace_time_zone(
+    TIMEZONE_SWITZERLAND_STRING,
+    non_existent='null',
+    ambiguous='earliest',
+)
+SINK_PARQUET_KWARGS = {'compression': 'brotli', 'compression_level': 11}
