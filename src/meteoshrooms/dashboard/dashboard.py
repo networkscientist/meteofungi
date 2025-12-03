@@ -61,7 +61,7 @@ def main():
         create_metrics_expander_info(
             num_days_value=NUM_DAYS_VAL, num_days_delta=NUM_DAYS_DELTA
         )
-    st.caption(f'MeteoShrooms Version: {importlib.metadata.version("MeteoFungi")}')
+    st.caption(f'MeteoShrooms Version: {importlib.metadata.version("MeteoShrooms")}')
 
 
 if __name__ == '__main__':

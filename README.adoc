@@ -1,6 +1,6 @@
 = MeteoShrooms
 
-image:https://img.shields.io/github/v/tag/networkscientist/meteofungi[] image:https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml/badge.svg["Tests",link=https://github.com/networkscientist/meteofungi/actions/workflows/run_tests_ci.yml] image:https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg[https://github.com/networkscientist/meteofungi/blob/aea6b7708c70768c107d6a127da64378992a3aec/LICENSE.md]
+image:https://img.shields.io/github/v/tag/networkscientist/meteoshrooms[] image:https://github.com/networkscientist/meteoshrooms/actions/workflows/run_tests_ci.yml/badge.svg["Tests",link=https://github.com/networkscientist/meteoshrooms/actions/workflows/run_tests_ci.yml] image:https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg[https://github.com/networkscientist/meteoshrooms/blob/aea6b7708c70768c107d6a127da64378992a3aec/LICENSE.md]
 
 image:https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json[Ruff]
 
@@ -23,7 +23,7 @@ image::assets/meteoshrooms_start_page.png[]
 [NOTE]
 ====
 Contributors Welcome!
-See https://github.com/networkscientist/meteofungi/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
+See https://github.com/networkscientist/meteoshrooms/blob/master/docs/CONTRIBUTING.adoc[Contributing Guidelines] for more info...
 ====
 
 [NOTE]
@@ -94,55 +94,55 @@ Metrics and time series visulizations are currently hosted as a Streamlit dashbo
 == Roadmap
 
 A high-level roadmap structured along the planned release milestones.
-For a more detailed overview, see either https://github.com/networkscientist/meteofungi/issues[Issues] or the detailed https://github.com/users/networkscientist/projects/7[Project Planner], where the project is managed.
+For a more detailed overview, see either https://github.com/networkscientist/meteoshrooms/issues[Issues] or the detailed https://github.com/users/networkscientist/projects/7[Project Planner], where the project is managed.
 
-=== Release v0.3 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/1[GitHub milestone details]
+=== Release v0.3 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/1[GitHub milestone details]
 
-* [x] Define set of issue tags https://github.com/networkscientist/meteofungi/issues/40[#40]
-* [x] Develop linting concept https://github.com/networkscientist/meteofungi/issues/57[#57]
-* [x] Write CI test action https://github.com/networkscientist/meteofungi/issues/56[#56]
-* [ ] Define clear goals for project https://github.com/networkscientist/meteofungi/issues/54[#54]
-* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteofungi/issues/55[#55]
-* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteofungi/issues/59[#59]
+* [x] Define set of issue tags https://github.com/networkscientist/meteoshrooms/issues/40[#40]
+* [x] Develop linting concept https://github.com/networkscientist/meteoshrooms/issues/57[#57]
+* [x] Write CI test action https://github.com/networkscientist/meteoshrooms/issues/56[#56]
+* [ ] Define clear goals for project https://github.com/networkscientist/meteoshrooms/issues/54[#54]
+* [ ] Change project name to MeteoShrooms https://github.com/networkscientist/meteoshrooms/issues/55[#55]
+* [ ] Add example projects and usage walkthroughs https://github.com/networkscientist/meteoshrooms/issues/59[#59]
 * [ ] _Release v0.3_
 
-=== Release v0.4 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/2[GitHub milestone details]
+=== Release v0.4 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/2[GitHub milestone details]
 
-* [ ] Increase test coverage to 25% https://github.com/networkscientist/meteofungi/issues/53[#53]
-* [ ] Define consistent mypy concept https://github.com/networkscientist/meteofungi/issues/58[#58]
-* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteofungi/issues/61[#61]
-* [ ] Develop issue templates https://github.com/networkscientist/meteofungi/issues/64[#64]
-* [ ] Make passing of CI test action mandatory https://github.com/networkscientist/meteofungi/issues/67[#67]
-* [ ] Write Concept on the AI Part https://github.com/networkscientist/meteofungi/issues/68[#68]
+* [ ] Increase test coverage to 25% https://github.com/networkscientist/meteoshrooms/issues/53[#53]
+* [ ] Define consistent mypy concept https://github.com/networkscientist/meteoshrooms/issues/58[#58]
+* [ ] Extend package metadata in pyproject.toml https://github.com/networkscientist/meteoshrooms/issues/61[#61]
+* [ ] Develop issue templates https://github.com/networkscientist/meteoshrooms/issues/64[#64]
+* [ ] Make passing of CI test action mandatory https://github.com/networkscientist/meteoshrooms/issues/67[#67]
+* [ ] Write Concept on the AI Part https://github.com/networkscientist/meteoshrooms/issues/68[#68]
 * [ ] _Release v0.4_
 
-=== Release v0.5 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/3[GitHub milestone details]
+=== Release v0.5 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/3[GitHub milestone details]
 
-* [x] Add badges to Readme https://github.com/networkscientist/meteofungi/issues/60[#60]
-* [ ] Add st.pills element to select type of station to display in st.multiselect https://github.com/networkscientist/meteofungi/issues/22[#22]
-* [ ] Create a build and test it locally https://github.com/networkscientist/meteofungi/issues/62[#62]
-* [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteofungi/issues/65[#65]
-* [ ] Define Geodata Model Basics https://github.com/networkscientist/meteofungi/issues/69[#69]
-* [x] Move Dashboard Calculations to dashboard.calculations https://github.com/networkscientist/meteofungi/issues/73[#73]
+* [x] Add badges to Readme https://github.com/networkscientist/meteoshrooms/issues/60[#60]
+* [ ] Add st.pills element to select type of station to display in st.multiselect https://github.com/networkscientist/meteoshrooms/issues/22[#22]
+* [ ] Create a build and test it locally https://github.com/networkscientist/meteoshrooms/issues/62[#62]
+* [ ] Integrate profiling/performance benchmarks/tests https://github.com/networkscientist/meteoshrooms/issues/65[#65]
+* [ ] Define Geodata Model Basics https://github.com/networkscientist/meteoshrooms/issues/69[#69]
+* [x] Move Dashboard Calculations to dashboard.calculations https://github.com/networkscientist/meteoshrooms/issues/73[#73]
 * [ ] _Release v0.5_
 
-=== Release v0.6 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/4[GitHub milestone details]
+=== Release v0.6 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/4[GitHub milestone details]
 
-* [ ] Set up PyPI publishing workflow https://github.com/networkscientist/meteofungi/issues/63[#63]
-* [ ] Update Meteo Data with Recent Values Instead of Downloading Entire Dataset https://github.com/networkscientist/meteofungi/issues/74[#74]
-* [ ] Can We Have the Prepared Data as an Asset with Consistent URL? https://github.com/networkscientist/meteofungi/issues/75[#75]
+* [ ] Set up PyPI publishing workflow https://github.com/networkscientist/meteoshrooms/issues/63[#63]
+* [ ] Update Meteo Data with Recent Values Instead of Downloading Entire Dataset https://github.com/networkscientist/meteoshrooms/issues/74[#74]
+* [ ] Can We Have the Prepared Data as an Asset with Consistent URL? https://github.com/networkscientist/meteoshrooms/issues/75[#75]
 * [ ] _Release v0.6_
 
-=== Release v0.7 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/7[GitHub milestone details]
+=== Release v0.7 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/7[GitHub milestone details]
 
-* [ ] Move from Streamlit Cloud to stlite for WASM https://github.com/networkscientist/meteofungi/issues/52[#52]
+* [ ] Move from Streamlit Cloud to stlite for WASM https://github.com/networkscientist/meteoshrooms/issues/52[#52]
 
-=== Release v0.8 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/8[GitHub milestone details]
+=== Release v0.8 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/8[GitHub milestone details]
 
-* [ ] Develop First Version of AI Model https://github.com/networkscientist/meteofungi/issues/71[#71]
+* [ ] Develop First Version of AI Model https://github.com/networkscientist/meteoshrooms/issues/71[#71]
 
-=== Release v0.9 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/9[GitHub milestone details]
+=== Release v0.9 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/9[GitHub milestone details]
 
-=== Release v1.0 image:https://img.shields.io/github/milestones/progress/networkscientist/meteofungi/10[GitHub milestone details]
+=== Release v1.0 image:https://img.shields.io/github/milestones/progress/networkscientist/meteoshrooms/10[GitHub milestone details]
 
-* [ ] Develop AI Model for Mushroom Occurence Prediction https://github.com/networkscientist/meteofungi/issues/70[#70]
+* [ ] Develop AI Model for Mushroom Occurence Prediction https://github.com/networkscientist/meteoshrooms/issues/70[#70]
