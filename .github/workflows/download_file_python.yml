@@ -35,7 +35,7 @@ jobs:
         run: uv sync
 
       - name: "Data Preparation with Python"
-        run: uv run "src/meteoshrooms/data_preparation/data_preparation.py"
+        run: uv run "src/meteoshrooms/data_preparation/data_preparation.py" -m -d
 
       # Commit all changed files back to the repository
       - uses: stefanzweifel/git-auto-commit-action@v6.0.1
