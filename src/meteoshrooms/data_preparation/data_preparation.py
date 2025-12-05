@@ -105,11 +105,12 @@ def generate_download_urls(
     station_series: pl.Series, station_type: str, timeframe: str
 ) -> pl.Series:
     check_generate_download_urls_arguments_or_raise_error(station_type, timeframe)
+    station_type_string = str()
     match station_type:
         case 'rainfall':
-            station_type_string: str = '-precip'
+            station_type_string = '-precip'
         case 'weather':
-            station_type_string: str = ''
+            station_type_string = ''
     return combine_urls_parts_to_string(station_series, station_type_string, timeframe)
 
 
