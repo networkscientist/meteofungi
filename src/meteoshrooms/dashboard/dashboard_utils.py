@@ -20,7 +20,7 @@ from meteoshrooms.dashboard.constants import (
 from meteoshrooms.dashboard.log import init_logging
 
 init_logging(__name__)
-root_logger = logging.getLogger(__name__)
+root_logger: logging.Logger = logging.getLogger(__name__)
 
 
 @st.cache_data

@@ -43,7 +43,7 @@ def create_area_chart(
     param_short_code: str,
 ):
     if not time_period:
-        time_period = 7
+        time_period: int = 7
     st.area_chart(
         data=create_area_chart_frame(
             _df_weather, stations_options_selected, time_period

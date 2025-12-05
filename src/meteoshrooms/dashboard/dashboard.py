@@ -66,7 +66,7 @@ def main():
 
 if __name__ == '__main__':
     init_logging(__name__)
-    root_logger = logging.getLogger(__name__)
+    root_logger: logging.Logger = logging.getLogger(__name__)
     root_logger.debug('Logger created')
 
     # cProfile.run("main()", sort='ncalls')

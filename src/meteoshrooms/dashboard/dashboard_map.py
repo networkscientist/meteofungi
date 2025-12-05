@@ -4,6 +4,7 @@ from typing import Any
 import polars as pl
 import streamlit as st
 from plotly import express as px
+from plotly.graph_objs import Figure
 
 from meteoshrooms.dashboard.constants import WEATHER_SHORT_LABEL_DICT
 from meteoshrooms.dashboard.dashboard_utils import (
@@ -14,14 +15,14 @@ from meteoshrooms.dashboard.dashboard_utils import (
 from meteoshrooms.dashboard.log import init_logging
 
 init_logging(__name__)
-root_logger = logging.getLogger(__name__)
+root_logger: logging.Logger = logging.getLogger(__name__)
 
 
 def create_map_section(
     _metrics: pl.LazyFrame, param_short_code: str, time_period: int | None
 ):
     with st.container():
-        fig = draw_map(_metrics, param_short_code, time_period)
+        fig: Figure = draw_map(_metrics, param_short_code, time_period)
         st.plotly_chart(
             fig,
             width='stretch',

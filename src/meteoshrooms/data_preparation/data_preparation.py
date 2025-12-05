@@ -441,11 +441,11 @@ def create_weather_schema_dict(
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser: argparse.ArgumentParser = argparse.ArgumentParser()
     parser.add_argument('-m', '--metrics', action='store_true')
     parser.add_argument('-d', '--debug', action='store_true')
     parser.add_argument('-u', '--update', action='store_true')
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     if args.debug:
         logger.setLevel(logging.DEBUG)
     logger.debug('Logger created')
@@ -462,7 +462,7 @@ if __name__ == '__main__':
         load_metadata('datainventory', *ARGS_LOAD_META_DATAINVENTORY).collect().lazy()
     )
     with tempfile.TemporaryDirectory() as tmpdir:
-        down_path = Path(tmpdir)
+        down_path: Path = Path(tmpdir)
         weather_data: pl.LazyFrame = load_weather(
             meta_stations,
             schema_dict_lazyframe=weather_schema_dict,

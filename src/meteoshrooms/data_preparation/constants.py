@@ -3,6 +3,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 import polars as pl
+from polars import DataType, Expr
 
 DATA_PATH: Path = Path(__file__).resolve().parents[3].joinpath('data')
 DTYPE_DICT: dict[str, type[pl.DataType]] = {
@@ -11,7 +12,7 @@ DTYPE_DICT: dict[str, type[pl.DataType]] = {
     'String': pl.String,
 }
 
-METEO_CSV_ENCODING = 'ISO-8859-1'
+METEO_CSV_ENCODING: str = 'ISO-8859-1'
 META_FILE_PATH_DICT: dict[str, list[str]] = {
     meta_type: [
         f'https://data.geo.admin.ch/ch.meteoschweiz.ogd-smn{ogd_smn_prefix}/ogd-smn{meta_suffix}_meta_{meta_type}.csv'
@@ -109,8 +110,8 @@ COLS_TO_KEEP_META_DATAINVENTORY: tuple[str, ...] = (
     'parameter_shortname',
     'station_abbr',
 )
-URL_GEO_ADMIN_BASE = 'https://data.geo.admin.ch'
-URL_GEO_ADMIN_STATION_TYPE_BASE = 'ch.meteoschweiz.ogd-smn'
+URL_GEO_ADMIN_BASE: str = 'https://data.geo.admin.ch'
+URL_GEO_ADMIN_STATION_TYPE_BASE: str = 'ch.meteoschweiz.ogd-smn'
 
 PARAMETER_AGGREGATION_TYPES: dict[str, tuple[str, ...]] = {
     'sum': ('rre150h0',),
@@ -124,31 +125,40 @@ TIME_PERIODS: dict[int, datetime] = {
     )
     for period in TIME_PERIOD_VALUES
 }
-EXPR_WEATHER_AGGREGATION_TYPES = (
+EXPR_WEATHER_AGGREGATION_TYPES: tuple[Expr, Expr] = (
     pl.sum(*PARAMETER_AGGREGATION_TYPES['sum']),
     pl.mean(*PARAMETER_AGGREGATION_TYPES['mean']),
 )
-STATION_TYPE_ERROR_STRING = 'station_type must be String and cannot be None'
-TIMEFRAME_VALUE_ERROR_STRING = "timeframe needs to be 'recent' or 'now'"
-TIMEFRAME_STRINGS = {'recent', 'now'}
-ARGS_LOAD_META_PARAMETERS = (
+STATION_TYPE_ERROR_STRING: str = 'station_type must be String and cannot be None'
+TIMEFRAME_VALUE_ERROR_STRING: str = "timeframe needs to be 'recent' or 'now'"
+TIMEFRAME_STRINGS: set[str] = {'recent', 'now'}
+ARGS_LOAD_META_PARAMETERS: tuple[
+    dict[str, list[str]], dict[str, type[DataType]], tuple[str, ...]
+] = (
     META_FILE_PATH_DICT,
     SCHEMA_META_PARAMETERS,
     COLS_TO_KEEP_META_PARAMETERS,
 )
-ARGS_LOAD_META_STATIONS = (
+ARGS_LOAD_META_STATIONS: tuple[
+    dict[str, list[str]], dict[str, type[DataType]], tuple[str, ...]
+] = (
     META_FILE_PATH_DICT,
     SCHEMA_META_STATIONS,
     COLS_TO_KEEP_META_STATIONS,
 )
-ARGS_LOAD_META_DATAINVENTORY = (
+ARGS_LOAD_META_DATAINVENTORY: tuple[
+    dict[str, list[str]], dict[str, type[DataType]], tuple[str, ...]
+] = (
     META_FILE_PATH_DICT,
     SCHEMA_META_DATAINVENTORY,
     COLS_TO_KEEP_META_DATAINVENTORY,
 )
-TIMEZONE_EXPRESSION = pl.col('reference_timestamp').dt.replace_time_zone(
+TIMEZONE_EXPRESSION: pl.Expr = pl.col('reference_timestamp').dt.replace_time_zone(
     TIMEZONE_SWITZERLAND_STRING,
     non_existent='null',
     ambiguous='earliest',
 )
-SINK_PARQUET_KWARGS = {'compression': 'brotli', 'compression_level': 11}
+SINK_PARQUET_KWARGS: dict[str, int | str] = {
+    'compression': 'brotli',
+    'compression_level': 11,
+}
