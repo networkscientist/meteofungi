@@ -94,9 +94,9 @@ def calculate_metric_value(
         df_filtered: LazyFrame | None = filter_metrics_time_period(
             metrics, station_name, number_days, metric_name
         )
-        if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
-            df_filtered = df_filtered.select(pl.col(metric_name) / number_days)
-        if df_filtered:
+        if df_filtered is not None:
+            if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
+                df_filtered = df_filtered.select(pl.col(metric_name) / number_days)
             return df_filtered.collect().item()
         return None
     except ValueError:
