@@ -220,7 +220,7 @@ def update_weather_data(
         down_path, urls_weather, kwargs_lazyframe
     )
     rainfall_now: pl.LazyFrame = create_rainfall_weather_lazyframes(
-        urls_rainfall, kwargs_lazyframe
+        down_path, urls_rainfall, kwargs_lazyframe
     )
     weather_new: pl.LazyFrame = concat_rainfall_weather_lazyframes(
         metadata, rainfall_now, weather_now
