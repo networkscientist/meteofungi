@@ -44,7 +44,7 @@ def main():
         stations_options_selected: list = create_stations_options_selected(
             station_name_list
         )
-        time_period_selected: int = st.pills(
+        time_period_selected: int | None = st.pills(
             'Time Period', TIME_PERIODS.keys(), default=7
         )
         toggle_hide_map: bool = st.toggle('Hide Map')

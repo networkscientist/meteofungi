@@ -39,7 +39,7 @@ def create_area_chart_frame(
 def create_area_chart(
     _df_weather: pl.LazyFrame,
     stations_options_selected: Sequence[str],
-    time_period: int,
+    time_period: int | None,
     param_short_code: str,
 ):
     if not time_period:

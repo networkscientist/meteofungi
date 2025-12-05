@@ -17,7 +17,9 @@ init_logging(__name__)
 root_logger = logging.getLogger(__name__)
 
 
-def create_map_section(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
+def create_map_section(
+    _metrics: pl.LazyFrame, param_short_code: str, time_period: int | None
+):
     with st.container():
         fig = draw_map(_metrics, param_short_code, time_period)
         st.plotly_chart(
@@ -31,7 +33,7 @@ def create_map_section(_metrics: pl.LazyFrame, param_short_code: str, time_perio
 
 
 @st.cache_data
-def draw_map(_metrics: pl.LazyFrame, param_short_code: str, time_period: int):
+def draw_map(_metrics: pl.LazyFrame, param_short_code: str, time_period: int | None):
     if not time_period:
         time_period = 7
     station_frame_for_map: pl.DataFrame = create_station_frame_for_map(
