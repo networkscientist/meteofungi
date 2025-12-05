@@ -46,9 +46,17 @@ def collect_meta_params_to_dicts(metadata: pl.DataFrame) -> tuple[dict[str, Any]
 @st.cache_data
 def create_meta_map(metadata: pl.DataFrame):
     meta_map: dict = {
-        r['parameter_shortname']: re.search(
-            parameter_description_extraction_pattern, r['parameter_description_en']
-        ).group()
+        r['parameter_shortname']: (
+            result.group()
+            if (
+                result := re.search(
+                    parameter_description_extraction_pattern,
+                    r['parameter_description_en'],
+                )
+            )
+            is not None
+            else None
+        )
         for r in collect_meta_params_to_dicts(metadata)
     }
     return meta_map
