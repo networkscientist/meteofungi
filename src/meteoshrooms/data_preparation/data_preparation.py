@@ -324,6 +324,7 @@ def download_files(urls: Iterable[str], down_path: Path):
                 r = s.get(url)
                 with Path(Path(down_path, Path(url).name)).open('wb') as f:
                     f.write(r.content)
+                logger.debug(f'file {Path(down_path, Path(url).name)} written.')
             except Exception as e:
                 print('Exception in download_url():', e)
 
