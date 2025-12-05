@@ -6,7 +6,7 @@ import tempfile
 from collections.abc import Sequence
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Iterable, Literal, Mapping
+from typing import Any, Iterable, Mapping
 from zoneinfo import ZoneInfo
 
 import polars as pl
@@ -90,7 +90,7 @@ def load_metadata(
 
 
 def combine_urls_parts_to_string(
-    station: pl.Series, station_type_string: str, timeframe: Literal['recent', 'now']
+    station: pl.Series, station_type_string: str, timeframe: str
 ) -> pl.Series:
     return (
         f'{URL_GEO_ADMIN_BASE}/{URL_GEO_ADMIN_STATION_TYPE_BASE}{station_type_string}/'
@@ -102,7 +102,7 @@ def combine_urls_parts_to_string(
 
 
 def generate_download_urls(
-    station_series: pl.Series, station_type: str, timeframe: Literal['recent', 'now']
+    station_series: pl.Series, station_type: str, timeframe: str
 ) -> pl.Series:
     check_generate_download_urls_arguments_or_raise_error(station_type, timeframe)
     match station_type:
