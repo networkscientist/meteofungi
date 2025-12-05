@@ -273,7 +273,7 @@ def filter_unique_station_names(metadata: pl.LazyFrame) -> pl.LazyFrame:
 
 
 def create_rainfall_weather_lazyframes(
-    down_path: Path, station_urls, kwargs_lazyframe: dict
+    down_path: Path, station_urls: pl.Series, kwargs_lazyframe: dict
 ) -> pl.LazyFrame:
     """Create LazyFrame from CSV urls
 
