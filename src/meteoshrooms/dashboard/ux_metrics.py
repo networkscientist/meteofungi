@@ -76,14 +76,14 @@ def create_metric_kwargs(metric_name) -> dict[str, bool | str]:
 
 def filter_metrics_time_period(
     metrics: pl.LazyFrame, station_name: str, number_days: int, metric_short_code: str
-) -> pl.LazyFrame:
+) -> pl.LazyFrame | None:
     return (
         metrics.filter(
             (pl.col('station_name') == station_name)
             & (pl.col('time_period') == number_days)
         ).select(pl.col(metric_short_code))
         if metrics.select(pl.len()).collect().item() > 0
-        else 0
+        else None
     )
 
 
@@ -91,12 +91,14 @@ def calculate_metric_value(
     metrics: pl.LazyFrame, metric_name: str, station_name: str, number_days: int
 ) -> float | None:
     try:
-        df_filtered: LazyFrame = filter_metrics_time_period(
+        df_filtered: LazyFrame | None = filter_metrics_time_period(
             metrics, station_name, number_days, metric_name
         )
         if metric_name in PARAMETER_AGGREGATION_TYPES['sum']:
             df_filtered = df_filtered.select(pl.col(metric_name) / number_days)
-        return df_filtered.collect().item()
+        if df_filtered:
+            return df_filtered.collect().item()
+        return None
     except ValueError:
         # If a station has data missing, return None
         return None
